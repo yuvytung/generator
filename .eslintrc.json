@@ -1,0 +1,27 @@
+{
+  "parser": "eslint-plugin-coffee",
+  "plugins": ["coffee"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:coffee/eslint-recommended",
+    "plugin:coffee/disable-incompatible",
+    "plugin:coffee/airbnb-base",
+    "plugin:coffee/prettier",
+    "prettier",
+    "eslint-config-prettier"
+  ],
+  "globals": {
+    "global": true,
+    "process": true,
+    "require": true,
+    "console": true,
+
+    "log": true,
+    "app": true,
+    "APP_ENV": true
+  },
+  "rules": {
+    "coffee/no-return-await": "off",
+    "coffee/vars-on-top": "off"
+  }
+}
