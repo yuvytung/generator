@@ -3,20 +3,20 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import { <%-_entity.name.pascal()%>Controller } from '../web/rest/<%-_entity.name.kebab()%>.controller';
 import { <%-_entity.name.pascal()%><%-entitySuffix%> } from '../domain/<%-_entity.name.kebab()%>.entity';
 import { <%-_entity.name.pascal()%>Service } from '../service/<%-_entity.name.kebab()%>.service';
-<%-modules.elasticsearch &&
+<%-modules.elasticsearch ?
 `import {ElasticSearchModule} from "./elasticsearch.module";
-import {${_entity._name.pascal}SearchRepository} from "../repository/search/${_entity._name.kebab}.search.repository";`
+import {${_entity._name.pascal}SearchRepository} from "../repository/search/${_entity._name.kebab}.search.repository";` : ``
 %>
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([<%-_entity.name.pascal()%><%-entitySuffix%>]),
-    <%-modules.elasticsearch && `ElasticSearchModule,`%>
+    <%-modules.elasticsearch ? `ElasticSearchModule,` : ``%>
   ],
   controllers: [<%-_entity.name.pascal()%>Controller],
   providers: [
     <%-_entity.name.pascal()%>Service,
-    <%-modules.elasticsearch && `${_entity._name.pascal}SearchRepository,`%>
+    <%-modules.elasticsearch ? `${_entity._name.pascal}SearchRepository,` : ``%>
   ],
   exports: [<%-_entity.name.pascal()%>Service],
 })

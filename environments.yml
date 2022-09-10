@@ -16,6 +16,9 @@ ejs:
       messageBroker: kafka
       clientPackageManager: yarn
       buildTool: gradle
+      database: mongodb # mysql, mariadb, postgres
+      devDatabase: mongodb
+      prodDatabase: mongodb
       clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
 modules:
   backend-nestjs:

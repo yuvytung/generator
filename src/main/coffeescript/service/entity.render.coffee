@@ -44,6 +44,9 @@ processTemplateEjs = (moduleName) ->
 
   glob
     .sync "#{moduleTemplatePath}/@(#{subModulesIncluded})/**/{.??,}*.ejs", {}
+    .filter (pathInput) ->
+      environments?.modules?["backend-nestjs"]?.elasticsearch and
+      pathInput.match(/.*__entity\.search\.repository\.ts\.ejs/g)?.length
     .map (pathInput) ->
       epsCP = entityProperty.map (ep) -> StringPool.caseProcessing ep
       entityProperty.map (ep) ->

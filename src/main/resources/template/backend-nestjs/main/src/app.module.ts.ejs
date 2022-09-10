@@ -4,14 +4,14 @@ import { AuthModule } from "./module/auth.module";
 import { ormConfig } from "./orm.config";
 import { config } from "./config";
 import { ServeStaticModule } from "@nestjs/serve-static";
-<%-modules.redis && `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";
-import { CacheService } from "./index";`%>
+<%-modules.redis ? `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";
+import { CacheService } from "./index";` : ``%>
 
 export class GlobalInit {
   constructor(
-    <%-modules.redis && `@InjectRedis() private readonly cache: CacheService,`%>
+    <%-modules.redis ? `@InjectRedis() private readonly cache: CacheService,` : ``%>
   ) {
-    <%-modules.redis &&
+    <%-modules.redis ?
     `this.cache.quick = async (key, callback) => {
       let result = await this.cache.get(key.toString()).then(r => JSON.parse(r));
       if (!result) {
@@ -19,7 +19,7 @@ export class GlobalInit {
         this.cache.set(key, JSON.stringify(result));
       }
       return result;
-    };`%>
+    };` : ``%>
   }
 }
 
@@ -29,7 +29,7 @@ export class GlobalInit {
     ServeStaticModule.forRoot({
       rootPath: config.getClientPath()
     }),
-    <%-modules.redis &&
+    <%-modules.redis ?
     `RedisModule.forRootAsync({
       useFactory: () => ({
         config: [
@@ -39,7 +39,7 @@ export class GlobalInit {
           }
         ]
       })
-    }),`%>
+    }),` : ``%>
     AuthModule,
   ],
   controllers: [
