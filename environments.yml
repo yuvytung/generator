@@ -1,0 +1,103 @@
+baseName: "catiny"
+serverPort: "8081"
+prefix: "nhi"
+suffix: ""
+entitySuffix: ""
+dtoSuffix: "DTO"
+nativeLanguage: "en"
+packageFolder: "com/jhipster/node"
+serviceDiscoveryType: true
+websocket: true
+searchEngine: "elasticsearch"
+messageBroker: "kafka"
+clientPackageManager: "yarn"
+buildTool: "gradle"
+ejs:
+  environment:
+    original:
+      baseName: "catiny"
+      serverPort: "8081"
+      prefix: "nhi"
+      suffix: ""
+      entitySuffix: ""
+      dtoSuffix: "DTO"
+      nativeLanguage: "en"
+      packageFolder: "com/jhipster/node"
+      serviceDiscoveryType: true
+      websocket: true
+      searchEngine: "elasticsearch"
+      messageBroker: "kafka"
+      clientPackageManager: "yarn"
+      buildTool: "gradle"
+
+modules:
+  - "backend-nestjs"
+  - "frontend-reactjs"
+
+
+file:
+  typeExtensions:
+    binary:
+      # # Audio
+      - kar
+      - m4a
+      - mid
+      - midi
+      - mp3
+      - ogg
+      - ra
+      # VIDEO
+      - 3gpp
+      - 3gp
+      - as
+      - asf
+      - asx
+      - fla
+      - flv
+      - m4v
+      - mng
+      - mov
+      - mp4
+      - mpeg
+      - mpg
+      - swc
+      - swf
+      - webm
+      # ARCHIVES
+      - 7z
+      - gz
+      - rar
+      - tar
+      - zip
+      # FONTS
+      - ttf
+      - eot
+      - otf
+      - woff
+      - woff2
+      # Graphics
+      - png
+      - jpg
+      - jpeg
+      - gif
+      - tif
+      - tiff
+      # SVG
+      - ico
+      - svg
+      - eps
+      # Java
+      - class
+      - jar
+      - war
+      # Doc
+      - doc
+      - DOC
+      - docx
+      - DOCX
+      - dot
+      - DOT
+      - pdf
+      - PDF
+      - rtf
+      - RTF

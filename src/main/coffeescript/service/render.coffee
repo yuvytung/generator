@@ -2,8 +2,28 @@ import glob from "glob"
 import * as fs from "fs"
 import * as path from "path"
 import * as ejs from "ejs"
+import Case from "case"
 
-environments = YAML.parseFile "render-environments.yml"
+environments = YAML.parseFile "environments.yml"
+
+caseProcessing = (resource = environments.ejs.environment.original) ->
+  result = {}
+  Object.keys(resource).forEach (key) ->
+    # eslint-disable-next-line coffee/no-return-assign
+    result["_#{key}"] =
+      snake: Case.snake resource[key]
+      pascal: Case.pascal resource[key]
+      camel: Case.camel resource[key]
+      kebab: Case.kebab resource[key]
+      header: Case.header resource[key]
+      constant: Case.constant resource[key]
+      upper: Case.upper resource[key]
+      lower: Case.lower resource[key]
+      capital: Case.capital resource[key]
+  result
+
+ejsEnv = environments.ejs.environment.original
+Object.assign ejsEnv, caseProcessing environments.ejs.environment.original
 
 processTemplateEjs = ->
   environments.modules.map (moduleName) ->
@@ -18,7 +38,7 @@ processTemplateEjs = ->
         fs.mkdirSync path.dirname(pathOutput), recursive: true
         fs.writeFileSync(
           pathOutput
-          await ejs.renderFile pathInput, environments, charset: "utf8"
+          await ejs.renderFile pathInput, ejsEnv, charset: "utf8"
         )
     log.info "render module: #{moduleName} done!, output folder: #{moduleOutputPath}"
 processTemplateBinary = ->
@@ -36,5 +56,6 @@ processTemplateBinary = ->
     log.info "render module: #{moduleName} done!, output folder: #{moduleOutputPath}"
 export default ->
   log.debug "render", environments.modules
+  log.debug ejsEnv
   processTemplateEjs()
   processTemplateBinary()

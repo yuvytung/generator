@@ -15,9 +15,11 @@
     "test": "chmod +x src/main/bash/main.sh && ./src/main/bash/main.sh"
   },
   "dependencies": {
+    "case": "^1.6.3",
     "ejs": "^3.1.8",
     "glob": "^8.0.3",
-    "log4js": "^6.6.1"
+    "log4js": "^6.6.1",
+    "yaml": "^2.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",

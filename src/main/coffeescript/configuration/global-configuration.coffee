@@ -21,6 +21,5 @@ global.log = log4js.getLogger " "
 
 global.YAML = yaml
 YAML.parseFile = (path, options = "utf8") ->
-  log.debug path
-  path = if path.startsWith "/" then path else "#{app.rootDirPath}/#{path}"
-  yaml.parse fs.readFileSync path, options
+  fullPath = if path.startsWith "/" then path else "#{app.rootDirPath}/#{path}"
+  yaml.parse fs.readFileSync fullPath, options
