@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner, getRepository } from 'typeorm';
-import { User<%=entitySuffix%> } from '../domain/user.entity';
+import { User<%-entitySuffix%> } from '../domain/user.entity';
 import { transformPassword } from '../security';
 import { Authority } from '../domain/authority.entity';
 
@@ -8,7 +8,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
     role2: Authority = { name: 'ROLE_USER' };
 
-    user1: User<%=entitySuffix%> = {
+    user1: User<%-entitySuffix%> = {
         login: 'system',
         password: 'system',
         firstName: 'System',
@@ -21,7 +21,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
         lastModifiedBy: 'system',
     };
 
-    user2: User<%=entitySuffix%> = {
+    user2: User<%-entitySuffix%> = {
         login: 'anonymoususer',
         password: 'anonymoususer',
         firstName: 'Anonymous',
@@ -34,7 +34,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
         lastModifiedBy: 'system',
     };
 
-    user3: User<%=entitySuffix%> = {
+    user3: User<%-entitySuffix%> = {
         login: 'admin',
         password: 'admin',
         firstName: 'Administrator',
@@ -47,7 +47,7 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
         lastModifiedBy: 'system',
     };
 
-    user4: User<%=entitySuffix%> = {
+    user4: User<%-entitySuffix%> = {
         login: 'user',
         password: 'user',
         firstName: 'User',
@@ -62,12 +62,12 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
 
     // eslint-disable-next-line
     public async up(queryRunner: QueryRunner): Promise<any> {
-        const authorityRepository = getRepository('<%=`${prefix}_`%>authority');
+        const authorityRepository = getRepository('<%-`${prefix}_`%>authority');
 
         const adminRole = await authorityRepository.save(this.role1);
         const userRole = await authorityRepository.save(this.role2);
 
-        const userRepository = getRepository('<%=`${prefix}_`%>user');
+        const userRepository = getRepository('<%-`${prefix}_`%>user');
 
         this.user1.authorities = [adminRole, userRole];
         this.user3.authorities = [adminRole, userRole];

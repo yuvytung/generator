@@ -2,7 +2,7 @@
   "name": "catinybase-name",
   "version": "0.0.1-SNAPSHOT",
   "private": true,
-  "description": "Description for <%=baseName%>",
+  "description": "Description for <%-baseName%>",
   "license": "UNLICENSED",
   "scripts": {
     "build": "yarn run webapp:prod --",
@@ -10,6 +10,11 @@
     "ci:frontend:test": "npm run webapp:build:$npm_package_config_default_environment && npm run test-ci",
     "clean-www": "rimraf build/resources/main/static/app/{src,build/}",
     "cleanup": "rimraf build/resources/main/static/",
+    <%-modules.cypress && `"cypress": "cypress open --e2e",
+    "e2e": "yarn run e2e:cypress:headed --",
+    "e2e:cypress": "cypress run --e2e --browser chrome --record \${CYPRESS_ENABLE_RECORD:-false}",
+    "e2e:cypress:headed": "yarn run e2e:cypress -- --headed",
+    "e2e:headless": "yarn run e2e:cypress --",`%>
     "jest": "jest --coverage --logHeapUsage --maxWorkers=2 --config jest.conf.js",
     "jest:update": "yarn run jest -- --updateSnapshot",
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
@@ -85,6 +90,8 @@
     "cross-env": "7.0.3",
     "css-loader": "6.7.1",
     "css-minimizer-webpack-plugin": "4.0.0",
+    <%-modules.cypress && `"cypress": "10.7.0",
+    "eslint-plugin-cypress": "2.12.1",`%>
     "eslint": "8.23.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-react": "7.31.1",

@@ -19,7 +19,7 @@ eureka:
             defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 server:
-    port: <%=serverPort%>
+    port: <%-serverPort%>
 
     mail:
         host: localhost
@@ -35,7 +35,7 @@ server:
 
 jhipster:
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: <%=baseName%>@localhost
+        from: <%-baseName%>@localhost
         base-url: http://127.0.0.1:8082
 # ===================================================================
 # Application specific properties

@@ -6,7 +6,7 @@ import { Exclude } from 'class-transformer';
 /**
  * An User DTO object.
  */
-export class User<%=dtoSuffix %> extends BaseDTO {
+export class User<%-dtoSuffix %> extends BaseDTO {
     @ApiModelProperty({ uniqueItems: true, example: 'myuser', description: 'User login' })
     @IsString()
     login: string;

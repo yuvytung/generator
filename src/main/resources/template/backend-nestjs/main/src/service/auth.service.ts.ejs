@@ -6,7 +6,7 @@ import { Payload } from '../security/payload.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthorityRepository } from '../repository/authority.repository';
 import { UserService } from '../service/user.service';
-import { User<%=dtoSuffix%> } from './dto/user.dto';
+import { User<%-dtoSuffix%> } from './dto/user.dto';
 import { FindManyOptions } from 'typeorm';
 
 @Injectable()
@@ -43,17 +43,17 @@ export class AuthService {
     }
 
     /* eslint-enable */
-    async validateUser(payload: Payload): Promise<User<%=dtoSuffix%> | undefined> {
+    async validateUser(payload: Payload): Promise<User<%-dtoSuffix%> | undefined> {
         return await this.findUserWithAuthById(payload.id);
     }
 
-    async findUserWithAuthById(userId: number): Promise<User<%=dtoSuffix%> | undefined> {
-        const userDTO: User<%=dtoSuffix %> = await this.userService.findByFields({ where: { id: userId } });
+    async findUserWithAuthById(userId: number): Promise<User<%-dtoSuffix%> | undefined> {
+        const userDTO: User<%-dtoSuffix %> = await this.userService.findByFields({ where: { id: userId } });
         return userDTO;
     }
 
-    async getAccount(userId: number): Promise<User<%=dtoSuffix %> | undefined> {
-        const userDTO: User<%=dtoSuffix %> = await this.findUserWithAuthById(userId);
+    async getAccount(userId: number): Promise<User<%-dtoSuffix %> | undefined> {
+        const userDTO: User<%-dtoSuffix %> = await this.findUserWithAuthById(userId);
         if (!userDTO) {
             return;
         }
@@ -61,7 +61,7 @@ export class AuthService {
     }
 
     async changePassword(userLogin: string, currentClearTextPassword: string, newPassword: string): Promise<void> {
-        const userFind: User<%=dtoSuffix %> = await this.userService.findByFields({ where: { login: userLogin } });
+        const userFind: User<%-dtoSuffix %> = await this.userService.findByFields({ where: { login: userLogin } });
         if (!userFind) {
             throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
         }
@@ -74,8 +74,8 @@ export class AuthService {
         return;
     }
 
-    async registerNewUser(newUser: User<%=dtoSuffix %>): Promise<User<%=dtoSuffix %>> {
-        let userFind: User<%=dtoSuffix %> = await this.userService.findByFields({ where: { login: newUser.login } });
+    async registerNewUser(newUser: User<%-dtoSuffix %>): Promise<User<%-dtoSuffix %>> {
+        let userFind: User<%-dtoSuffix %> = await this.userService.findByFields({ where: { login: newUser.login } });
         if (userFind) {
             throw new HttpException('Login name already used!', HttpStatus.BAD_REQUEST);
         }
@@ -84,16 +84,16 @@ export class AuthService {
             throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
         }
         newUser.authorities = ['ROLE_USER'];
-        const user: User<%=dtoSuffix %> = await this.userService.save(newUser, newUser.login, true);
+        const user: User<%-dtoSuffix %> = await this.userService.save(newUser, newUser.login, true);
         return user;
     }
 
-    async updateUserSettings(userLogin: string, newUserInfo: User<%=dtoSuffix %>): Promise<User<%=dtoSuffix %>> {
-        const userFind: User<%=dtoSuffix %> = await this.userService.findByFields({ where: { login: userLogin } });
+    async updateUserSettings(userLogin: string, newUserInfo: User<%-dtoSuffix %>): Promise<User<%-dtoSuffix %>> {
+        const userFind: User<%-dtoSuffix %> = await this.userService.findByFields({ where: { login: userLogin } });
         if (!userFind) {
             throw new HttpException('Invalid login name!', HttpStatus.BAD_REQUEST);
         }
-        const userFindEmail: User<%=dtoSuffix %> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
+        const userFindEmail: User<%-dtoSuffix %> = await this.userService.findByFields({ where: { email: newUserInfo.email } });
         if (userFindEmail && newUserInfo.email !== userFind.email) {
             throw new HttpException('Email is already in use!', HttpStatus.BAD_REQUEST);
         }
@@ -106,7 +106,7 @@ export class AuthService {
         return;
     }
 
-    async getAllUsers(options: FindManyOptions<User<%=dtoSuffix %>>): Promise<[User<%=dtoSuffix %>[], number]> {
+    async getAllUsers(options: FindManyOptions<User<%-dtoSuffix %>>): Promise<[User<%-dtoSuffix %>[], number]> {
         return await this.userService.findAndCount(options);
     }
 }

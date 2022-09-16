@@ -31,8 +31,9 @@ ejs:
       buildTool: "gradle"
 
 modules:
-  - "backend-nestjs"
-  - "frontend-reactjs"
+  backend-nestjs:
+  frontend-reactjs:
+    cypress: true
 
 
 file:
@@ -101,3 +102,78 @@ file:
       - PDF
       - rtf
       - RTF
+    text:
+      #
+      - webapp
+      - eslintignore
+      - prettierignore
+      - prettierrc
+      - lock
+      #
+      - bat
+      - cmd
+      - ps1
+      - coffee
+      - css
+      - cql
+      - df
+      - ejs
+      - tsx
+      - html
+      - java
+      - js
+      - json
+      - less
+      - properties
+      - sass
+      - scss
+      - sh
+      - sql
+      - txt
+      - ts
+      - xml
+      - yaml
+      - yml
+      # Documents
+      - markdown
+      - md
+      - adoc
+      - textile
+      - mustache
+      - csv
+      - tab
+      - tsv
+      - txt
+      - AUTHORS
+      - CHANGELOG
+      - CHANGES
+      - CONTRIBUTING
+      - COPYING
+      - copyright
+      - COPYRIGHT
+      - INSTALL
+      - license
+      - LICENSE
+      - NEWS
+      - readme
+      - README
+      - TODO
+      # LINTERS
+      - csslintrc
+      - eslintrc
+      - jscsrc
+      - jshintrc
+      - jshintignore
+      - stylelintrc
+      # CONFIGS
+      - conf
+      - config
+      - editorconfig
+      - gitattributes
+      - gitconfig
+      - gitignore
+      - htaccess
+      - npmignore
+      # HEROKU
+      - Procfile
+      - slugignore

@@ -1,4 +1,4 @@
-# <%=baseName%>
+# <%-baseName%>
 
 This application was generated using JHipster 7.9.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3).
 
@@ -99,7 +99,7 @@ docker-compose -f src/main/docker/jhipster-control-center.yml up
 
 ### Packaging as jar
 
-To build the final jar and optimize the <%=baseName%> application for production, run:
+To build the final jar and optimize the <%-baseName%> application for production, run:
 
 ```
 ./gradlew -Pprod clean bootJar
@@ -112,7 +112,7 @@ To ensure everything worked, run:
 java -jar build/libs/*.jar
 ```
 
-Then navigate to [http://localhost:<%=serverPort%>](http://localhost:<%=serverPort%>) in your browser.
+Then navigate to [http://localhost:<%-serverPort%>](http://localhost:<%-serverPort%>) in your browser.
 
 Refer to [Using JHipster in production][] for more details.
 
@@ -139,6 +139,16 @@ Unit tests are run by [Jest][]. They're located in [src/test/javascript/](src/te
 ```
 yarn test
 ```
+<%-modules.cypress && `UI end-to-end tests are powered by [Cypress][]. They're located in [src/test/javascript/cypress](src/test/javascript/cypress)
+and can be run by starting Spring Boot in one terminal (\`./gradlew bootRun\`) and running the tests (\`yarn run e2e\`) in a second one.
+
+#### Lighthouse audits
+
+You can execute automated [lighthouse audits][https://developers.google.com/web/tools/lighthouse/] with [cypress audits][https://github.com/mfrachet/cypress-audit] by running \`yarn run e2e:cypress:audits\`.
+You should only run the audits when your application is packaged with the production profile.
+The lighthouse report is created in \`build/cypress/lhreport.html\`
+
+`%>
 
 For more information, refer to the [Running tests page][].
 

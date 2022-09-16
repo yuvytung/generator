@@ -9,9 +9,10 @@ modules = [
 
 environments = YAML.parseFile "environments.yml"
 binaryExtensions = environments.file.typeExtensions.binary
+textExtensions = environments.file.typeExtensions.text
 
-detectBinaryFile = (p) ->
-  p.match new RegExp "^.*.(#{binaryExtensions.join "|"})$", "g"
+detectFile = (p, extensions) ->
+  p.match new RegExp "^.*.(#{extensions.join "|"})$", "g"
 
 export default ->
   log.debug "convert"
@@ -19,8 +20,8 @@ export default ->
     moduleTemplatePath = "tmp/#{moduleName}"
     moduleOutputPath = "src/main/resources/template/#{moduleName}/main"
     allFile = glob.sync "#{moduleTemplatePath}/**/{.??,}*", nodir: true
-    allFile
-      .filter detectBinaryFile
+    countProcessed = allFile
+      .filter (pathInput) -> detectFile pathInput, binaryExtensions
       .map (pathInput) ->
         pathOutput = pathInput
           .replace(moduleTemplatePath, moduleOutputPath)
@@ -28,14 +29,20 @@ export default ->
         return { pathOutput, pathInput }
       .concat(
         allFile
-          .filter (pathInput) -> !detectBinaryFile pathInput
+          .filter (pathInput) -> detectFile pathInput, textExtensions
           .map (pathInput) ->
             pathOutput = pathInput
               .replace(moduleTemplatePath, moduleOutputPath)
               .concat ".ejs"
             return { pathOutput, pathInput }
       )
-      .map ({ pathOutput, pathInput }) ->
+      .map(({ pathOutput, pathInput }) ->
         fs.mkdirSync path.dirname(pathOutput), recursive: true
         fs.copyFileSync pathInput, pathOutput
-    log.info "convert module: #{moduleName} done!, output folder: #{moduleOutputPath}"
+      ).length
+    log.info """convert module: #{moduleName} done!
+      ->
+        processed: #{countProcessed}
+        total: #{allFile.length}
+        output folder: #{moduleOutputPath}
+      """

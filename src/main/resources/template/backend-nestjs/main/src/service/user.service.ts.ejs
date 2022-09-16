@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User<%=entitySuffix%> } from '../domain/user.entity';
-import { User<%=dtoSuffix %> } from './dto/user.dto';
+import { User<%-entitySuffix%> } from '../domain/user.entity';
+import { User<%-dtoSuffix %> } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
 import { UserRepository } from '../repository/user.repository';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
@@ -11,26 +11,26 @@ import { transformPassword } from '../security';
 export class UserService {
     constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
-    async findById(id: number): Promise<User<%=dtoSuffix %> | undefined> {
+    async findById(id: number): Promise<User<%-dtoSuffix %> | undefined> {
         const result = await this.userRepository.findOne(id);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async findByFields(options: FindOneOptions<User<%=dtoSuffix %>>): Promise<User<%=dtoSuffix %> | undefined> {
+    async findByFields(options: FindOneOptions<User<%-dtoSuffix %>>): Promise<User<%-dtoSuffix %> | undefined> {
         options.relations = ['authorities'];
         const result = await this.userRepository.findOne(options);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async find(options: FindManyOptions<User<%=dtoSuffix %>>): Promise<User<%=dtoSuffix %> | undefined> {
+    async find(options: FindManyOptions<User<%-dtoSuffix %>>): Promise<User<%-dtoSuffix %> | undefined> {
         const result = await this.userRepository.findOne(options);
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async findAndCount(options: FindManyOptions<User<%=dtoSuffix %>>): Promise<[User<%=dtoSuffix %>[], number]> {
+    async findAndCount(options: FindManyOptions<User<%-dtoSuffix %>>): Promise<[User<%-dtoSuffix %>[], number]> {
         options.relations = ['authorities'];
         const resultList = await this.userRepository.findAndCount(options);
-        const usersDTO: User<%=dtoSuffix %>[] = [];
+        const usersDTO: User<%-dtoSuffix %>[] = [];
         if (resultList && resultList[0]) {
             resultList[0].forEach(user => usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))));
             resultList[0] = usersDTO;
@@ -38,7 +38,7 @@ export class UserService {
         return resultList;
     }
 
-    async save(userDTO: User<%=dtoSuffix %>, creator?: string, updatePassword = false): Promise<User<%=dtoSuffix %> | undefined> {
+    async save(userDTO: User<%-dtoSuffix %>, creator?: string, updatePassword = false): Promise<User<%-dtoSuffix %> | undefined> {
         const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
         if (updatePassword) {
             await transformPassword(user);
@@ -53,17 +53,17 @@ export class UserService {
         return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
     }
 
-    async update(userDTO: User<%=dtoSuffix %>, updater?: string): Promise<User<%=dtoSuffix %> | undefined> {
+    async update(userDTO: User<%-dtoSuffix %>, updater?: string): Promise<User<%-dtoSuffix %> | undefined> {
         return this.save(userDTO, updater);
     }
 
-    async delete(userDTO: User<%=dtoSuffix %>): Promise<User<%=dtoSuffix %> | undefined> {
+    async delete(userDTO: User<%-dtoSuffix %>): Promise<User<%-dtoSuffix %> | undefined> {
         const user = UserMapper.fromDTOtoEntity(userDTO);
         const result = await this.userRepository.remove(user);
         return UserMapper.fromEntityToDTO(result);
     }
 
-    private flatAuthorities(user: any): User<%=entitySuffix%> {
+    private flatAuthorities(user: any): User<%-entitySuffix%> {
         if (user && user.authorities) {
             const authorities: string[] = [];
             user.authorities.forEach(authority => authorities.push(authority.name));
@@ -72,7 +72,7 @@ export class UserService {
         return user;
     }
 
-    private convertInAuthorities(user: any): User<%=entitySuffix%> {
+    private convertInAuthorities(user: any): User<%-entitySuffix%> {
         if (user && user.authorities) {
             const authorities: any[] = [];
             user.authorities.forEach(authority => authorities.push({ name: authority }));

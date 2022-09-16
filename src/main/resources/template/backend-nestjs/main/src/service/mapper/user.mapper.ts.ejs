@@ -1,11 +1,11 @@
-import { User<%=entitySuffix%> } from '../../domain/user.entity';
-import { User<%=dtoSuffix %> } from '../dto/user.dto';
+import { User<%-entitySuffix%> } from '../../domain/user.entity';
+import { User<%-dtoSuffix %> } from '../dto/user.dto';
 
 /**
  * An User mapper object.
  */
 export class UserMapper {
-    static fromDTOtoEntity(userDTO: User<%=dtoSuffix %>): User {
+    static fromDTOtoEntity(userDTO: User<%-dtoSuffix %>): User {
         if (!userDTO) {
             return;
         }
@@ -17,11 +17,11 @@ export class UserMapper {
         return user;
     }
 
-    static fromEntityToDTO(user: User): User<%=dtoSuffix %> {
+    static fromEntityToDTO(user: User): User<%-dtoSuffix %> {
         if (!user) {
             return;
         }
-        const userDTO = new User<%=dtoSuffix %>();
+        const userDTO = new User<%-dtoSuffix %>();
 
         const fields = Object.getOwnPropertyNames(user);
 

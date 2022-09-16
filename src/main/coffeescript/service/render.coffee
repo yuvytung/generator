@@ -6,6 +6,8 @@ import Case from "case"
 
 environments = YAML.parseFile "environments.yml"
 
+modules = Object.keys environments.modules
+
 caseProcessing = (resource = environments.ejs.environment.original) ->
   result = {}
   Object.keys(resource).forEach (key) ->
@@ -25,37 +27,46 @@ caseProcessing = (resource = environments.ejs.environment.original) ->
 ejsEnv = environments.ejs.environment.original
 Object.assign ejsEnv, caseProcessing environments.ejs.environment.original
 
-processTemplateEjs = ->
-  environments.modules.map (moduleName) ->
-    moduleTemplatePath = "src/main/resources/template/#{moduleName}/main"
-    moduleOutputPath = "build/output/#{moduleName}"
-    glob
-      .sync "#{moduleTemplatePath}/**/{.??,}*.ejs", {}
-      .map (pathInput) ->
-        pathOutput = pathInput
-          .replace(moduleTemplatePath, moduleOutputPath)
-          .replace /\.ejs$/g, ""
-        fs.mkdirSync path.dirname(pathOutput), recursive: true
-        fs.writeFileSync(
-          pathOutput
-          await ejs.renderFile pathInput, ejsEnv, charset: "utf8"
+processTemplateEjs = (moduleName) ->
+  subModules = environments.modules[moduleName]
+  subModulesIncluded = ["main"]
+    .concat((subModules && Object.keys(subModules))?.filter (key) -> subModules[key])
+    .join "|"
+  moduleTemplatePath = "src/main/resources/template/#{moduleName}"
+  moduleOutputPath = "build/output/#{moduleName}"
+  glob
+    .sync "#{moduleTemplatePath}/@(#{subModulesIncluded})/**/{.??,}*.ejs", {}
+    .map (pathInput) ->
+      pathOutput = pathInput
+        .replace(new RegExp("#{moduleTemplatePath}/[\\w]+"), moduleOutputPath)
+        .replace /\.ejs$/g, ""
+      fs.mkdirSync path.dirname(pathOutput), recursive: true
+      fs.writeFileSync(
+        pathOutput
+        await ejs.renderFile(
+          pathInput
+          { ejsEnv..., modules: environments.modules[moduleName] }
+          charset: "utf8"
         )
-    log.info "render module: #{moduleName} done!, output folder: #{moduleOutputPath}"
-processTemplateBinary = ->
-  environments.modules.map (moduleName) ->
-    moduleTemplatePath = "src/main/resources/template/#{moduleName}/main"
-    moduleOutputPath = "build/output/#{moduleName}"
-    glob
-      .sync "#{moduleTemplatePath}/**/{.??,}*.binary", {}
-      .map (pathInput) ->
-        pathOutput = pathInput
-          .replace(moduleTemplatePath, moduleOutputPath)
-          .replace /\.binary$/g, ""
-        fs.mkdirSync path.dirname(pathOutput), recursive: true
-        fs.copyFileSync pathInput, pathOutput
-    log.info "render module: #{moduleName} done!, output folder: #{moduleOutputPath}"
+      )
+processTemplateBinary = (moduleName) ->
+  subModules = environments.modules[moduleName]
+  subModulesIncluded = ["main"]
+    .concat((subModules && Object.keys(subModules))?.filter (key) -> subModules[key])
+    .join "|"
+  moduleTemplatePath = "src/main/resources/template/#{moduleName}"
+  moduleOutputPath = "build/output/#{moduleName}"
+  glob
+    .sync "#{moduleTemplatePath}/@(#{subModulesIncluded})/**/{.??,}*.binary", {}
+    .map (pathInput) ->
+      pathOutput = pathInput
+        .replace(new RegExp("#{moduleTemplatePath}/[\\w]+"), moduleOutputPath)
+        .replace /\.binary$/g, ""
+      fs.mkdirSync path.dirname(pathOutput), recursive: true
+      fs.copyFileSync pathInput, pathOutput
 export default ->
   log.debug "render", environments.modules
-  log.debug ejsEnv
-  processTemplateEjs()
-  processTemplateBinary()
+  modules.map (moduleName) ->
+    processTemplateEjs moduleName
+    processTemplateBinary moduleName
+    log.info "render module: #{moduleName} done!, output folder: build/output/#{moduleName}"

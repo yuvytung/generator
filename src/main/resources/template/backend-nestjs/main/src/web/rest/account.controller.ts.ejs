@@ -16,7 +16,7 @@ import {
 import { Response, Request } from 'express';
 import { AuthGuard, Roles, RoleType, RolesGuard } from '../../security';
 import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
-import { User<%=dtoSuffix %> } from '../../service/dto/user.dto';
+import { User<%-dtoSuffix %> } from '../../service/dto/user.dto';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../../service/auth.service';
@@ -34,9 +34,9 @@ export class AccountController {
     @ApiResponse({
         status: 201,
         description: 'Registered user',
-        type: User<%=dtoSuffix %>,
+        type: User<%-dtoSuffix %>,
     })
-    async registerAccount(@Req() req: Request, @Body() userDTO: User<%=dtoSuffix %> & { password: string }): Promise<any> {
+    async registerAccount(@Req() req: Request, @Body() userDTO: User<%-dtoSuffix %> & { password: string }): Promise<any> {
         return await this.authService.registerNewUser(userDTO);
     }
 
@@ -87,9 +87,9 @@ export class AccountController {
     @ApiResponse({
         status: 201,
         description: 'user info updated',
-        type: User<%=dtoSuffix %>,
+        type: User<%-dtoSuffix %>,
     })
-    async saveAccount(@Req() req: Request, @Body() newUserInfo: User<%=dtoSuffix %>): Promise<any> {
+    async saveAccount(@Req() req: Request, @Body() newUserInfo: User<%-dtoSuffix %>): Promise<any> {
         const user: any = req.user;
         return await this.authService.updateUserSettings(user.login, newUserInfo);
     }

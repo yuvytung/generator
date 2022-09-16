@@ -27,7 +27,7 @@ function ormConfig(): TypeOrmModuleOptions {
         ormconfig = {
             name: 'default',
             type: 'mysql',
-            database: '<%=baseName%>',
+            database: '<%-baseName%>',
             host: 'localhost',
             port: 3307,
             username: 'sa',
