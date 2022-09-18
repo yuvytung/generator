@@ -69,4 +69,4 @@ export default ->
   modules.map (moduleName) ->
     processTemplateEjs moduleName
     processTemplateBinary moduleName
-    log.info "render module: #{moduleName} done!, output folder: build/output/#{moduleName}"
+    log.info "render module: #{moduleName} done!, output: build/output/#{moduleName}"
