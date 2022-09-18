@@ -10,11 +10,27 @@
     "ci:frontend:test": "npm run webapp:build:$npm_package_config_default_environment && npm run test-ci",
     "clean-www": "rimraf build/resources/main/static/app/{src,build/}",
     "cleanup": "rimraf build/resources/main/static/",
-    <%-modules.cypress && `"cypress": "cypress open --e2e",
-    "e2e": "yarn run e2e:cypress:headed --",
+    <%-
+    modules.cypress ?
+    `"e2e": "yarn run e2e:protractor --",
+    "e2e:headless": "yarn run e2e:protractor:headless --",` :
+    modules.protractor ?
+    `"e2e": "yarn run e2e:cypress:headed --",
+    "e2e:headless": "yarn run e2e:cypress --",` :
+    ``
+    %>
+    <%-
+    modules.cypress &&
+    `"cypress": "cypress open --e2e",
     "e2e:cypress": "cypress run --e2e --browser chrome --record \${CYPRESS_ENABLE_RECORD:-false}",
-    "e2e:cypress:headed": "yarn run e2e:cypress -- --headed",
-    "e2e:headless": "yarn run e2e:cypress --",`%>
+    "e2e:cypress:headed": "yarn run e2e:cypress -- --headed",`
+    %>
+    <%-
+    modules.protractor &&
+    `"e2e:protractor": "protractor src/test/javascript/protractor.conf.js",
+    "e2e:protractor:headless": "yarn run e2e:protractor --",
+    "e2e:update-webdriver": "webdriver-manager update --gecko false",`
+    %>
     "jest": "jest --coverage --logHeapUsage --maxWorkers=2 --config jest.conf.js",
     "jest:update": "yarn run jest -- --updateSnapshot",
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
@@ -92,6 +108,15 @@
     "css-minimizer-webpack-plugin": "4.0.0",
     <%-modules.cypress && `"cypress": "10.7.0",
     "eslint-plugin-cypress": "2.12.1",`%>
+    <%-modules.protractor && `"@types/chai": "4.2.11",
+    "@types/mocha": "7.0.2",
+    "@types/selenium-webdriver": "4.0.9",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "ts-node": "8.9.1",
+    "webdriver-manager": "12.1.8",
+    "mocha": "7.1.2",
+    "protractor": "7.0.0",`%>
     "eslint": "8.23.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-react": "7.31.1",

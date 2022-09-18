@@ -16,7 +16,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./tsconfig.json",<%-modules.cypress && ` \"./src/test/javascript/cypress/tsconfig.json\",`%> "./tsconfig.test.json"]
+    "project": ["./tsconfig.json",<%-modules.cypress && ` \"./src/test/javascript/cypress/tsconfig.json\",`%><%-modules.protractor && ` \"./tsconfig.e2e.json\",`%> "./tsconfig.test.json"]
   },
   "settings": {
     "react": {

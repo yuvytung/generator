@@ -139,6 +139,10 @@ Unit tests are run by [Jest][]. They're located in [src/test/javascript/](src/te
 ```
 yarn test
 ```
+<%-modules.protractor && `UI end-to-end tests are powered by [Protractor][], which is built on top of WebDriverJS. They're located in [src/test/javascript/e2e](src/test/javascript/e2e)
+and can be run by starting Spring Boot in one terminal (\`./gradlew bootRun\`) and running the tests (\`yarn run e2e\`) in a second one.
+
+`%>
 <%-modules.cypress && `UI end-to-end tests are powered by [Cypress][]. They're located in [src/test/javascript/cypress](src/test/javascript/cypress)
 and can be run by starting Spring Boot in one terminal (\`./gradlew bootRun\`) and running the tests (\`yarn run e2e\`) in a second one.
 
@@ -149,7 +153,6 @@ You should only run the audits when your application is packaged with the produc
 The lighthouse report is created in \`build/cypress/lhreport.html\`
 
 `%>
-
 For more information, refer to the [Running tests page][].
 
 ### Code quality
@@ -228,5 +231,7 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [webpack]: https://webpack.github.io/
 [browsersync]: https://www.browsersync.io/
 [jest]: https://facebook.github.io/jest/
+<%-modules.protractor && `[protractor]: https://angular.github.io/protractor/`%>
+<%-modules.cypress && `[cypress]: https://www.cypress.io/`%>
 [leaflet]: https://leafletjs.com/
 [definitelytyped]: https://definitelytyped.org/

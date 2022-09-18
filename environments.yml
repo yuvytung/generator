@@ -34,6 +34,7 @@ modules:
   backend-nestjs:
   frontend-reactjs:
     cypress: true
+    protractor: true
 
 
 file:
