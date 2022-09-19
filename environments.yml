@@ -1,35 +1,21 @@
-baseName: "catiny"
-serverPort: "8081"
-prefix: "nhi"
-suffix: ""
-entitySuffix: ""
-dtoSuffix: "DTO"
-nativeLanguage: "en"
-packageFolder: "com/jhipster/node"
-serviceDiscoveryType: true
-websocket: true
-searchEngine: "elasticsearch"
-messageBroker: "kafka"
-clientPackageManager: "yarn"
-buildTool: "gradle"
 ejs:
   environment:
     original:
-      baseName: "catiny"
-      serverPort: "8081"
-      prefix: "nhi"
+      baseName: catiny
+      serverPort: 8081
+      prefix: nhi
       suffix: ""
       entitySuffix: ""
-      dtoSuffix: "DTO"
-      nativeLanguage: "en"
-      packageFolder: "com/jhipster/node"
+      dtoSuffix: DTO
+      nativeLanguage: en
+      packageFolder: com/jhipster/node
       serviceDiscoveryType: true
       websocket: true
-      searchEngine: "elasticsearch"
-      messageBroker: "kafka"
-      clientPackageManager: "yarn"
-      buildTool: "gradle"
-
+      searchEngine: elasticsearch
+      messageBroker: kafka
+      clientPackageManager: yarn
+      buildTool: gradle
+      clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
 modules:
   backend-nestjs:
   frontend-reactjs:
