@@ -71,6 +71,6 @@ export class LoggerConfig implements LoggerService {
    * Write a 'verbose' level log.
    */
   verbose?(message: any, ...optionalParams: any[]) {
-    log.fatal(message, optionalParams)
+    log.trace(message, optionalParams)
   }
 }

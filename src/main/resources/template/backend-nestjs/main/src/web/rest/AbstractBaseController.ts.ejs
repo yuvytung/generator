@@ -12,7 +12,7 @@ import {
     Req,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { JobDTO } from '../../service/dto/job.dto';
 import { JobService } from '../../service/job.service';
 import { PageRequest, Page } from '../../domain/base/pagination.entity';
@@ -27,7 +27,7 @@ import { Job } from '../../domain/job.entity';
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiBearerAuth()
-@ApiUseTags('jobs')
+@ApiTags('jobs')
 export class AbstractBaseController<D> {
     logger = new Logger('BaseController');
 
@@ -64,7 +64,7 @@ export class AbstractBaseController<D> {
 
     @PostMethod('/')
     @Roles(RoleType.ADMIN)
-    @ApiOperation({ title: 'Create job' })
+    @ApiOperation({ summary: 'Create job' })
     @ApiResponse({
         status: 201,
         description: 'The record has been successfully created.',
@@ -79,7 +79,7 @@ export class AbstractBaseController<D> {
 
     @Put('/')
     @Roles(RoleType.ADMIN)
-    @ApiOperation({ title: 'Update job' })
+    @ApiOperation({ summary: 'Update job' })
     @ApiResponse({
         status: 200,
         description: 'The record has been successfully updated.',
@@ -92,7 +92,7 @@ export class AbstractBaseController<D> {
 
     @Put('/:id')
     @Roles(RoleType.ADMIN)
-    @ApiOperation({ title: 'Update job with id' })
+    @ApiOperation({ summary: 'Update job with id' })
     @ApiResponse({
         status: 200,
         description: 'The record has been successfully updated.',
@@ -105,7 +105,7 @@ export class AbstractBaseController<D> {
 
     @Delete('/:id')
     @Roles(RoleType.ADMIN)
-    @ApiOperation({ title: 'Delete job' })
+    @ApiOperation({ summary: 'Delete job' })
     @ApiResponse({
         status: 204,
         description: 'The record has been successfully deleted.',

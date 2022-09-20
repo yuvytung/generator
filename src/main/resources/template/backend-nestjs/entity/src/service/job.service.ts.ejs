@@ -1,0 +1,19 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { JobDTO } from './dto/job.dto';
+import { JobMapper } from './mapper/job.mapper';
+import { JobRepository } from '../repository/job.repository';
+import { AbstractBaseService } from './AbstractBaseService';
+import { Job } from '../domain/job.entity';
+
+const relationshipNames = [];
+//relationshipNames.push('tasks');
+
+@Injectable()
+export class JobService extends AbstractBaseService<Job, JobDTO> {
+    logger = new Logger('JobService');
+
+    constructor(@InjectRepository(JobRepository) private jobRepository: JobRepository) {
+        super(jobRepository, new JobMapper(),relationshipNames);
+    }
+}
