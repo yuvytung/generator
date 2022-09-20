@@ -1,0 +1,18 @@
+/**
+ * A Job mapper object.
+ */
+export class AbstractBaseMapper<E, D> {
+  static copy(resource) {
+    return JSON.parse(JSON.stringify(resource));
+  }
+
+  d2e(dto: D): E {
+    if (!dto) return;
+    return AbstractBaseMapper.copy(dto) as E;
+  }
+
+  e2d(entity: E): D {
+    if (!entity) return;
+    return AbstractBaseMapper.copy(entity) as D;
+  }
+}

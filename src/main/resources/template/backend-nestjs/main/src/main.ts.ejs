@@ -4,8 +4,10 @@ import cloudConfigClient from 'cloud-config-client';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
+import { LoggerConfig } from "./logger.config";
 import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
+
 const logger: Logger = new Logger('Main');
 const port = process.env.NODE_SERVER_PORT || config.get('server.port');
 const useJHipsterRegistry = config.get('eureka.client.enabled');
@@ -14,7 +16,7 @@ async function bootstrap(): Promise<void> {
     loadCloudConfig();
     registerAsEurekaService();
 
-    const appOptions = { cors: true };
+    const appOptions = { cors: true, logger: new LoggerConfig(),};
     const app = await NestFactory.create(AppModule, appOptions);
     app.useGlobalPipes(
         new ValidationPipe({
