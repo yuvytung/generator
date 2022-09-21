@@ -1,13 +1,23 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JobController } from '../web/rest/job.controller';
-import { JobRepository } from '../repository/job.repository';
-import { JobService } from '../service/job.service';
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {JobController} from '../web/rest/job.controller';
+import {JobRepository} from '../repository/job.repository';
+import {JobService} from '../service/job.service';
+<%-modules.elasticsearch &&
+`import {ElasticSearchModule} from "./elasticsearch.module";
+import {JobSearchRepository} from "../repository/search/job.search.repository";`
+%>
 
 @Module({
-    imports: [TypeOrmModule.forFeature([JobRepository])],
-    controllers: [JobController],
-    providers: [JobService],
-    exports: [JobService],
+  imports: [
+    TypeOrmModule.forFeature([JobRepository]),
+    <%-modules.elasticsearch && `ElasticSearchModule,`%>
+  ],
+  controllers: [JobController],
+  providers: [
+    JobService,
+    <%-modules.elasticsearch && `JobSearchRepository,`%>
+  ],
+  exports: [JobService],
 })
 export class JobModule {}

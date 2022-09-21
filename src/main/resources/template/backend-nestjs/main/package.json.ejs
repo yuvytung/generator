@@ -41,6 +41,9 @@
         }
     },
     "dependencies": {
+        <%-modules.elasticsearch &&
+        `"@elastic/elasticsearch": "^7.0.0",
+        "@nestjs/elasticsearch": "^9.0.0",` %>
         "@nestjs/common": "^9.0.0",
         "@nestjs/core": "^9.0.0",
         "@nestjs/jwt": "^9.0.0",

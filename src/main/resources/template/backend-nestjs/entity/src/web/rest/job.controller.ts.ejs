@@ -1,16 +1,22 @@
 import {
-    ClassSerializerInterceptor,
-    Controller,
-    Logger,
-    UseGuards,
-    UseInterceptors,
+  ClassSerializerInterceptor,
+  Controller,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JobDTO } from '../../service/dto/job.dto';
-import { JobService } from '../../service/job.service';
-import { AuthGuard, RolesGuard } from '../../security';
-import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
-import {AbstractBaseController} from "./AbstractBaseController";
+import {
+  ApiBearerAuth,
+  ApiTags
+} from '@nestjs/swagger';
+import {JobDTO} from '../../service/dto/job.dto';
+import {JobService} from '../../service/job.service';
+import {
+  AuthGuard,
+  RolesGuard
+} from '../../security';
+import {LoggingInterceptor} from '../../client/interceptors/logging.interceptor';
+import {AbstractBaseController} from "./abstract.base.controller";
+
 
 @Controller('api/jobs')
 @UseGuards(AuthGuard, RolesGuard)
@@ -18,9 +24,9 @@ import {AbstractBaseController} from "./AbstractBaseController";
 @ApiBearerAuth()
 @ApiTags('jobs')
 export class JobController extends AbstractBaseController<JobDTO> {
-    logger = new Logger('JobController');
-
-    constructor(private readonly jobService: JobService) {
-      super(jobService);
-    }
+  constructor(
+    protected readonly service: JobService,
+  ) {
+    super(service);
+  }
 }

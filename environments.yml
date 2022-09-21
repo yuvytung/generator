@@ -19,6 +19,7 @@ ejs:
 modules:
   backend-nestjs:
     entity: true
+    elasticsearch: true
   frontend-reactjs:
     cypress: true
     protractor: true

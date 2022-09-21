@@ -8,17 +8,19 @@ import {
   FindOneOptions
 } from 'typeorm';
 import {AbstractBaseRepository} from '../repository/AbstractBaseRepository';
-import {AbstractBaseMapper} from './mapper/AbstractBaseMapper';
+import {AbstractBaseMapper} from './mapper/abstract.base.mapper';
 import {BaseEntity} from '../domain/base/base.entity';
 import {BaseDTO} from './dto/base.dto';
+import {AbstractBaseSearchRepository} from "../repository/search/abstract.base.search.repository";
 
 export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDTO> {
   logger = new Logger('BaseService');
 
-  constructor(
+  protected constructor(
     protected _repository: AbstractBaseRepository<E>,
     protected _mapper: AbstractBaseMapper<E, D>,
     protected _relationshipNames: string[] = [],
+    protected _searchRepository: AbstractBaseSearchRepository<E>
   ) {
   }
 
@@ -27,6 +29,11 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     const options = {relations: this._relationshipNames};
     const result = await this._repository.findOne(id, options);
     return this._mapper.e2d(result);
+  }
+
+  async search(keywords: string): Promise<D[] | undefined> {
+    const result = await this._searchRepository.search(keywords);
+    return result.map(this._mapper.e2d);
   }
 
   async findByFields(options: FindOneOptions<D>): Promise<D | undefined> {
@@ -53,6 +60,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
       entity.lastModifiedBy = creator;
     }
     const result = await this._repository.save(entity as any);
+    this._searchRepository.save(result)
     return this._mapper.e2d(result);
   }
 
@@ -60,6 +68,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     const entity = this._mapper.d2e(dto);
     if (updater) entity.lastModifiedBy = updater;
     const result = await this._repository.save(entity as any);
+    this._searchRepository.save(result);
     return this._mapper.e2d(result);
   }
 
@@ -69,6 +78,6 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     if (entityFind) {
       throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
     }
-    return;
+    this._searchRepository.delete(id);
   }
 }
