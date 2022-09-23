@@ -7,7 +7,7 @@ import {
   FindManyOptions,
   FindOneOptions
 } from 'typeorm';
-import {AbstractBaseRepository} from '../repository/AbstractBaseRepository';
+import {AbstractBaseRepository} from '../repository/abstract.base.repository';
 import {AbstractBaseMapper} from './mapper/abstract.base.mapper';
 import {BaseEntity} from '../domain/base/base.entity';
 import {BaseDTO} from './dto/base.dto';
@@ -20,7 +20,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     protected _repository: AbstractBaseRepository<E>,
     protected _mapper: AbstractBaseMapper<E, D>,
     protected _relationshipNames: string[] = [],
-    protected _searchRepository: AbstractBaseSearchRepository<E>
+    <%-modules.elasticsearch && `protected _searchRepository: AbstractBaseSearchRepository<E>,`%>
   ) {
   }
 
@@ -30,11 +30,11 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     const result = await this._repository.findOne(id, options);
     return this._mapper.e2d(result);
   }
-
-  async search(keywords: string): Promise<D[] | undefined> {
+  <%-modules.elasticsearch &&
+  `async search(keywords: string): Promise<D[] | undefined> {
     const result = await this._searchRepository.search(keywords);
     return result.map(this._mapper.e2d);
-  }
+  }`%>
 
   async findByFields(options: FindOneOptions<D>): Promise<D | undefined> {
     const result = await this._repository.findOne(AbstractBaseMapper.copy(options));
@@ -60,7 +60,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
       entity.lastModifiedBy = creator;
     }
     const result = await this._repository.save(entity as any);
-    this._searchRepository.save(result)
+    <%-modules.elasticsearch && `this._searchRepository.save(result)`%>
     return this._mapper.e2d(result);
   }
 
@@ -68,7 +68,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     const entity = this._mapper.d2e(dto);
     if (updater) entity.lastModifiedBy = updater;
     const result = await this._repository.save(entity as any);
-    this._searchRepository.save(result);
+    <%-modules.elasticsearch && `this._searchRepository.save(result);`%>
     return this._mapper.e2d(result);
   }
 
@@ -78,6 +78,6 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     if (entityFind) {
       throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
     }
-    this._searchRepository.delete(id);
+    <%-modules.elasticsearch && `this._searchRepository.delete(id);`%>
   }
 }

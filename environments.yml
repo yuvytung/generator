@@ -20,6 +20,7 @@ modules:
   backend-nestjs:
     entity: true
     elasticsearch: true
+    redis: true
   frontend-reactjs:
     cypress: true
     protractor: true

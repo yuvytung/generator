@@ -44,6 +44,9 @@
         <%-modules.elasticsearch &&
         `"@elastic/elasticsearch": "^7.0.0",
         "@nestjs/elasticsearch": "^9.0.0",` %>
+        <%-modules.redis &&
+        `"@liaoliaots/nestjs-redis": "^9.0.0",
+        "ioredis": "^5.2.3",`%>
         "@nestjs/common": "^9.0.0",
         "@nestjs/core": "^9.0.0",
         "@nestjs/jwt": "^9.0.0",
