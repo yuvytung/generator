@@ -2,8 +2,7 @@
  * A base mapper object.
  */
 export class AbstractBaseMapper<E, D> {
-  constructor(protected readonly Entity: any, protected readonly DTO: any) {
-  }
+  constructor(protected readonly Entity: any, protected readonly DTO: any) {}
 
   static copy(resource) {
     return JSON.parse(JSON.stringify(resource));

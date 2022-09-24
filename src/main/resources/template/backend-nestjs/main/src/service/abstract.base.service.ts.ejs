@@ -1,37 +1,28 @@
-import {
-  HttpException,
-  HttpStatus,
-  Logger
-} from '@nestjs/common';
-import {
-  FindManyOptions,
-  FindOneOptions
-} from 'typeorm';
-import {AbstractBaseRepository} from '../repository/abstract.base.repository';
-import {AbstractBaseMapper} from './mapper/abstract.base.mapper';
-import {BaseEntity} from '../domain/base/base.entity';
-import {BaseDTO} from './dto/base.dto';
-import {AbstractBaseSearchRepository} from "../repository/search/abstract.base.search.repository";
+import { HttpException, HttpStatus, Logger } from "@nestjs/common";
+import { FindManyOptions, FindOneOptions } from "typeorm";
+import { AbstractBaseRepository } from "../repository/abstract.base.repository";
+import { AbstractBaseMapper } from "./mapper/abstract.base.mapper";
+import { BaseEntity } from "../domain/base/base.entity";
+import { BaseDTO } from "./dto/base.dto";
+import { AbstractBaseSearchRepository } from "../repository/search/abstract.base.search.repository";
 
 export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDTO> {
-  logger = new Logger('BaseService');
+  logger = new Logger("BaseService");
 
   protected constructor(
     protected _repository: AbstractBaseRepository<E>,
     protected _mapper: AbstractBaseMapper<E, D>,
     protected _relationshipNames: string[] = [],
     <%-modules.elasticsearch && `protected _searchRepository: AbstractBaseSearchRepository<E>,`%>
-  ) {
-  }
-
+  ) {}
 
   async findById(id: number): Promise<D | undefined> {
-    const options = {relations: this._relationshipNames};
+    const options = { relations: this._relationshipNames };
     const result = await this._repository.findOne(id, options);
     return this._mapper.e2d(result);
   }
-  <%-modules.elasticsearch &&
-  `async search(keywords: string): Promise<D[] | undefined> {
+  <%-modules.elasticsearch && `
+    async search(keywords: string): Promise<D[] | undefined> {
     const result = await this._searchRepository.search(keywords);
     return result.map(this._mapper.e2d);
   }`%>
