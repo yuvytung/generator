@@ -15,7 +15,7 @@ import {
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { AuthGuard, Roles, RoleType, RolesGuard } from "../../security";
-import { PasswordChangeDTO } from "../../service/dto/password-change.dto";
+import { PasswordChange<%-dtoSuffix%> } from "../../service/dto/password-change.dto";
 import { User<%-dtoSuffix%> } from "../../service/dto/user.dto";
 import { LoggingInterceptor } from "../../client/interceptors/logging.interceptor";
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation } from "@nestjs/swagger";
@@ -38,9 +38,9 @@ export class AccountController {
   })
   async registerAccount(
     @Req() req: Request,
-    @Body() userDTO: User<%-dtoSuffix %> & { password: string }
+    @Body() user<%-dtoSuffix%>: User<%-dtoSuffix %> & { password: string }
   ): Promise<any> {
-    return await this.authService.registerNewUser(userDTO);
+    return await this.authService.registerNewUser(user<%-dtoSuffix%>);
   }
 
   @Get("/activate")
@@ -104,11 +104,11 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: "user password changed",
-    type: PasswordChangeDTO
+    type: PasswordChange<%-dtoSuffix%>
   })
   async changePassword(
     @Req() req: Request,
-    @Body() passwordChange: PasswordChangeDTO
+    @Body() passwordChange: PasswordChange<%-dtoSuffix%>
   ): Promise<any> {
     const user: any = req.user;
     return await this.authService.changePassword(

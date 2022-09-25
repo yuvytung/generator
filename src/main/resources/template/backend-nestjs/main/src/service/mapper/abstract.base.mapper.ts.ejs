@@ -2,7 +2,7 @@
  * A base mapper object.
  */
 export class AbstractBaseMapper<E, D> {
-  constructor(protected readonly Entity: any, protected readonly DTO: any) {}
+  constructor(protected readonly Entity: any, protected readonly <%-dtoSuffix%>: any) {}
 
   static copy(resource) {
     return JSON.parse(JSON.stringify(resource));
@@ -16,7 +16,7 @@ export class AbstractBaseMapper<E, D> {
 
   e2d(entity: E): D {
     if (!entity) return;
-    const dto = new this.DTO();
+    const dto = new this.<%-dtoSuffix%>();
     return AbstractBaseMapper.copy(entity) as D;
   }
 }

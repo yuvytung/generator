@@ -1,0 +1,10 @@
+import { <%-_entity._name.pascal%> } from '../../domain/<%-_entity._name.kebab%>.entity';
+import { <%-_entity._name.pascal%><%-dtoSuffix%> } from '../dto/<%-_entity._name.kebab%>.dto';
+import { AbstractBaseMapper } from './abstract.base.mapper';
+
+/**
+ * A Job mapper object.
+ */
+export class <%-_entity._name.pascal%>Mapper extends AbstractBaseMapper<<%-_entity._name.pascal%>, <%-_entity._name.pascal%><%-dtoSuffix%>> {
+
+}

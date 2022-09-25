@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { UserLoginDTO } from "../service/dto/user-login.dto";
+import { UserLogin<%-dtoSuffix%> } from "../service/dto/user-login.dto";
 import { Payload } from "../security/payload.interface";
 import * as bcrypt from "bcrypt";
 import { AuthorityRepository } from "../repository/authority.repository";
@@ -18,7 +18,7 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async login(userLogin: UserLoginDTO): Promise<any> {
+  async login(userLogin: UserLogin<%-dtoSuffix%>): Promise<any> {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
 
@@ -48,16 +48,16 @@ export class AuthService {
   }
 
   async findUserWithAuthById(userId: number): Promise<User<%-dtoSuffix%> | undefined> {
-    const userDTO: User<%-dtoSuffix%> = await this.userService.findByFields({ where: { id: userId } });
-    return userDTO;
+    const user<%-dtoSuffix%>: User<%-dtoSuffix%> = await this.userService.findByFields({ where: { id: userId } });
+    return user<%-dtoSuffix%>;
   }
 
   async getAccount(userId: number): Promise<User<%-dtoSuffix%> | undefined> {
-    const userDTO: User<%-dtoSuffix%> = await this.findUserWithAuthById(userId);
-    if (!userDTO) {
+    const user<%-dtoSuffix%>: User<%-dtoSuffix%> = await this.findUserWithAuthById(userId);
+    if (!user<%-dtoSuffix%>) {
       return;
     }
-    return userDTO;
+    return user<%-dtoSuffix%>;
   }
 
   async changePassword(

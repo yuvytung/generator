@@ -8,8 +8,8 @@ import {
   ApiBearerAuth,
   ApiTags
 } from '@nestjs/swagger';
-import {JobDTO} from '../../service/dto/job.dto';
-import {JobService} from '../../service/job.service';
+import { <%-_entity._name.pascal%><%-dtoSuffix%> } from '../../service/dto/<%-_entity._name.kebab%>.dto';
+import { <%-_entity._name.pascal%>Service } from '../../service/<%-_entity._name.kebab%>.service';
 import {
   AuthGuard,
   RolesGuard
@@ -18,14 +18,14 @@ import {LoggingInterceptor} from '../../client/interceptors/logging.interceptor'
 import {AbstractBaseController} from "./abstract.base.controller";
 
 
-@Controller('api/jobs')
+@Controller('api/<%-_entity._name.kebab%>s')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiBearerAuth()
-@ApiTags('jobs')
-export class JobController extends AbstractBaseController<JobDTO> {
+@ApiTags('<%-_entity._name.kebab%>s')
+export class <%-_entity._name.pascal%>Controller extends AbstractBaseController<<%-_entity._name.pascal%><%-dtoSuffix%>> {
   constructor(
-    protected readonly service: JobService,
+    protected readonly service: <%-_entity._name.pascal%>Service,
   ) {
     super(service);
   }

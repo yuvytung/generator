@@ -60,9 +60,9 @@ export class UserController {
     type: User<%-dtoSuffix%>
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
-  async createUser(@Req() req: Request, @Body() userDTO: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
-    userDTO.password = userDTO.login;
-    const created = await this.userService.save(userDTO, req.user?.login);
+  async createUser(@Req() req: Request, @Body() user<%-dtoSuffix%>: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
+    user<%-dtoSuffix%>.password = user<%-dtoSuffix%>.login;
+    const created = await this.userService.save(user<%-dtoSuffix%>, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, "User", created.id);
     return created;
   }
@@ -75,16 +75,16 @@ export class UserController {
     description: "The record has been successfully updated.",
     type: User<%-dtoSuffix%>
   })
-  async updateUser(@Req() req: Request, @Body() userDTO: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
-    const userOnDb = await this.userService.find({ where: { login: userDTO.login } });
+  async updateUser(@Req() req: Request, @Body() user<%-dtoSuffix%>: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
+    const userOnDb = await this.userService.find({ where: { login: user<%-dtoSuffix%>.login } });
     let updated = false;
     if (userOnDb && userOnDb.id) {
-      userDTO.id = userOnDb.id;
+      user<%-dtoSuffix%>.id = userOnDb.id;
       updated = true;
     } else {
-      userDTO.password = userDTO.login;
+      user<%-dtoSuffix%>.password = user<%-dtoSuffix%>.login;
     }
-    const createdOrUpdated = await this.userService.update(userDTO, req.user?.login);
+    const createdOrUpdated = await this.userService.update(user<%-dtoSuffix%>, req.user?.login);
     if (updated) {
       HeaderUtil.addEntityUpdatedHeaders(req.res, "User", createdOrUpdated.id);
     } else {

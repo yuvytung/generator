@@ -4,7 +4,7 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { AuthGuard } from '../src/security/guards/auth.guard';
 import { RolesGuard } from '../src/security/guards/roles.guard';
-import { UserDTO } from '../src/service/dto/user.dto';
+import { User<%-dtoSuffix%> } from '../src/service/dto/user.dto';
 import { UserService } from '../src/service/user.service';
 
 describe('User', () => {
@@ -21,7 +21,7 @@ describe('User', () => {
         email: 'usertest@localhost.it',
     };
 
-    const testUserDTO: UserDTO = {
+    const testUser<%-dtoSuffix%>: User<%-dtoSuffix%> = {
         login: 'userTestLogin',
         firstName: 'UserTest',
         lastName: 'UserTest',
@@ -45,7 +45,7 @@ describe('User', () => {
     });
 
     it('/POST create user', async () => {
-        const createdUser: UserDTO = (
+        const createdUser: User<%-dtoSuffix%> = (
             await request(app.getHttpServer())
                 .post('/api/admin/users')
                 .send(testUserRequestObject)
@@ -63,10 +63,10 @@ describe('User', () => {
     });
 
     it('/PUT update user', async () => {
-        testUserDTO.login = 'TestUserUpdate';
+        testUser<%-dtoSuffix%>.login = 'TestUserUpdate';
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: savedPassword, lastModifiedDate: savedLastModifiedDate, ...savedUser } = await service.save(
-            testUserDTO,
+            testUser<%-dtoSuffix%>,
         );
         savedUser.firstName = 'Updated Name';
 
@@ -80,16 +80,16 @@ describe('User', () => {
 
         expect(updatedUser).toEqual(JSON.parse(JSON.stringify(savedUser)));
 
-        await service.delete(savedUser as UserDTO);
+        await service.delete(savedUser as User<%-dtoSuffix%>);
     });
 
     it('/GET user with a login name', async () => {
-        testUserDTO.login = 'TestUserGet';
-        const savedUser: UserDTO = await service.save(testUserDTO);
+        testUser<%-dtoSuffix%>.login = 'TestUserGet';
+        const savedUser: User<%-dtoSuffix%> = await service.save(testUser<%-dtoSuffix%>);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...savedUserWithoutPassword } = savedUser;
 
-        const getUser: UserDTO = (
+        const getUser: User<%-dtoSuffix%> = (
             await request(app.getHttpServer())
                 .get('/api/admin/users/' + savedUser.login)
                 .expect(200)
@@ -101,8 +101,8 @@ describe('User', () => {
     });
 
     it('/DELETE user', async () => {
-        testUserDTO.login = 'TestUserDelete';
-        const savedUser: UserDTO = await service.save(testUserDTO);
+        testUser<%-dtoSuffix%>.login = 'TestUserDelete';
+        const savedUser: User<%-dtoSuffix%> = await service.save(testUser<%-dtoSuffix%>);
 
         await request(app.getHttpServer())
             .delete('/api/admin/users/' + savedUser.login)

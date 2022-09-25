@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
-import { UserLoginDTO } from '../src/service/dto/user-login.dto';
+import { UserLogin<%-dtoSuffix%> } from '../src/service/dto/user-login.dto';
 
 describe('App', () => {
     let app: INestApplication;
@@ -11,7 +11,7 @@ describe('App', () => {
         activeProfiles: 'dev',
         'display-ribbon-on-profiles': 'dev',
     };
-    const testUserLogin: UserLoginDTO = {
+    const testUserLogin: UserLogin<%-dtoSuffix%> = {
         username: 'system',
         password: 'system',
         rememberMe: true,

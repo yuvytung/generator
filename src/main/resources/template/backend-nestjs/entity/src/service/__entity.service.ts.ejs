@@ -1,0 +1,28 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { <%-_entity._name.pascal%><%-dtoSuffix%> } from './dto/<%-_entity._name.kebab%>.dto';
+import { <%-_entity._name.pascal%>Mapper } from './mapper/<%-_entity._name.kebab%>.mapper';
+import { <%-_entity._name.pascal%>Repository } from '../repository/<%-_entity._name.kebab%>.repository';
+import { AbstractBaseService } from './abstract.base.service';
+import { <%-_entity._name.pascal%> } from '../domain/<%-_entity._name.kebab%>.entity';
+<%-modules.elasticsearch &&
+`import { ${_entity._name.pascal}SearchRepository } from "../repository/search/${_entity._name.kebab}.search.repository";` %>
+
+const relationshipNames = [];
+//relationshipNames.push('tasks');
+
+@Injectable()
+export class <%-_entity._name.pascal%>Service extends AbstractBaseService<<%-_entity._name.pascal%>, <%-_entity._name.pascal%><%-dtoSuffix%>> {
+
+  constructor(
+    @InjectRepository(<%-_entity._name.pascal%>Repository) protected _repository: <%-_entity._name.pascal%>Repository,
+    <%-modules.elasticsearch && `private searchRepository: ${_entity._name.pascal}SearchRepository<${_entity._name.pascal}>,`%>
+  ) {
+    super(
+      _repository,
+      new <%-_entity._name.pascal%>Mapper(<%-_entity._name.pascal%>, <%-_entity._name.pascal%><%-dtoSuffix%>),
+      relationshipNames,
+      <%-modules.elasticsearch && `searchRepository,`%>
+    );
+  }
+}

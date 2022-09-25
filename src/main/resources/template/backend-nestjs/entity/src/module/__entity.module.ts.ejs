@@ -1,0 +1,23 @@
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import { <%-_entity._name.pascal%>Controller } from '../web/rest/<%-_entity._name.kebab%>.controller';
+import { <%-_entity._name.pascal%>Repository } from '../repository/<%-_entity._name.kebab%>.repository';
+import { <%-_entity._name.pascal%>Service } from '../service/<%-_entity._name.kebab%>.service';
+<%-modules.elasticsearch &&
+`import {ElasticSearchModule} from "./elasticsearch.module";
+import {${_entity._name.pascal}SearchRepository} from "../repository/search/${_entity._name.kebab}.search.repository";`
+%>
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([<%-_entity._name.pascal%>Repository]),
+    <%-modules.elasticsearch && `ElasticSearchModule,`%>
+  ],
+  controllers: [<%-_entity._name.pascal%>Controller],
+  providers: [
+    <%-_entity._name.pascal%>Service,
+    <%-modules.elasticsearch && `${_entity._name.pascal}SearchRepository,`%>
+  ],
+  exports: [<%-_entity._name.pascal%>Service],
+})
+export class <%-_entity._name.pascal%>Module {}

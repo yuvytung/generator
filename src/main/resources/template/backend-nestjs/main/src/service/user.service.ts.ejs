@@ -30,22 +30,22 @@ export class UserService {
   async findAndCount(options: FindManyOptions<User<%-dtoSuffix%>>): Promise<[User<%-dtoSuffix%>[], number]> {
     options.relations = ["authorities"];
     const resultList = await this.userRepository.findAndCount(options);
-    const usersDTO: User<%-dtoSuffix%>[] = [];
+    const users<%-dtoSuffix%>: User<%-dtoSuffix%>[] = [];
     if (resultList && resultList[0]) {
       resultList[0].forEach(user =>
-        usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user)))
+        users<%-dtoSuffix%>.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user)))
       );
-      resultList[0] = usersDTO;
+      resultList[0] = users<%-dtoSuffix%>;
     }
     return resultList;
   }
 
   async save(
-    userDTO: User<%-dtoSuffix%>,
+    user<%-dtoSuffix%>: User<%-dtoSuffix%>,
     creator?: string,
     updatePassword = false
   ): Promise<User<%-dtoSuffix%> | undefined> {
-    const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+    const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(user<%-dtoSuffix%>));
     if (updatePassword) {
       await transformPassword(user);
     }
@@ -59,12 +59,12 @@ export class UserService {
     return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
   }
 
-  async update(userDTO: User<%-dtoSuffix%>, updater?: string): Promise<User<%-dtoSuffix%> | undefined> {
-    return this.save(userDTO, updater);
+  async update(user<%-dtoSuffix%>: User<%-dtoSuffix%>, updater?: string): Promise<User<%-dtoSuffix%> | undefined> {
+    return this.save(user<%-dtoSuffix%>, updater);
   }
 
-  async delete(userDTO: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%> | undefined> {
-    const user = UserMapper.fromDTOtoEntity(userDTO);
+  async delete(user<%-dtoSuffix%>: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%> | undefined> {
+    const user = UserMapper.fromDTOtoEntity(user<%-dtoSuffix%>);
     const result = await this.userRepository.remove(user);
     return UserMapper.fromEntityToDTO(result);
   }

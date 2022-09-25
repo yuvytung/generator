@@ -13,21 +13,20 @@ import {
   UseInterceptors
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { JobDTO } from "../../service/dto/job.dto";
 import { Page, PageRequest } from "../../domain/base/pagination.entity";
 import { AuthGuard, Roles, RolesGuard, RoleType } from "../../security";
 import { HeaderUtil } from "../../client/header-util";
 import { Request } from "../../client/request";
 import { LoggingInterceptor } from "../../client/interceptors/logging.interceptor";
 import { AbstractBaseService } from "../../service/abstract.base.service";
-import { BaseDTO } from "../../service/dto/base.dto";
+import { Base<%-dtoSuffix%> } from "../../service/dto/base.dto";
 
 @Controller("api/jobs")
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiBearerAuth()
 @ApiTags("jobs")
-export class AbstractBaseController<D extends BaseDTO> {
+export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   constructor(protected readonly service: AbstractBaseService<any, any>) {}
 
   @Get("/")
@@ -35,7 +34,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 200,
     description: "List all records",
-    type: "DTO[]"
+    type: "<%-dtoSuffix%>[]"
   })
   async getAll(@Req() req: Request): Promise<D[]> {
     const pageRequest: PageRequest = new PageRequest(
@@ -58,7 +57,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 200,
     description: 'Search all records by keywords.',
-    type: "DTO[]",
+    type: "${dtoSuffix}[]",
   })
   @ApiResponse({status: 403, description: 'Forbidden.'})
   async search(@Req() req: Request,@Query("keywords") keywords: string): Promise<D[]> {
@@ -72,7 +71,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 200,
     description: "The found record",
-    type: "DTO"
+    type: "<%-dtoSuffix%>"
   })
   async getOne(@Param("id") id: number): Promise<D> {
     return this.service.findById(id);
@@ -84,7 +83,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 201,
     description: "The record has been successfully created.",
-    type: "DTO"
+    type: "<%-dtoSuffix%>"
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
   async post(@Req() req: Request, @Body() dto: D): Promise<D> {
@@ -99,7 +98,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
-    type: "DTO"
+    type: "<%-dtoSuffix%>"
   })
   async put(@Req() req: Request, @Body() dto: D): Promise<D> {
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
@@ -112,7 +111,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
-    type: "DTO"
+    type: "<%-dtoSuffix%>"
   })
   async putId(@Req() req: Request, @Body() dto: D): Promise<D> {
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);

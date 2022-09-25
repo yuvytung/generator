@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsEmail } from "class-validator";
-import { BaseDTO } from "./base.dto";
+import { Base<%-dtoSuffix%> } from "./base.dto";
 import { Exclude } from "class-transformer";
 
 /**
- * An User DTO object.
+ * An User <%-dtoSuffix%> object.
  */
-export class User<%-dtoSuffix%> extends BaseDTO {
+export class User<%-dtoSuffix%> extends Base<%-dtoSuffix%> {
   @ApiProperty({ uniqueItems: true, example: "myuser", description: "User login" })
   @IsString()
   login: string;

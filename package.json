@@ -9,10 +9,12 @@
     "coffeescript:render": "npm run coffeescript:build && node build/out/src/main/coffeescript/index.js",
     "start": "coffee -t src/main/coffeescript/index.coffee",
     "render": "coffee -t src/main/coffeescript/index.coffee render ",
+    "entity:render": "coffee -t src/main/coffeescript/index.coffee entity_render ",
     "convert": "coffee -t src/main/coffeescript/index.coffee convert",
     "lint": "eslint 'src/main/coffeescript/' --fix --ext .coffee",
     "prettier": "prettier --write 'src/main/coffeescript/**/*.coffee'",
-    "test": "chmod +x src/main/bash/main.sh && ./src/main/bash/main.sh"
+    "clean": "rm -rf build",
+    "test": "npm run clean && npm run render && chmod +x src/main/bash/main.sh && ./src/main/bash/main.sh"
   },
   "husky": {
     "hooks": {

@@ -23,3 +23,6 @@ global.YAML = yaml
 YAML.parseFile = (path, options = "utf8") ->
   fullPath = if path.startsWith "/" then path else "#{app.rootDirPath}/#{path}"
   yaml.parse fs.readFileSync fullPath, options
+JSON.parseFile = (path, options = "utf8") ->
+  fullPath = if path.startsWith "/" then path else "#{app.rootDirPath}/#{path}"
+  JSON.parse fs.readFileSync fullPath, options
