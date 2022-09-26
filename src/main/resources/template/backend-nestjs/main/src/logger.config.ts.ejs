@@ -10,7 +10,7 @@ const log4jsConfig = () => {
         layout: {
           type: "pattern",
           pattern: `${chalk.gray("%d{hh:mm:ss.SSS}")} ${chalk.bold(
-            "%[%5.-5p%]"
+            "%[%5.-5p%]",
           )}%-0.-20c%-40.-50x{fileName} ${chalk.hex("#FFC16BFF").italic("%m")}`,
           tokens: {
             fileName: logEvent =>
@@ -19,19 +19,19 @@ const log4jsConfig = () => {
                   .replace(`${process.env.PWD}/`, "")
                   .replace(/(.js|.ts)$/g, "")
                   .concat(`:${logEvent.lineNumber}`)
-                  .replace(/src\/logger.config:\d*/, chalk.gray("NestJS Logger"))
-              )
-          }
-        }
-      }
+                  .replace(/src\/logger.config:\d*/, chalk.gray("NestJS Logger")),
+              ),
+          },
+        },
+      },
     },
     categories: {
       default: {
         appenders: ["console"],
         level: "debug",
-        enableCallStack: true
-      }
-    }
+        enableCallStack: true,
+      },
+    },
   });
   global.log = log4js.getLogger(" ");
 };

@@ -38,7 +38,7 @@ export class AuthService {
 
     /* eslint-disable */
     return {
-      id_token: this.jwtService.sign(payload)
+      id_token: this.jwtService.sign(payload),
     };
   }
 
@@ -63,7 +63,7 @@ export class AuthService {
   async changePassword(
     userLogin: string,
     currentClearTextPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<void> {
     const userFind: User<%-dtoSuffix%> = await this.userService.findByFields({ where: { login: userLogin } });
     if (!userFind) {
@@ -80,7 +80,7 @@ export class AuthService {
 
   async registerNewUser(newUser: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
     let userFind: User<%-dtoSuffix%> = await this.userService.findByFields({
-      where: { login: newUser.login }
+      where: { login: newUser.login },
     });
     if (userFind) {
       throw new HttpException("Login name already used!", HttpStatus.BAD_REQUEST);
@@ -100,7 +100,7 @@ export class AuthService {
       throw new HttpException("Invalid login name!", HttpStatus.BAD_REQUEST);
     }
     const userFindEmail: User<%-dtoSuffix%> = await this.userService.findByFields({
-      where: { email: newUserInfo.email }
+      where: { email: newUserInfo.email },
     });
     if (userFindEmail && newUserInfo.email !== userFind.email) {
       throw new HttpException("Email is already in use!", HttpStatus.BAD_REQUEST);

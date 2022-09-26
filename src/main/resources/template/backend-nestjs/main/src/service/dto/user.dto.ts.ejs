@@ -31,7 +31,7 @@ export class User<%-dtoSuffix%> extends Base<%-dtoSuffix%> {
     isArray: true,
     enum: ["ROLE_USER", "ROLE_ADMIN", "ROLE_ANONYMOUS"],
     description: "Array of permissions",
-    required: false
+    required: false,
   })
   authorities?: any[];
 

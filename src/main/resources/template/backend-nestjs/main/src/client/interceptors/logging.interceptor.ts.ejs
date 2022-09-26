@@ -8,7 +8,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const req: Request = context.switchToHttp().getRequest();
     Logger.debug(
       `${context.getClass().name}.${context.getHandler().name}() : ${req.method} ${req.url}`,
-      "LoggingInterceptor"
+      "LoggingInterceptor",
     );
     return next.handle();
   }

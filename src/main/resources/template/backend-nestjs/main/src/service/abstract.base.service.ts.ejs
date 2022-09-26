@@ -21,8 +21,8 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
     const result = await this._repository.findOne(id, options);
     return this._mapper.e2d(result);
   }
-  <%-modules.elasticsearch && `
-    async search(keywords: string): Promise<D[] | undefined> {
+
+  <%-modules.elasticsearch && `async search(keywords: string): Promise<D[] | undefined> {
     const result = await this._searchRepository.search(keywords);
     return result.map(this._mapper.e2d);
   }`%>
@@ -51,7 +51,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
       entity.lastModifiedBy = creator;
     }
     const result = await this._repository.save(entity as any);
-    <%-modules.elasticsearch && `this._searchRepository.save(result)`%>
+    <%-modules.elasticsearch && `this._searchRepository.save(result);`%>
     return this._mapper.e2d(result);
   }
 
@@ -67,7 +67,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
     await this._repository.delete(id);
     const entityFind = await this.findById(id);
     if (entityFind) {
-      throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
+      throw new HttpException("Error, entity not deleted!", HttpStatus.NOT_FOUND);
     }
     <%-modules.elasticsearch && `this._searchRepository.delete(id);`%>
   }

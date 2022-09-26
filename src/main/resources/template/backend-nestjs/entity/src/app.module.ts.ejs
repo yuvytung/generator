@@ -1,15 +1,16 @@
+<%
+  const entitiesName = _entities.map((e)=> e._name )
+-%>
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./module/auth.module";
 import { ormConfig } from "./orm.config";
 import { config } from "./config";
 import { ServeStaticModule } from "@nestjs/serve-static";
-import { JobModule } from "./module/job.module";
+<%- entitiesName.map((name)=> `import { ${name.pascal}Module } from "./module/${name.kebab}.module";`).join(`\n`)%>
+
 <%-modules.redis && `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";
 import { CacheService } from "./index";`%>
-// jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
-// jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
-// jhipster-needle-add-service-module-to-main-import - JHipster will import service modules here, do not remove
 
 export class GlobalInit {
   constructor(
@@ -31,7 +32,7 @@ export class GlobalInit {
   imports: [
     TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     ServeStaticModule.forRoot({
-      rootPath: config.getClientPath()
+      rootPath: config.getClientPath(),
     }),
     <%-modules.redis &&
     `RedisModule.forRootAsync({
@@ -39,21 +40,19 @@ export class GlobalInit {
         config: [
           {
             host: "localhost",
-            port: 6379
-          }
-        ]
-      })
+            port: 6379,
+          },
+        ],
+      }),
     }),`%>
     AuthModule,
-    JobModule,
-    // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
+    <%- entitiesName.map((name)=> `${name.pascal}Module,`).join(`
+    `)%>
   ],
   controllers: [
-    // jhipster-needle-add-controller-module-to-main - JHipster will add controller modules here, do not remove
   ],
   providers: [
-    GlobalInit
-    // jhipster-needle-add-service-module-to-main - JHipster will add service modules here, do not remove
+    GlobalInit,
   ]
 })
 export class AppModule {}

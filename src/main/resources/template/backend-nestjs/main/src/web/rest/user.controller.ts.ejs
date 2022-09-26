@@ -10,7 +10,7 @@ import {
   UseGuards,
   Req,
   UseInterceptors,
-  ClassSerializerInterceptor
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { AuthGuard, Roles, RolesGuard, RoleType } from "../../security";
 import { PageRequest, Page } from "../../domain/base/pagination.entity";
@@ -37,7 +37,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: "List all users",
-    type: User<%-dtoSuffix%>
+    type: User<%-dtoSuffix%>,
   })
   async getAllUsers(@Req() req: Request): Promise<User<%-dtoSuffix%>[]> {
     const sortField = req.query.sort;
@@ -45,7 +45,7 @@ export class UserController {
     const [results, count] = await this.userService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
-      order: pageRequest.sort.asOrder()
+      order: pageRequest.sort.asOrder(),
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
@@ -57,7 +57,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: "The record has been successfully created.",
-    type: User<%-dtoSuffix%>
+    type: User<%-dtoSuffix%>,
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
   async createUser(@Req() req: Request, @Body() user<%-dtoSuffix%>: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
@@ -73,7 +73,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
-    type: User<%-dtoSuffix%>
+    type: User<%-dtoSuffix%>,
   })
   async updateUser(@Req() req: Request, @Body() user<%-dtoSuffix%>: User<%-dtoSuffix%>): Promise<User<%-dtoSuffix%>> {
     const userOnDb = await this.userService.find({ where: { login: user<%-dtoSuffix%>.login } });
@@ -99,7 +99,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: "The found record",
-    type: User<%-dtoSuffix%>
+    type: User<%-dtoSuffix%>,
   })
   async getUser(@Param("login") loginValue: string): Promise<User<%-dtoSuffix%>> {
     return await this.userService.find({ where: { login: loginValue } });
@@ -111,7 +111,7 @@ export class UserController {
   @ApiResponse({
     status: 204,
     description: "The record has been successfully deleted.",
-    type: User<%-dtoSuffix%>
+    type: User<%-dtoSuffix%>,
   })
   async deleteUser(@Req() req: Request, @Param("login") loginValue: string): Promise<User<%-dtoSuffix%>> {
     HeaderUtil.addEntityDeletedHeaders(req.res, "User", loginValue);

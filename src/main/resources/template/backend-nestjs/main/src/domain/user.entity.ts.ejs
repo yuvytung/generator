@@ -23,7 +23,7 @@ export class User<%-entitySuffix%> extends BaseEntity {
   authorities?: any[];
 
   @Column({
-    type: "varchar"
+    type: "varchar",
   })
   @Exclude()
   password: string;

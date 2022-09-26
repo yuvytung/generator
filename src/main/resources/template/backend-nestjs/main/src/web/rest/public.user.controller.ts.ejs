@@ -4,7 +4,7 @@ import {
   Get,
   Logger,
   Req,
-  UseInterceptors
+  UseInterceptors,
 } from "@nestjs/common";
 import { LoggingInterceptor } from "../../client/interceptors/logging.interceptor";
 import { PageRequest, Page } from "../../domain/base/pagination.entity";
@@ -27,7 +27,7 @@ export class PublicUserController {
   @ApiResponse({
     status: 200,
     description: "List all users records",
-    type: User<%-dtoSuffix %>
+    type: User<%-dtoSuffix %>,
   })
   async getAllPublicUsers(@Req() req: Request): Promise<User<%-dtoSuffix %>[]> {
     const sortField = req.query.sort;
@@ -35,7 +35,7 @@ export class PublicUserController {
     const [results, count] = await this.authService.getAllUsers({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
-      order: pageRequest.sort.asOrder()
+      order: pageRequest.sort.asOrder(),
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
@@ -47,7 +47,7 @@ export class PublicUserController {
     status: 200,
     description: "List all user roles",
     type: "string",
-    isArray: true
+    isArray: true,
   })
   getAuthorities(@Req() req: any): any {
     const user: any = req.user;

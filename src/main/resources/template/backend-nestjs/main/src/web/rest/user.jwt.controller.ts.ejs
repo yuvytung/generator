@@ -17,12 +17,12 @@ export class UserJWTController {
   @ApiOperation({ summary: "Authorization api retrieving token" })
   @ApiResponse({
     status: 201,
-    description: "Authorized"
+    description: "Authorized",
   })
   async authorize(
     @Req() req: Request,
     @Body() user: UserLogin<%-dtoSuffix%>,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<any> {
     const jwt = await this.authService.login(user);
     res.setHeader("Authorization", "Bearer " + jwt.id_token);

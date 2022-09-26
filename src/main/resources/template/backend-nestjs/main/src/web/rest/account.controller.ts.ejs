@@ -11,7 +11,7 @@ import {
   Req,
   UseInterceptors,
   ClassSerializerInterceptor,
-  InternalServerErrorException
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { AuthGuard, Roles, RoleType, RolesGuard } from "../../security";
@@ -38,7 +38,7 @@ export class AccountController {
   })
   async registerAccount(
     @Req() req: Request,
-    @Body() user<%-dtoSuffix%>: User<%-dtoSuffix %> & { password: string }
+    @Body() user<%-dtoSuffix%>: User<%-dtoSuffix %> & { password: string },
   ): Promise<any> {
     return await this.authService.registerNewUser(user<%-dtoSuffix%>);
   }
@@ -50,7 +50,7 @@ export class AccountController {
   @ApiOperation({ summary: "Activate an account" })
   @ApiResponse({
     status: 200,
-    description: "activated"
+    description: "activated",
   })
   activateAccount(@Param() key: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
@@ -62,7 +62,7 @@ export class AccountController {
   @ApiOperation({ summary: "Check if the user is authenticated" })
   @ApiResponse({
     status: 200,
-    description: "login authenticated"
+    description: "login authenticated",
   })
   isAuthenticated(@Req() req: Request): any {
     const user: any = req.user;
@@ -75,7 +75,7 @@ export class AccountController {
   @ApiOperation({ summary: "Get the current user." })
   @ApiResponse({
     status: 200,
-    description: "user retrieved"
+    description: "user retrieved",
   })
   async getAccount(@Req() req: Request): Promise<any> {
     const user: any = req.user;
@@ -104,17 +104,17 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: "user password changed",
-    type: PasswordChange<%-dtoSuffix%>
+    type: PasswordChange<%-dtoSuffix%>,
   })
   async changePassword(
     @Req() req: Request,
-    @Body() passwordChange: PasswordChange<%-dtoSuffix%>
+    @Body() passwordChange: PasswordChange<%-dtoSuffix%>,
   ): Promise<any> {
     const user: any = req.user;
     return await this.authService.changePassword(
       user.login,
       passwordChange.currentPassword,
-      passwordChange.newPassword
+      passwordChange.newPassword,
     );
   }
 
@@ -125,7 +125,7 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: "mail to reset password sent",
-    type: "string"
+    type: "string",
   })
   requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
     throw new InternalServerErrorException();
@@ -138,12 +138,12 @@ export class AccountController {
   @ApiResponse({
     status: 201,
     description: "password reset",
-    type: "string"
+    type: "string",
   })
   finishPasswordReset(
     @Req() req: Request,
     @Body() keyAndPassword: string,
-    @Res() res: Response
+    @Res() res: Response,
   ): any {
     throw new InternalServerErrorException();
   }

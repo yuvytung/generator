@@ -24,6 +24,7 @@ processTemplateEjs = (moduleName) ->
   glob
     .sync "#{moduleTemplatePath}/@(#{subModulesIncluded})/**/{.??,}*.ejs", {}
     .map (pathInput) ->
+      epsCP = entityProperty.map (ep) -> StringPool.caseProcessing ep
       entityProperty.map (ep) ->
         epCaseProcessed = StringPool.caseProcessing ep
         pathOutput = pathInput
@@ -39,6 +40,7 @@ processTemplateEjs = (moduleName) ->
             {
               ejsEnv...
               _entity: epCaseProcessed
+              _entities: epsCP
               modules: environments.modules[moduleName]
             }
             charset: "utf8"

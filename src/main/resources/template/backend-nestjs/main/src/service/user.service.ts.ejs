@@ -33,7 +33,7 @@ export class UserService {
     const users<%-dtoSuffix%>: User<%-dtoSuffix%>[] = [];
     if (resultList && resultList[0]) {
       resultList[0].forEach(user =>
-        users<%-dtoSuffix%>.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user)))
+        users<%-dtoSuffix%>.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))),
       );
       resultList[0] = users<%-dtoSuffix%>;
     }
@@ -43,7 +43,7 @@ export class UserService {
   async save(
     user<%-dtoSuffix%>: User<%-dtoSuffix%>,
     creator?: string,
-    updatePassword = false
+    updatePassword = false,
   ): Promise<User<%-dtoSuffix%> | undefined> {
     const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(user<%-dtoSuffix%>));
     if (updatePassword) {
