@@ -1,0 +1,32 @@
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiTags
+} from '@nestjs/swagger';
+import { <%-_entity._name.pascal%><%-dtoSuffix%> } from '../../service/dto/<%-_entity._name.kebab%>.dto';
+import { <%-_entity._name.pascal%>Service } from '../../service/<%-_entity._name.kebab%>.service';
+import {
+  AuthGuard,
+  RolesGuard
+} from '../../security';
+import {LoggingInterceptor} from '../../client/interceptors/logging.interceptor';
+import {AbstractBaseController} from "./abstract.base.controller";
+
+
+@Controller('api/<%-_entity._name.kebab%>s')
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@ApiBearerAuth()
+@ApiTags('<%-_entity._name.kebab%>s')
+export class <%-_entity._name.pascal%>Controller extends AbstractBaseController<<%-_entity._name.pascal%><%-dtoSuffix%>> {
+  constructor(
+    protected readonly service: <%-_entity._name.pascal%>Service,
+  ) {
+    super(service);
+  }
+}

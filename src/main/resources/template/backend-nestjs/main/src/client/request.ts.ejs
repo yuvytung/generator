@@ -1,0 +1,6 @@
+import { Request as ExpressRequest } from "express";
+import { User<%-dtoSuffix%> } from "../service/dto/user.dto";
+
+export interface Request extends ExpressRequest {
+  user?: User<%-dtoSuffix%>;
+}

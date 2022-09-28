@@ -8,15 +8,36 @@
     "coffeescript:build": "coffee -bct -o build/out/src/main/coffeescript src/main/coffeescript",
     "coffeescript:render": "npm run coffeescript:build && node build/out/src/main/coffeescript/index.js",
     "start": "coffee -t src/main/coffeescript/index.coffee",
+    "render": "coffee -t src/main/coffeescript/index.coffee render ",
+    "entity:render": "coffee -t src/main/coffeescript/index.coffee entity_render ",
+    "convert": "coffee -t src/main/coffeescript/index.coffee convert",
     "lint": "eslint 'src/main/coffeescript/' --fix --ext .coffee",
-    "prettier": "prettier --write 'src/main/coffeescript/**/*.coffee'"
+    "prettier": "prettier --write 'src/main/coffeescript/**/*.coffee'",
+    "clean": "rm -rf build",
+    "test": "npm run clean && npm run render && chmod +x src/main/bash/main.sh && ./src/main/bash/main.sh"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "{src,apps,libs}/**/*.coffee": [
+      "npm run lint",
+      "npm run prettier"
+    ]
   },
   "dependencies": {
+    "case": "^1.6.3",
     "ejs": "^3.1.8",
     "glob": "^8.0.3",
-    "log4js": "^6.6.1"
+    "log4js": "^6.6.1",
+    "yaml": "^2.1.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "@babel/core": "^7.19.0",
     "@babel/preset-env": "^7.19.0",
     "@nerevu/prettier-coffee": "^1.1.0",
@@ -28,6 +49,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
+    "lint-staged": "^10.5.4",
     "prettier": "github:helixbass/prettier#prettier-v2.1.0-dev.100-gitpkg",
     "prettier-plugin-coffeescript": "^0.1.5"
   },

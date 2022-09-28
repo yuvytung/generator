@@ -1,6 +1,7 @@
 node_modules/
-jest.conf.js
-webpack/
+src/main/resources/template/frontend-reactjs/main/jest.conf.js
+src/main/resources/template/frontend-reactjs/main/webpack/
 target/
 build/
 node/
+tmp/

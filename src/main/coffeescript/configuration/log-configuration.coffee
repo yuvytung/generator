@@ -16,5 +16,5 @@ log4js.configure
   categories:
     default:
       appenders: ["console"]
-      level: "debug"
+      level: if process.argv.includes "debug" then "debug" else "info"
       enableCallStack: true
