@@ -3,6 +3,8 @@ import Case from "case"
 export class StringPool
   @BLANK: ""
 
+  @case: Case
+
   @caseProcessing: (resource) ->
     result = {}
     Object.keys(resource).forEach (key) ->

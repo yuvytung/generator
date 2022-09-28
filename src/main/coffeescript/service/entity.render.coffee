@@ -11,6 +11,21 @@ modules = Object.keys environments.modules
 ejsEnv = environments.ejs.environment.original
 Object.assign ejsEnv, StringPool.caseProcessing environments.ejs.environment.original
 
+fieldTypeProcessing = (type) ->
+  switch
+    when type is "UUID" then "string"
+    when type is "String" then "string"
+    when type is "Long" then "number"
+    when type is "Integer" then "number"
+    when type is "Float" then "number"
+    when type is "Double" then "number"
+    when type is "Boolean" then "boolean"
+    when type is "Instant" then "Date"
+    when type is "LocalDate" then "Date"
+    when type is "ZonedDateTime" then "Date"
+    when type is "Duration" then "Date"
+    else "string"
+
 processTemplateEjs = (moduleName) ->
   subModulesIncluded = ["entity"].join "|"
   moduleTemplatePath = "src/main/resources/template/#{moduleName}"
@@ -39,8 +54,14 @@ processTemplateEjs = (moduleName) ->
             pathInput
             {
               ejsEnv...
-              _entity: epCaseProcessed
+              _entity: {
+                epCaseProcessed...
+                ep...
+              }
               _entities: epsCP
+              _:
+                Case: StringPool.case
+                typeDetect: fieldTypeProcessing
               modules: environments.modules[moduleName]
             }
             charset: "utf8"

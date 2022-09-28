@@ -4,7 +4,8 @@ import { AbstractBaseRepository } from "../repository/abstract.base.repository";
 import { AbstractBaseMapper } from "./mapper/abstract.base.mapper";
 import { BaseEntity } from "../domain/base/base.entity";
 import { Base<%-dtoSuffix%> } from "./dto/base.dto";
-import { AbstractBaseSearchRepository } from "../repository/search/abstract.base.search.repository";
+<%-modules.elasticsearch &&
+`import { AbstractBaseSearchRepository } from "../repository/search/abstract.base.search.repository";`%>
 
 export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%-dtoSuffix%>> {
   logger = new Logger("BaseService");
