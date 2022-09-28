@@ -1,0 +1,34 @@
+import { User<%-entitySuffix%> } from "../../domain/user.entity";
+import { User<%-dtoSuffix%> } from "../dto/user.dto";
+
+/**
+ * An User mapper object.
+ */
+export class UserMapper {
+  static fromDTOtoEntity(user<%-dtoSuffix%>: User<%-dtoSuffix%>): User {
+    if (!user<%-dtoSuffix%>) {
+      return;
+    }
+    const user = new User();
+    const fields = Object.getOwnPropertyNames(user<%-dtoSuffix%>);
+    fields.forEach(field => {
+      user[field] = user<%-dtoSuffix%>[field];
+    });
+    return user;
+  }
+
+  static fromEntityToDTO(user: User): User<%-dtoSuffix%> {
+    if (!user) {
+      return;
+    }
+    const user<%-dtoSuffix%> = new User<%-dtoSuffix%>();
+
+    const fields = Object.getOwnPropertyNames(user);
+
+    fields.forEach(field => {
+      user<%-dtoSuffix%>[field] = user[field];
+    });
+
+    return user<%-dtoSuffix%>;
+  }
+}

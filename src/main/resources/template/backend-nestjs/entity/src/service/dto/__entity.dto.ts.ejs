@@ -1,0 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ApiProperty } from '@nestjs/swagger';
+import { Base<%-dtoSuffix%> } from './base.dto';
+
+//import { Task<%-dtoSuffix%> } from './task.dto';
+
+/**
+ * A Job<%-dtoSuffix%> object.
+ */
+export class <%-_entity._name.pascal%><%-dtoSuffix%> extends Base<%-dtoSuffix%> {
+    @ApiProperty({ description: 'jobTitle field', required: false })
+    jobTitle: string;
+
+    @ApiProperty({ description: 'minSalary field', required: false })
+    minSalary: string;
+
+    @ApiProperty({ description: 'maxSalary field', required: false })
+    maxSalary: string;
+
+//    @ApiProperty({ type: Task<%-dtoSuffix%>, isArray: true, description: 'tasks relationship' })
+//    tasks: Task<%-dtoSuffix%>[];
+
+}

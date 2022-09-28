@@ -16,6 +16,7 @@
     "require": true,
     "console": true,
 
+    "YAML": true,
     "log": true,
     "app": true,
     "APP_ENV": true

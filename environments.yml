@@ -1,0 +1,170 @@
+ejs:
+  environment:
+    original:
+      baseName: catiny
+      serverPort: 8081
+      prefix: nhi
+      suffix: ""
+      entityPrefix: ""
+      entitySuffix: ""
+      dtoSuffix: DTO
+      nativeLanguage: en
+      packageFolder: com/jhipster/node
+      serviceDiscoveryType: true
+      websocket: true
+      searchEngine: elasticsearch
+      messageBroker: kafka
+      clientPackageManager: yarn
+      buildTool: gradle
+      clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
+modules:
+  backend-nestjs:
+#    entity: true
+    elasticsearch: true
+    redis: true
+  frontend-reactjs:
+    cypress: true
+    protractor: true
+
+
+file:
+  typeExtensions:
+    binary:
+      # # Audio
+      - kar
+      - m4a
+      - mid
+      - midi
+      - mp3
+      - ogg
+      - ra
+      # VIDEO
+      - 3gpp
+      - 3gp
+      - as
+      - asf
+      - asx
+      - fla
+      - flv
+      - m4v
+      - mng
+      - mov
+      - mp4
+      - mpeg
+      - mpg
+      - swc
+      - swf
+      - webm
+      # ARCHIVES
+      - 7z
+      - gz
+      - rar
+      - tar
+      - zip
+      # FONTS
+      - ttf
+      - eot
+      - otf
+      - woff
+      - woff2
+      # Graphics
+      - png
+      - jpg
+      - jpeg
+      - gif
+      - tif
+      - tiff
+      # SVG
+      - ico
+      - svg
+      - eps
+      # Java
+      - class
+      - jar
+      - war
+      # Doc
+      - doc
+      - DOC
+      - docx
+      - DOCX
+      - dot
+      - DOT
+      - pdf
+      - PDF
+      - rtf
+      - RTF
+    text:
+      #
+      - webapp
+      - eslintignore
+      - prettierignore
+      - prettierrc
+      - lock
+      #
+      - bat
+      - cmd
+      - ps1
+      - coffee
+      - css
+      - cql
+      - df
+      - ejs
+      - tsx
+      - html
+      - java
+      - js
+      - json
+      - less
+      - properties
+      - sass
+      - scss
+      - sh
+      - sql
+      - txt
+      - ts
+      - xml
+      - yaml
+      - yml
+      # Documents
+      - markdown
+      - md
+      - adoc
+      - textile
+      - mustache
+      - csv
+      - tab
+      - tsv
+      - txt
+      - AUTHORS
+      - CHANGELOG
+      - CHANGES
+      - CONTRIBUTING
+      - COPYING
+      - copyright
+      - COPYRIGHT
+      - INSTALL
+      - license
+      - LICENSE
+      - NEWS
+      - readme
+      - README
+      - TODO
+      # LINTERS
+      - csslintrc
+      - eslintrc
+      - jscsrc
+      - jshintrc
+      - jshintignore
+      - stylelintrc
+      # CONFIGS
+      - conf
+      - config
+      - editorconfig
+      - gitattributes
+      - gitconfig
+      - gitignore
+      - htaccess
+      - npmignore
+      # HEROKU
+      - Procfile
+      - slugignore
