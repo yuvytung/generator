@@ -1,6 +1,12 @@
-import { EntityRepository } from 'typeorm';
-import { <%-_entity._name.pascal%> } from '../domain/<%-_entity._name.kebab%>.entity';
+<% const entityName=_entity.name.pascal().concat(entitySuffix) -%>
+import { <%-entityName%> } from '../domain/<%-_entity.name.kebab()%>.entity';
 import { AbstractBaseRepository } from './abstract.base.repository';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 
-@EntityRepository(<%-_entity._name.pascal%>)
-export abstract class <%-_entity._name.pascal%>Repository extends AbstractBaseRepository<<%-_entity._name.pascal%>> {}
+@Injectable()
+export abstract class <%-_entity.name.pascal()%>Repository extends AbstractBaseRepository<<%-entityName%>> {
+  protected constructor(@InjectRepository(<%-entityName%>) repository: AbstractBaseRepository<<%-entityName%>>) {
+    super(repository);
+  }
+}

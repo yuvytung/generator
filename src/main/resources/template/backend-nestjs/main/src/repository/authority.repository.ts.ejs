@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from "typeorm";
-import { Authority } from "../domain/authority.entity";
+import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
+import { AbstractBaseRepository } from "./abstract.base.repository";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 
-@EntityRepository(Authority)
-export class AuthorityRepository extends Repository<Authority> {}
+@Injectable()
+export class AuthorityRepository extends AbstractBaseRepository<Authority<%-entitySuffix%>> {
+  constructor(@InjectRepository(Authority<%-entitySuffix%>) repository: AbstractBaseRepository<Authority<%-entitySuffix%>>) {
+    super(repository);
+  }
+}

@@ -26,6 +26,12 @@ fieldTypeProcessing = (type) ->
     when type is "Duration" then "Date"
     else "string"
 
+fieldType =
+  string: "string"
+  number: "number"
+  boolean: "boolean"
+  date: "Date"
+
 processTemplateEjs = (moduleName) ->
   subModulesIncluded = ["entity"].join "|"
   moduleTemplatePath = "src/main/resources/template/#{moduleName}"
@@ -38,6 +44,9 @@ processTemplateEjs = (moduleName) ->
 
   glob
     .sync "#{moduleTemplatePath}/@(#{subModulesIncluded})/**/{.??,}*.ejs", {}
+    .filter (pathInput) ->
+      environments?.modules?["backend-nestjs"]?.elasticsearch and
+      pathInput.match(/.*__entity\.search\.repository\.ts\.ejs/g)?.length
     .map (pathInput) ->
       epsCP = entityProperty.map (ep) -> StringPool.caseProcessing ep
       entityProperty.map (ep) ->
@@ -46,26 +55,30 @@ processTemplateEjs = (moduleName) ->
           .replace new RegExp("#{moduleTemplatePath}/[\\w]+"), moduleOutputPath
           .replace /\.ejs$/g, ""
           # eslint-disable-next-line coffee/no-underscore-dangle
-          .replace /__entity\./g, "#{epCaseProcessed._name.kebab}."
+          .replace /__entity/g, "#{epCaseProcessed._name.kebab}"
         fs.mkdirSync path.dirname(pathOutput), recursive: true
         fs.writeFileSync(
           pathOutput
-          await ejs.renderFile(
-            pathInput
-            {
-              ejsEnv...
-              _entity: {
-                epCaseProcessed...
-                ep...
+          await ejs
+            .renderFile(
+              pathInput
+              {
+                ejsEnv...
+                _entity: {
+                  epCaseProcessed...
+                  ep...
+                }
+                _entities: epsCP
+                _: {
+                  fieldType
+                  Case: StringPool.case
+                  typeDetect: fieldTypeProcessing
+                }
+                modules: environments.modules[moduleName]
               }
-              _entities: epsCP
-              _:
-                Case: StringPool.case
-                typeDetect: fieldTypeProcessing
-              modules: environments.modules[moduleName]
-            }
-            charset: "utf8"
-          )
+              charset: "utf8"
+            )
+            .catch (err) -> log.error err
         )
 
 export default ->

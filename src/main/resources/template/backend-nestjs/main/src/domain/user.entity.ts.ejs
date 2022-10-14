@@ -1,5 +1,5 @@
 import { Authority } from "./authority.entity";
-import { Entity, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, Column<%-(database === 'mysql' || database === 'mariadb' || database === 'postgres') ?`, ManyToMany, JoinTable` : ``%> } from "typeorm";
 import { BaseEntity } from "./base/base.entity";
 import { Exclude } from "class-transformer";
 
@@ -18,9 +18,13 @@ export class User<%-entitySuffix%> extends BaseEntity {
   @Column({ default: "en" })
   langKey?: string;
 
-  @ManyToMany(() => Authority)
+  <%-database === 'mongodb' ?
+  `@Column()
+  authorities?: Authority[];` :
+  (database === 'mysql' || database === 'mariadb' || database === 'postgres') ?
+  `@ManyToMany(() => Authority)
   @JoinTable()
-  authorities?: any[];
+  authorities?: Authority[];` : ``%>
 
   @Column({
     type: "varchar",

@@ -1,0 +1,135 @@
+<%
+const { Case, typeDetect } = _;
+const { name , javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import axios from 'axios';
+import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+
+import { cleanEntity } from 'app/shared/util/entity-utils';
+import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { I<%-name.pascal()%>, defaultValue } from 'app/shared/model/<%-name.kebab()%>.model';
+
+const initialState: EntityState<I<%-name.pascal()%>> = {
+  loading: false,
+  errorMessage: null,
+  entities: [],
+  entity: defaultValue,
+  updating: false,
+  totalItems: 0,
+  updateSuccess: false,
+};
+
+const apiUrl = 'api/<%-name.kebab()%>s';
+
+// Actions
+
+export const getEntities = createAsyncThunk('<%-name.camel()%>/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+  return axios.get<I<%-name.pascal()%>[]>(requestUrl);
+});
+
+export const getEntity = createAsyncThunk(
+  '<%-name.camel()%>/fetch_entity',
+  async (id: string | number) => {
+    const requestUrl = `${apiUrl}/${id}`;
+    return axios.get<I<%-name.pascal()%>>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const createEntity = createAsyncThunk(
+  '<%-name.camel()%>/create_entity',
+  async (entity: I<%-name.pascal()%>, thunkAPI) => {
+    const result = await axios.post<I<%-name.pascal()%>>(apiUrl, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const updateEntity = createAsyncThunk(
+  '<%-name.camel()%>/update_entity',
+  async (entity: I<%-name.pascal()%>, thunkAPI) => {
+    const result = await axios.put<I<%-name.pascal()%>>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const partialUpdateEntity = createAsyncThunk(
+  '<%-name.camel()%>/partial_update_entity',
+  async (entity: I<%-name.pascal()%>, thunkAPI) => {
+    const result = await axios.patch<I<%-name.pascal()%>>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const deleteEntity = createAsyncThunk(
+  '<%-name.camel()%>/delete_entity',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}`;
+    const result = await axios.delete<I<%-name.pascal()%>>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+// slice
+
+export const <%-name.pascal()%>Slice = createEntitySlice({
+  name: '<%-name.camel()%>',
+  initialState,
+  extraReducers(builder) {
+    builder
+      .addCase(getEntity.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entity = action.payload.data;
+      })
+      .addCase(deleteEntity.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+      })
+      .addMatcher(isFulfilled(getEntities), (state, action) => {
+        const { data, headers } = action.payload;
+
+        return {
+          ...state,
+          loading: false,
+          entities: data,
+          totalItems: parseInt(headers['x-total-count'], 10),
+        };
+      })
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+        state.updating = false;
+        state.loading = false;
+        state.updateSuccess = true;
+        state.entity = action.payload.data;
+      })
+      .addMatcher(isPending(getEntities, getEntity), state => {
+        state.errorMessage = null;
+        state.updateSuccess = false;
+        state.loading = true;
+      })
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+        state.errorMessage = null;
+        state.updateSuccess = false;
+        state.updating = true;
+      });
+  },
+});
+
+export const { reset } = <%-name.pascal()%>Slice.actions;
+
+// Reducer
+export default <%-name.pascal()%>Slice.reducer;

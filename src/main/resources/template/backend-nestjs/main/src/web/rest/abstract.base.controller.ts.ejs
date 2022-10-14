@@ -51,7 +51,7 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
     return results;
   }
 
-  <%-modules.elasticsearch &&
+  <%-modules.elasticsearch ?
   `@Get("/_search")
   @Roles(RoleType.ADMIN)
   @ApiOperation({summary: "Search entity (default)"})
@@ -65,7 +65,7 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
     const results = await this.service.search(keywords);
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", results);
     return results;
-  }`%>
+  }` : ``%>
 
   @Get("/:id")
   @Roles(RoleType.USER)

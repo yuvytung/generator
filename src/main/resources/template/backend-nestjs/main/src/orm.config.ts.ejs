@@ -1,42 +1,58 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+<%-devDatabase === 'mongodb' ? `import { MongoMemoryServer } from 'mongodb-memory-server';`: ''%>
 
-function ormConfig(): TypeOrmModuleOptions {
+<%-devDatabase === 'mongodb' ?
+  `async function ormConfig(): Promise<TypeOrmModuleOptions>` :
+  `function ormConfig(): TypeOrmModuleOptions`%> {
+  <%-devDatabase === 'mongodb' ?
+  `let mongod;
+  if (process.env.BACKEND_ENV !== 'prod') {
+    mongod = await MongoMemoryServer.create();
+  }` : `` %>
   const commonConf = {
     SYNCRONIZE: false,
     ENTITIES: [__dirname + "/domain/*.entity{.ts,.js}"],
     MIGRATIONS: [__dirname + "/migrations/**/*{.ts,.js}"],
-    CLI: {
-      migrationsDir: "src/migrations",
-    },
     MIGRATIONS_RUN: true,
   };
 
   let ormconfig: TypeOrmModuleOptions = {
     name: "default",
-    type: "sqlite",
-    database: "../target/db/sqlite-dev-db.sql",
+    <%-devDatabase === 'mongodb' ?
+    `type: 'mongodb',
+    url: await mongod.getUri(),
+    useNewUrlParser: true,
+    useUnifiedTopology: true,` :
+    devDatabase === 'sqlite' ?
+    `type: "sqlite",
+    database: "../target/db/sqlite-dev-db.sql",` :
+    ``%>
     logging: false,
     synchronize: true,
     entities: commonConf.ENTITIES,
     migrations: commonConf.MIGRATIONS,
-    cli: commonConf.CLI,
     migrationsRun: commonConf.MIGRATIONS_RUN,
   };
 
   if (process.env.BACKEND_ENV === "prod") {
     ormconfig = {
       name: "default",
-      type: "mysql",
+      <%-prodDatabase === 'mongodb' ?
+      `type: 'mongodb',
+      database: 'admin',
+      port: 27018,` :
+      prodDatabase === 'mysql' ?
+      `type: "mysql",
       database: "nhipster",
+      port: 3307,` :
+      ``%>
       host: "localhost",
-      port: 3307,
       username: "sa",
       password: "yourStrong(!)Password",
       logging: false,
       synchronize: commonConf.SYNCRONIZE,
       entities: commonConf.ENTITIES,
       migrations: commonConf.MIGRATIONS,
-      cli: commonConf.CLI,
       migrationsRun: commonConf.MIGRATIONS_RUN,
     };
   }
@@ -51,7 +67,6 @@ function ormConfig(): TypeOrmModuleOptions {
       synchronize: true,
       entities: commonConf.ENTITIES,
       migrations: commonConf.MIGRATIONS,
-      cli: commonConf.CLI,
       migrationsRun: commonConf.MIGRATIONS_RUN,
     };
   }

@@ -1,9 +1,12 @@
-import { Entity, PrimaryColumn } from "typeorm";
+import { Entity, <%-database === 'mongodb' ? `Column` :
+(database === 'mysql' || database === 'mariadb' || database === 'postgres') ? `PrimaryColumn` : ``%> } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+<%-database === 'mongodb' ? `import { BaseEntity } from './base/base.entity';` : ``%>
 
 @Entity("<%-`${prefix}_`%>authority")
-export class Authority {
+export class Authority <%-database === 'mongodb' ? `extends BaseEntity` : ``%> {
   @ApiProperty({ example: "ROLE_USER", description: "User role" })
-  @PrimaryColumn()
+  <%-database === 'mongodb' ? `@Column({ unique: true })` :
+  (database === 'mysql' || database === 'mariadb' || database === 'postgres') ? `@PrimaryColumn()` : ``%>
   name: string;
 }

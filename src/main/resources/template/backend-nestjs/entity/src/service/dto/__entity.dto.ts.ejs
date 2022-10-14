@@ -7,7 +7,7 @@ import { Base<%-dtoSuffix%> } from './base.dto';
 /**
  * A Job<%-dtoSuffix%> object.
  */
-export class <%-_entity._name.pascal%><%-dtoSuffix%> extends Base<%-dtoSuffix%> {
+export class <%-_entity.name.pascal()%><%-dtoSuffix%> extends Base<%-dtoSuffix%> {
     @ApiProperty({ description: 'jobTitle field', required: false })
     jobTitle: string;
 
