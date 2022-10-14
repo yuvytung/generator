@@ -1,0 +1,114 @@
+<%
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React, { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Button, Row, Col } from 'reactstrap';
+import { Translate } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+
+import { getEntity } from './<%-name.kebab()%>.reducer';
+
+export const <%-name.pascal()%>Detail = () => {
+  const dispatch = useAppDispatch();
+
+  const { id } = useParams<'id'>();
+
+  useEffect(() => {
+    dispatch(getEntity(id));
+  }, []);
+
+  const <%-name.camel()%>Entity = useAppSelector(state => state.<%-name.camel()%>.entity);
+  return (
+    <Row>
+      <Col md="8">
+        <h2 data-cy="<%-name.camel()%>DetailsHeading">
+          <Translate contentKey="${baseName.camel()}App.<%-name.camel()%>.detail.title"><%-name.pascal()%></Translate>
+        </h2>
+        <dl className="jh-entity-details">
+          <dt>
+            <span id="id">
+              <Translate contentKey="global.field.id">ID</Translate>
+            </span>
+          </dt>
+          <dd>{<%-name.camel()%>Entity.id}</dd>
+          <%-fields?.map(field =>
+          `
+          <dt>
+            <span id="${field.fieldName.camel()}">
+              <Translate contentKey="${baseName.camel()}App.${name.camel()}.${field.fieldName.camel()}">${field.fieldName.title()}</Translate>
+            </span>
+          </dt>
+          <dd>{${name.camel()}Entity.${field.fieldName.camel()}}</dd>`
+          )%>
+
+          <%-relationships?.map(relationship => {
+            if (relationship.relationshipType === relationshipType.M2M) return `
+          <dt>
+            <Translate contentKey="${baseName.camel()}App.${name.camel()}.${relationship.otherEntityName.camel()}">${relationship.otherEntityName.pascal()}</Translate>
+          </dt>
+          <dd>
+            {${name.camel()}Entity.${relationship.otherEntityName.camel()}s
+              ? ${name.camel()}Entity.${relationship.otherEntityName.camel()}s.map((val, i) => (
+                  <span key={val.id}>
+                    <a>{val.title}</a>
+                    {${name.camel()}Entity.${relationship.otherEntityName.camel()}s && i === ${name.camel()}Entity.${relationship.otherEntityName.camel()}s.length - 1 ? '' : ', '}
+                  </span>
+                ))
+              : null}
+          </dd>`
+
+
+            else if (relationship.relationshipType === relationshipType.O2M) return `
+          <dt>
+            <Translate contentKey="${baseName.camel()}App.${name.camel()}.${relationship.otherEntityName.camel()}">${relationship.otherEntityName.pascal()}</Translate>
+          </dt>
+          <dd>{${name.camel()}Entity.${relationship.otherEntityName.camel()} ? ${name.camel()}Entity.${relationship.otherEntityName.camel()}.id : ''}</dd>`
+
+
+            else if (relationship.relationshipType === relationshipType.M2O) return `
+          <dt>
+            <Translate contentKey="${baseName.camel()}App.${name.camel()}.${relationship.otherEntityName.camel()}">${relationship.otherEntityName.pascal()}</Translate>
+          </dt>
+          <dd>{${name.camel()}Entity.${relationship.otherEntityName.camel()} ? ${name.camel()}Entity.${relationship.otherEntityName.camel()}.id : ''}</dd>`
+
+
+            else if (relationship.relationshipType === relationshipType.O2O) return `
+          <dt>
+            <Translate contentKey="${baseName.camel()}App.${name.camel()}.${relationship.otherEntityName.camel()}">${relationship.otherEntityName.pascal()}</Translate>
+          </dt>
+          <dd>{${name.camel()}Entity.${relationship.otherEntityName.camel()} ? ${name.camel()}Entity.${relationship.otherEntityName.camel()}.id : ''}</dd>`
+
+
+          })%>
+
+
+        </dl>
+        <Button tag={Link} to="/<%-name.camel()%>" replace color="info" data-cy="entityDetailsBackButton">
+          <FontAwesomeIcon icon="arrow-left" />{' '}
+          <span className="d-none d-md-inline">
+            <Translate contentKey="entity.action.back">Back</Translate>
+          </span>
+        </Button>
+        <Button tag={Link} to={`/<%-name.camel()%>/${<%-name.camel()%>Entity.id}/edit`} replace color="primary">
+          <FontAwesomeIcon icon="pencil-alt" />{' '}
+          <span className="d-none d-md-inline">
+            <Translate contentKey="entity.action.edit">Edit</Translate>
+          </span>
+        </Button>
+      </Col>
+    </Row>
+  );
+};
+
+export default <%-name.pascal()%>Detail;

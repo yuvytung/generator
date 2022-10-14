@@ -32,21 +32,13 @@ export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
   }
 
   async save(entity: E) {
-    return entity?.id
-      ? this.model.update({
-          index: this._entity.name,
-          id: entity.id?.toString(),
-          body: {
-            ...entity,
-          },
-        })
-      : this.model.index({
-          index: this._entity.name,
-          id: entity.id?.toString(),
-          body: {
-            ...entity,
-          },
-        });
+    return this.model.index({
+      index: this._entity.name,
+      id: entity.id?.toString(),
+      body: {
+        ...entity,
+      },
+    });
   }
 
   async delete(entityOrId: any) {

@@ -1,0 +1,33 @@
+<%
+const { Case, typeDetect } = _;
+const { _name, name , javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React from 'react';
+import { Route } from 'react-router-dom';
+
+import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+
+import <%-name.pascal()%> from './<%-name.kebab()%>';
+import <%-name.pascal()%>Detail from './<%-name.kebab()%>-detail';
+import <%-name.pascal()%>Update from './<%-name.kebab()%>-update';
+import <%-name.pascal()%>DeleteDialog from './<%-name.kebab()%>-delete-dialog';
+
+const <%-name.pascal()%>Routes = () => (
+  <ErrorBoundaryRoutes>
+    <Route index element={<<%-name.pascal()%> />} />
+    <Route path="new" element={<<%-name.pascal()%>Update />} />
+    <Route path=":id">
+      <Route index element={<<%-name.pascal()%>Detail />} />
+      <Route path="edit" element={<<%-name.pascal()%>Update />} />
+      <Route path="delete" element={<<%-name.pascal()%>DeleteDialog />} />
+    </Route>
+  </ErrorBoundaryRoutes>
+);
+
+export default <%-name.pascal()%>Routes;

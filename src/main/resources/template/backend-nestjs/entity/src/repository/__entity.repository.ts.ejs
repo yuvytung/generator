@@ -1,6 +1,6 @@
 import { EntityRepository } from 'typeorm';
-import { <%-_entity._name.pascal%> } from '../domain/<%-_entity._name.kebab%>.entity';
+import { <%-_entity.name.pascal()%> } from '../domain/<%-_entity.name.kebab()%>.entity';
 import { AbstractBaseRepository } from './abstract.base.repository';
 
-@EntityRepository(<%-_entity._name.pascal%>)
-export abstract class <%-_entity._name.pascal%>Repository extends AbstractBaseRepository<<%-_entity._name.pascal%>> {}
+@EntityRepository(<%-_entity.name.pascal()%>)
+export abstract class <%-_entity.name.pascal()%>Repository extends AbstractBaseRepository<<%-_entity.name.pascal()%>> {}
