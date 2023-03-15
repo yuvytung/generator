@@ -15,7 +15,7 @@ import { <%-_entity.name.pascal()%><%-dtoSuffix%> } from './dto/<%-_entity.name.
 import { <%-_entity.name.pascal()%>Mapper } from './mapper/<%-_entity.name.kebab()%>.mapper';
 import { <%-_entity.name.pascal()%>Repository } from '../repository/<%-_entity.name.kebab()%>.repository';
 import { AbstractBaseService } from './abstract.base.service';
-import { <%-_entity.name.pascal()%> } from '../domain/<%-_entity.name.kebab()%>.entity';
+import { <%-_entity.name.pascal()%><%-entitySuffix%> } from '../domain/<%-_entity.name.kebab()%>.entity';
 <%-modules.elasticsearch &&
 `import { ${_entity._name.pascal}SearchRepository } from "../repository/search/${_entity._name.kebab}.search.repository";` %>
 
@@ -25,15 +25,15 @@ const relationshipNames = [
 
 
 @Injectable()
-export class <%-_entity.name.pascal()%>Service extends AbstractBaseService<<%-_entity.name.pascal()%>, <%-_entity.name.pascal()%><%-dtoSuffix%>> {
+export class <%-_entity.name.pascal()%>Service extends AbstractBaseService<<%-_entity.name.pascal()%><%-entitySuffix%>, <%-_entity.name.pascal()%><%-dtoSuffix%>> {
 
   constructor(
-    @InjectRepository(<%-_entity.name.pascal()%>Repository) protected _repository: <%-_entity.name.pascal()%>Repository,
-    <%-modules.elasticsearch && `private searchRepository: ${_entity._name.pascal}SearchRepository<${_entity._name.pascal}>,`%>
+    @InjectRepository(<%-_entity.name.pascal()%><%-entitySuffix%>) protected _repository: <%-_entity.name.pascal()%>Repository,
+    <%-modules.elasticsearch && `private searchRepository: ${_entity._name.pascal}SearchRepository<${_entity._name.pascal}>${entitySuffix},`%>
   ) {
     super(
       _repository,
-      new <%-_entity.name.pascal()%>Mapper(<%-_entity.name.pascal()%>, <%-_entity.name.pascal()%><%-dtoSuffix%>),
+      new <%-_entity.name.pascal()%>Mapper(<%-_entity.name.pascal()%><%-entitySuffix%>, <%-_entity.name.pascal()%><%-dtoSuffix%>),
       relationshipNames,
       <%-modules.elasticsearch && `searchRepository,`%>
     );

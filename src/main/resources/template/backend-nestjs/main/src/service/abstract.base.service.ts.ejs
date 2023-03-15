@@ -19,7 +19,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
 
   async findById(id: number): Promise<D | undefined> {
     const options = { relations: this._relationshipNames };
-    const result = await this._repository.findOne(id, options);
+    const result = await this._repository.findById(id);
     return this._mapper.e2d(result);
   }
 

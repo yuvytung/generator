@@ -5,9 +5,6 @@ function ormConfig(): TypeOrmModuleOptions {
     SYNCRONIZE: false,
     ENTITIES: [__dirname + "/domain/*.entity{.ts,.js}"],
     MIGRATIONS: [__dirname + "/migrations/**/*{.ts,.js}"],
-    CLI: {
-      migrationsDir: "src/migrations",
-    },
     MIGRATIONS_RUN: true,
   };
 
@@ -19,7 +16,6 @@ function ormConfig(): TypeOrmModuleOptions {
     synchronize: true,
     entities: commonConf.ENTITIES,
     migrations: commonConf.MIGRATIONS,
-    cli: commonConf.CLI,
     migrationsRun: commonConf.MIGRATIONS_RUN,
   };
 
@@ -36,7 +32,6 @@ function ormConfig(): TypeOrmModuleOptions {
       synchronize: commonConf.SYNCRONIZE,
       entities: commonConf.ENTITIES,
       migrations: commonConf.MIGRATIONS,
-      cli: commonConf.CLI,
       migrationsRun: commonConf.MIGRATIONS_RUN,
     };
   }
@@ -51,7 +46,6 @@ function ormConfig(): TypeOrmModuleOptions {
       synchronize: true,
       entities: commonConf.ENTITIES,
       migrations: commonConf.MIGRATIONS,
-      cli: commonConf.CLI,
       migrationsRun: commonConf.MIGRATIONS_RUN,
     };
   }

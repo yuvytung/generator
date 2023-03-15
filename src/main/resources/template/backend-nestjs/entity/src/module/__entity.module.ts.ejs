@@ -1,7 +1,7 @@
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { <%-_entity.name.pascal()%>Controller } from '../web/rest/<%-_entity.name.kebab()%>.controller';
-import { <%-_entity.name.pascal()%>Repository } from '../repository/<%-_entity.name.kebab()%>.repository';
+import { <%-_entity.name.pascal()%><%-entitySuffix%> } from '../domain/<%-_entity.name.kebab()%>.entity';
 import { <%-_entity.name.pascal()%>Service } from '../service/<%-_entity.name.kebab()%>.service';
 <%-modules.elasticsearch &&
 `import {ElasticSearchModule} from "./elasticsearch.module";
@@ -10,7 +10,7 @@ import {${_entity._name.pascal}SearchRepository} from "../repository/search/${_e
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([<%-_entity.name.pascal()%>Repository]),
+    TypeOrmModule.forFeature([<%-_entity.name.pascal()%><%-entitySuffix%>]),
     <%-modules.elasticsearch && `ElasticSearchModule,`%>
   ],
   controllers: [<%-_entity.name.pascal()%>Controller],
