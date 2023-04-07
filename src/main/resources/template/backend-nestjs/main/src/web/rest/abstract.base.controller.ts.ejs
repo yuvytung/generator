@@ -21,11 +21,6 @@ import { LoggingInterceptor } from "../../client/interceptors/logging.intercepto
 import { AbstractBaseService } from "../../service/abstract.base.service";
 import { Base<%-dtoSuffix%> } from "../../service/dto/base.dto";
 
-@Controller("api/jobs")
-@UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
-@ApiBearerAuth()
-@ApiTags("jobs")
 export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   constructor(protected readonly service: AbstractBaseService<any, any>) {}
 

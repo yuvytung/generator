@@ -25,9 +25,9 @@ modules:
 #    entity: true
     elasticsearch: true
     redis: true
-  frontend-reactjs:
-    cypress: true
-    protractor: true
+#  frontend-reactjs:
+#    cypress: true
+#    protractor: true
 
 
 file:

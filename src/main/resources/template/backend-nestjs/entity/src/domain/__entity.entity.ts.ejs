@@ -46,37 +46,44 @@ export class <%-name.pascal()%> extends BaseEntity {
   %>
 
   <%-relationships?.map(relationship => {
-    if (relationshipType.O2O === relationship.relationshipType)
-      return `
+    let propBuilder = '';
+    if (database === "mysql" || database === "mariadb" || database === 'postgresql')
+      if (relationshipType.O2O === relationship.relationshipType)
+      propBuilder = `
   @OneToOne((type) => ${Case.pascal(relationship.otherEntityName)})
   @JoinColumn()
-  ${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};
   `
-    else if (relationshipType.M2O === relationship.relationshipType)
-      return `
+      else if (relationshipType.M2O === relationship.relationshipType)
+      propBuilder = `
   @ManyToOne((type) => ${Case.pascal(relationship.otherEntityName)})
-  ${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};
   `
-    else if (relationshipType.O2M === relationship.relationshipType)
-      return `
+      else if (relationshipType.O2M === relationship.relationshipType)
+      propBuilder = `
   @OneToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)} )
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
-    else if (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
-      return `
+      else if (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      propBuilder = `
   @ManyToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)}s )
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
-    else if (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
-      return `
+      else if (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+      propBuilder = `
   @ManyToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)}s )
   @JoinTable({
     name: 'rel_${relationship.otherEntityRelationshipName.snake()}__${relationship.relationshipName.snake()}',
     joinColumn: { name: '${Case.snake(relationship.otherEntityRelationshipName)}_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: '${relationship.relationshipName.snake()}_id', referencedColumnName: 'id' },
   })
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
+    else if (database === 'mongodb') propBuilder = ``;
+
+    if ((relationshipType.O2O === relationship.relationshipType)
+      || (relationshipType.M2O === relationship.relationshipType))
+      return propBuilder.concat(`${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};`);
+    else if ((relationshipType.O2M === relationship.relationshipType)
+      || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+    )
+      return propBuilder.concat(`${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];`);
   }).join(``)%>
 
 }
