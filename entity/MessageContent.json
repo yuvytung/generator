@@ -1,0 +1,68 @@
+{
+  "name": "MessageContent",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "senderName",
+      "fieldType": "String",
+      "javadoc": "senderName     : tên người gửi"
+    },
+    {
+      "fieldName": "attach",
+      "fieldType": "byte[]",
+      "javadoc": "attachInfo     : đính kèm tệp ảnh video ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "javadoc": "content        : nội dung tin nhắn",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "byte[]",
+      "javadoc": "status         : trạng thái của tin nhắn này, đã gửi chưa , ai đã nhận được , đã xem chưa đã thu hồi hay đã xóa...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "searchField",
+      "fieldType": "byte[]",
+      "javadoc": "searchField    : lưu content tin nhắn lọc dấu ... để sau này search",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "messageContent",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "messageGroup",
+      "otherEntityRelationshipName": "content",
+      "relationshipName": "group"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The MessageContent entity.\\n<p>@why?             ->\\n<p>@use-to           -> Chứa Những tin nhắn trong các nhóm cụ thể\\n<p>@commonly-used-in ->\\n\\n<p>@describe         ->",
+  "entityTableName": "message_content",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210523062730",
+  "incrementalChangelog": false
+}

@@ -1,0 +1,44 @@
+{
+  "name": "NewsFeed",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "priorityIndex",
+      "fieldType": "Long",
+      "javadoc": "priorityIndex  : chỉ số ưu tiên (số lớn nhỏ ưu tiên càng cao)"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "newsFeed",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "newsFeed",
+      "relationshipName": "post"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The NewsFeed entity.\\n<p>@why?             -> người dùng mà xem trực tiếp các Post thì một số bài đăng sẽ không phù hợp dễ gây chán khi xem\\n<p>@use-to           -> Ở đây chứa thông tin của những Post hiển thị cho người dùng xem\\n<p>@commonly-used-in -> Được sử dụng trong phần hiển thị các bài đăng trên news feed\\n\\n<p>@describe         -> trong phần bản tin thay vì hiển thị trực tiếp các Post cho người dùng xem\\nta sẽ tính toán độ phù hợp và add vào bảng này sau đó cho người dùng xem",
+  "entityTableName": "news_feed",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143922",
+  "incrementalChangelog": false
+}

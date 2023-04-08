@@ -1,0 +1,48 @@
+{
+  "name": "Notification",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "notifyType",
+      "fieldType": "NotifyType",
+      "javadoc": "notifyType     : loại thông báo",
+      "fieldValues": "SYSTEM,MANAGER,ADMIN,USER,ANONYMOUS"
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "notification",
+      "relationshipName": "info",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Notification entity.\\n<p>@why?             ->\\n<p>@use-to           -> Chứa những thông báo đến người dùng\\n<p>@commonly-used-in -> Thường xuất hiện trong chức năng thông báo của người dùng\\n\\n<p>@describe         ->",
+  "entityTableName": "notification",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143925",
+  "incrementalChangelog": false
+}

@@ -1,0 +1,57 @@
+{
+  "name": "Album",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "Boolean",
+      "javadoc": "name           : tên của album",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "note",
+      "fieldType": "Long",
+      "javadoc": "note           : trú thích của album (ví dụ album đại học)"
+    },
+    {
+      "fieldName": "avatar",
+      "fieldType": "byte[]",
+      "javadoc": "avatar         : @type Json -> ảnh đại diện của Album",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "album",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "album",
+      "relationshipName": "image",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Album entity\\n<p>@why?             ->\\n<p>@use-to           -> Lưu thông tin về một bộ album của người dùng\\n<p>@commonly-used-in -> Người dùng nhóm một bộ ảnh vào một album\\n\\n<p>@describe         ->",
+  "entityTableName": "album",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143926",
+  "incrementalChangelog": false
+}

@@ -1,0 +1,52 @@
+{
+  "name": "VideoLiveStreamBuffer",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "bufferData",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "bufferNumber",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "path",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "videoLiveStreamBuffer",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "videoStream",
+      "otherEntityRelationshipName": "videoLiveStreamBuffer",
+      "relationshipName": "videoStream"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The VideoLiveStreamBuffer entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu từng phần video dưới dạng base64 khi đang stream video\\n<p>@commonly-used-in -> thường sử dụng khi đang live stream\\n\\n<p>@describe         -> stream xong và xử lý xong không cân thì xóa (đây chỉ là bảng tạm)",
+  "entityTableName": "video_live_stream_buffer",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143930",
+  "incrementalChangelog": false
+}

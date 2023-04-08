@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./module/auth.module";
-import { ormConfig } from "./orm.config";
+import { ormConfig } from "./database.config";
 import { config } from "./config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 <%-modules.redis ? `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";

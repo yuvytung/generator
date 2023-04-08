@@ -1,0 +1,91 @@
+{
+  "name": "MasterUser",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "fullName",
+      "fieldType": "String",
+      "javadoc": "fullName : tên hiển thị . thực ra chỉ là firstName + lastName . nhưng sẽ rất bất tiện",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nickname",
+      "fieldType": "String",
+      "javadoc": "nickname : biệt danh của người dùng"
+    },
+    {
+      "fieldName": "avatar",
+      "fieldType": "byte[]",
+      "javadoc": "avatar : @type Json -> ảnh đại diện của người dùng",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "quickInfo",
+      "fieldType": "byte[]",
+      "javadoc": "quickInfo      : @type Json -> thông tin nhanh về người dùng này dùng trong giới thiệu sơ khi chỉ chuột vào người dùng",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "masterUser",
+      "relationshipName": "user",
+      "ownerSide": true,
+      "useJPADerivedIdentifier": true,
+      "id": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "rankUser",
+      "otherEntityRelationshipName": "owner",
+      "relationshipName": "myRank",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "masterUser",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "permission",
+      "otherEntityRelationshipName": "owner",
+      "relationshipName": "permission"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "topicInterest",
+      "otherEntityRelationshipName": "masterUser",
+      "relationshipName": "topicInterest",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "owner",
+      "relationshipName": "owned"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The MasterUser entity.\\n<p>@why?             -> User (mặc định của jhipster) không cho thêm cột (nếu thêm thì sau khó update)\\n<p>@use-to:          -> Lưu thông tin cơ bản của một người dùng\\n<p>@commonly-used-in -> Thường sử dụng khi thao tác với tài khoản trong service trên server\\n\\n<p>@describe      \t  -> Những dữ liệu của tài khoản và thương xuyên sử dụng (trong service) sẽ được lưu ở đây",
+  "entityTableName": "master_user",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143906",
+  "incrementalChangelog": false
+}

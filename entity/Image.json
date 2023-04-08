@@ -1,0 +1,97 @@
+{
+  "name": "Image",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "javadoc": "name           : tên của ảnh . muốn lấy ảnh sẽ gọi theo tên này. sẽ ra một danh sách các anh gồm (ảnh nguyên gốc , các ảnh đã tối ưu , cắt ... từ ảnh gốc đó)"
+    },
+    {
+      "fieldName": "width",
+      "fieldType": "Integer",
+      "javadoc": "width          : chiều rộng ảnh"
+    },
+    {
+      "fieldName": "height",
+      "fieldType": "Integer",
+      "javadoc": "height         : chiều cao ảnh"
+    },
+    {
+      "fieldName": "quality",
+      "fieldType": "Float",
+      "javadoc": "quality        : chất lượng sau khi xử lý",
+      "fieldValidateRules": ["min", "max"],
+      "fieldValidateRulesMin": "0",
+      "fieldValidateRulesMax": "1"
+    },
+    {
+      "fieldName": "pixelSize",
+      "fieldType": "Integer",
+      "javadoc": "pixelSize      : kích thước của ảnh"
+    },
+    {
+      "fieldName": "priorityIndex",
+      "fieldType": "Long",
+      "javadoc": "priorityIndex  : chỉ số ưu tiên (số lớn nhỏ ưu tiên càng cao)"
+    },
+    {
+      "fieldName": "dataSize",
+      "fieldType": "Long",
+      "javadoc": "dataSize       : kích thước file theo byte"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "fileInfo",
+      "otherEntityRelationshipName": "image",
+      "relationshipName": "fileInfo",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "image",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "original",
+      "relationshipName": "processed"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "processed",
+      "relationshipName": "original"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "album",
+      "otherEntityRelationshipName": "image",
+      "relationshipName": "album",
+      "ownerSide": false
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Image entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu thông tin Ảnh mà người dùng upload lên\\n<p>@commonly-used-in ->\\n\\n<p>@describe         ->",
+  "entityTableName": "image",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143928",
+  "incrementalChangelog": false
+}

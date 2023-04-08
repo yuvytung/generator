@@ -1,0 +1,55 @@
+{
+  "name": "FileInfo",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "nameFile",
+      "fieldType": "String",
+      "javadoc": "nameFile       : tên của file nếu có"
+    },
+    {
+      "fieldName": "typeFile",
+      "fieldType": "String",
+      "javadoc": "typeFile       : loại file"
+    },
+    {
+      "fieldName": "path",
+      "fieldType": "String",
+      "javadoc": "path           : đường dẫn file trên server",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "1024"
+    },
+    {
+      "fieldName": "dataSize",
+      "fieldType": "Long",
+      "javadoc": "dataSize       : kích thước file theo byte"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "fileInfo",
+      "relationshipName": "info",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "<p>@what?            -> The FileInfo entity.\\n<p>@why?             ->\\n<p>@use-to           -> Quản lý thông tin về file, vị trí file ...\\n<p>@commonly-used-in -> Những file mà người dùng upload (ảnh video ...)\\n\\n<p>@describe         ->",
+  "entityTableName": "file_info",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143914",
+  "incrementalChangelog": false
+}

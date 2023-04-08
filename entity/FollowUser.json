@@ -1,0 +1,39 @@
+{
+  "name": "FollowUser",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "followUser",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "followUser",
+      "relationshipName": "follow"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The FollowUser entity.\\n<p>@why?             ->\\n<p>@use-to           -> Quản lý những người mà người dùng đăng ký theo dõi\\n<p>@commonly-used-in -> Chủ đề mà người dùng theo dõi\\n\\n<p>@describe         ->",
+  "entityTableName": "follow_user",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143911",
+  "incrementalChangelog": false
+}

@@ -48,8 +48,8 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
   async save(dto: D, creator?: string): Promise<D | undefined> {
     const entity = this._mapper.d2e(dto);
     if (creator) {
-      if (!entity.createdBy) entity.createdBy = creator;
-      entity.lastModifiedBy = creator;
+      if (!entity._createdBy) entity._createdBy = creator;
+      entity._updatedBy = creator;
     }
     const result = await this._repository.save(entity as any);
     <%-modules.elasticsearch ? `this._searchRepository.save(result);` : ``%>
@@ -58,7 +58,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
 
   async update(dto: D, updater?: string): Promise<D | undefined> {
     const entity = this._mapper.d2e(dto);
-    if (updater) entity.lastModifiedBy = updater;
+    if (updater) entity._updatedBy = updater;
     const result = await this._repository.save(entity as any);
     <%-modules.elasticsearch ? `this._searchRepository.save(result);` : ``%>
     return this._mapper.e2d(result);

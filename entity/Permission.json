@@ -1,0 +1,67 @@
+{
+  "name": "Permission",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "read",
+      "fieldType": "Boolean",
+      "javadoc": "quyền đọc"
+    },
+    {
+      "fieldName": "write",
+      "fieldType": "Boolean",
+      "javadoc": "quyền ghi và sửa"
+    },
+    {
+      "fieldName": "share",
+      "fieldType": "Boolean",
+      "javadoc": "quyền chia sẻ"
+    },
+    {
+      "fieldName": "delete",
+      "fieldType": "Boolean",
+      "javadoc": "quyền xóa"
+    },
+    {
+      "fieldName": "add",
+      "fieldType": "Boolean",
+      "javadoc": "quyền trao quyền cho user khác"
+    },
+    {
+      "fieldName": "level",
+      "fieldType": "Integer",
+      "javadoc": "cấp độ 0->* số nhỏ hơn sẽ có quyền lớn hơn"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "permission",
+      "relationshipName": "baseInfo"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "permission",
+      "relationshipName": "owner"
+    }
+  ],
+  "entityTableName": "permission",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210718095352",
+  "incrementalChangelog": false
+}

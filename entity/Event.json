@@ -1,0 +1,89 @@
+{
+  "name": "Event",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "javadoc": "title          : tiêu đề event"
+    },
+    {
+      "fieldName": "avatar",
+      "fieldType": "byte[]",
+      "javadoc": "avatar         : @type Json -> ảnh đại diện event",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "javadoc": "content        : nội dung event",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "EventType",
+      "javadoc": "type           :loại event",
+      "fieldValues": "DAY,MONTH,YEAR,ONLY_ONE"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "byte[]",
+      "javadoc": "description    : mô tả chi tết về event",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "startTime",
+      "fieldType": "Instant",
+      "javadoc": "startTime      : thời gian bắt đầu"
+    },
+    {
+      "fieldName": "endTime",
+      "fieldType": "Instant",
+      "javadoc": "endTime        : thời gian kết thúc"
+    },
+    {
+      "fieldName": "tagLine",
+      "fieldType": "String",
+      "javadoc": "tagLine        : thẻ cho event"
+    },
+    {
+      "fieldName": "imageCollection",
+      "fieldType": "byte[]",
+      "javadoc": "imageCollection: @type Json -> tập ảnh của event",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "videoCollection",
+      "fieldType": "byte[]",
+      "javadoc": "videoCollection: @type Json -> tập video của event",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "event",
+      "relationshipName": "info",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Event entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu những sự kiện\\n<p>@commonly-used-in -> Tạo Sự kiện\\n\\n<p>@describe         ->",
+  "entityTableName": "event",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143933",
+  "incrementalChangelog": false
+}

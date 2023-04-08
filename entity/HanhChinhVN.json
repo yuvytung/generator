@@ -1,0 +1,64 @@
+{
+  "name": "HanhChinhVN",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "javadoc": "name Example(\"Ninh Kiều\")",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "slug",
+      "fieldType": "String",
+      "javadoc": "slug Example(\"ninh-kieu\")",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "String",
+      "javadoc": "type Example(\"quan\")",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nameWithType",
+      "fieldType": "String",
+      "javadoc": "nameWithType Example(\"Quận Ninh Kiều\")",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "javadoc": "code Example(\"916\")",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "parentCode",
+      "fieldType": "String",
+      "javadoc": "parentCode Example(\"92\") , equal to 0 is the city",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "path",
+      "fieldType": "String",
+      "javadoc": "path Example(\"Ninh Kiều, Cần Thơ\")"
+    },
+    {
+      "fieldName": "pathWithType",
+      "fieldType": "String",
+      "javadoc": "pathWithType Example(\"Quận Ninh Kiều, Thành phố Cần Thơ\")"
+    }
+  ],
+  "relationships": [],
+  "entityTableName": "hanh_chinh_vn",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143905",
+  "incrementalChangelog": false
+}

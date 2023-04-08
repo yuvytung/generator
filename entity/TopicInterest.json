@@ -1,0 +1,70 @@
+{
+  "name": "TopicInterest",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "topicInterest",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "topicInterest",
+      "relationshipName": "post",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "pagePost",
+      "otherEntityRelationshipName": "topicInterest",
+      "relationshipName": "pagePost",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "groupPost",
+      "otherEntityRelationshipName": "topicInterest",
+      "relationshipName": "groupPost",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "topicInterest",
+      "relationshipName": "masterUser",
+      "ownerSide": false
+    }
+  ],
+  "javadoc": "<p>@what?            -> The TopicInterest entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu những chủ đề mà người dùng quan tâm\\n<p>@commonly-used-in -> chủ đề quan tâm để lọc ra cho người dùng xem\\n\\n<p>@describe         ->",
+  "entityTableName": "topic_interest",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143931",
+  "incrementalChangelog": false
+}

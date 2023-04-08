@@ -1,0 +1,40 @@
+{
+  "name": "GroupProfile",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "groupProfile",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "groupPost",
+      "otherEntityRelationshipName": "profile",
+      "relationshipName": "group",
+      "ownerSide": false
+    }
+  ],
+  "javadoc": "<p>@what?            -> The GroupProfile entity.\\n<p>@why?             ->\\n<p>@use-to           -> Những thông tin trong phần giới thiệu của nhóm được lưu tại đây\\n<p>@commonly-used-in -> Thường thấy trong phần giới thiệu của nhóm\\n\\n<p>@describe         -> Đây là một bảng NoSQL dữ liệu một số field ở dưới dạng Json",
+  "entityTableName": "group_profile",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143921",
+  "incrementalChangelog": false
+}

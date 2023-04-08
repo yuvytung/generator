@@ -1,0 +1,105 @@
+{
+  "name": "UserProfile",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "work",
+      "fieldType": "byte[]",
+      "javadoc": "work : nơi làm việc\\n@data-type : Json\\n@describe : những nơi, công ty đã từng làm việc , khoảng thời gian vị trí ...\\n@example :\\n-companyName\\n-companyAddress\\n-companyContact\\n@author           -> yuvytung.",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "education",
+      "fieldType": "byte[]",
+      "javadoc": "education : học vấn\\n@data-type : Json\\n@describe : học vấn thế nào tốt nghiệp trường nào học tại đâu khoảng thời gian nào , bằng cấp chứng chỉ ra sao  ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "placesLived",
+      "fieldType": "byte[]",
+      "javadoc": "placesLived : những nơi đã từng sống\\n@data-type : Json\\n@describe : sống ở đâu khoảng thời gian nào có gì tại nơi sống ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "contactInfo",
+      "fieldType": "byte[]",
+      "javadoc": "contactInfo : những thông in liên hệ cơ bản\\n@data-type : Json\\n@describe : số điện thoại email , địa chỉ ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "webSocialLinks",
+      "fieldType": "byte[]",
+      "javadoc": "webSocialLinks : các mạng xã hội sử dụng . trang web ...\\n@data-type : Json\\n@describe : thông tin về mạng xã hội sử dụng ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "basicInfo",
+      "fieldType": "byte[]",
+      "javadoc": "basicInfo : thông tin cơ bản của người dùng\\n@data-type : Json\\n@describe : những thông tin tóm tắt để giới thiệu nổi bật",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "relationshipInfo",
+      "fieldType": "byte[]",
+      "javadoc": "relationshipInfo : những mối liên hệ với ai đó\\n@data-type : Json\\n@describe : ví dụ như đã kết hôn với ai ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "family",
+      "fieldType": "byte[]",
+      "javadoc": "family : những người trong gia đình\\n@data-type : Json\\n@describe : anh em bạn bè người thân trong gia đình",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "detailAbout",
+      "fieldType": "byte[]",
+      "javadoc": "detailAbout : chi tiết về bản thân mình\\n@data-type : Json\\n@describe : những thôn tin chi tết về bản thân như ngày tháng năm sinh nơi ở ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "lifeEvents",
+      "fieldType": "byte[]",
+      "javadoc": "lifeEvents : sự kiên lớn trong cuộc đời\\n@data-type : Json\\n@describe : những sự kiện như sinh , tốt nghiệp . lấy vợ chồng , có con ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "hobbies",
+      "fieldType": "byte[]",
+      "javadoc": "hobbies : sở thích của bản thân\\n@data-type : Json\\n@describe : sở thích của ban thân là gì , phim , nhạc , sách , ...",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "featured",
+      "fieldType": "byte[]",
+      "javadoc": "featured : điểm nổi bật của bản thân\\n@data-type : Json\\n@describe : cá tính thế nào , đã làm nhứng gì rất đặc sắc ....",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "userProfile",
+      "relationshipName": "info",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "@what?         \t  -> The UserProfile entity .\\n@why?          \t  ->\\n@use-to:       \t  -> Lưu thông tin mở rộng của người dùng (trường học cơ quan làm việc ...)\\n@commonly-used-in -> Trang cá nhân (trang giới thiệu)\\n\\n@describe      \t  -> Đây là bảng NoSQL một số trường ở dưới dạng JSON ,NoSQL vì dữ liệu mỗi trường học , cơ quan ,nới sống ... đôi khikhông giống nhau",
+  "entityTableName": "user_profile",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143907",
+  "incrementalChangelog": false
+}

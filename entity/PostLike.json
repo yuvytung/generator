@@ -1,0 +1,51 @@
+{
+  "name": "PostLike",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "reaction",
+      "fieldType": "ReactionType",
+      "fieldValues": "LIKE,LOVE,LAUGH,SURPRISED,CRY,ANGRY",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "postLike",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "like",
+      "relationshipName": "post"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "postComment",
+      "otherEntityRelationshipName": "like",
+      "relationshipName": "comment"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The PostLike entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu thông tin về những lượt like của bài đăng\\n<p>@commonly-used-in ->\\n\\n<p>@describe         ->",
+  "entityTableName": "post_like",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143920",
+  "incrementalChangelog": false
+}

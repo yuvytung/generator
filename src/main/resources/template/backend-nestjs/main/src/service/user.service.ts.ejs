@@ -53,10 +53,10 @@ export class UserService {
       await transformPassword(user);
     }
     if (creator) {
-      if (!user.createdBy) {
-        user.createdBy = creator;
+      if (!user._createdBy) {
+        user._createdBy = creator;
       }
-      user.lastModifiedBy = creator;
+      user._updatedBy = creator;
     }
     const result = await this.userRepository.save(user);
     return UserMapper.fromEntityToDTO(this.flatAuthorities(result));

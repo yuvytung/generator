@@ -1,21 +1,38 @@
+<%
+const dto = _entity.name.pascal().concat(dtoSuffix);
+-%>
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { <%-_entity.name.pascal()%><%-dtoSuffix%> } from '../../service/dto/<%-_entity.name.kebab()%>.dto';
-import { <%-_entity.name.pascal()%>Service } from '../../service/<%-_entity.name.kebab()%>.service';
 import {
   AuthGuard,
-  RolesGuard
+  Roles,
+  RolesGuard,
+  RoleType
 } from '../../security';
 import {LoggingInterceptor} from '../../client/interceptors/logging.interceptor';
 import {AbstractBaseController} from "./abstract.base.controller";
+import {Request} from "../../client/request";
+
+import { <%-_entity.name.pascal()%><%-dtoSuffix%> } from '../../service/dto/<%-_entity.name.kebab()%>.dto';
+import { <%-_entity.name.pascal()%>Service } from '../../service/<%-_entity.name.kebab()%>.service';
 
 
 @Controller('api/<%-_entity.name.kebab()%>s')
@@ -23,10 +40,94 @@ import {AbstractBaseController} from "./abstract.base.controller";
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiBearerAuth()
 @ApiTags('<%-_entity.name.kebab()%>s')
-export class <%-_entity.name.pascal()%>Controller extends AbstractBaseController<<%-_entity.name.pascal()%><%-dtoSuffix%>> {
+export class <%-_entity.name.pascal()%>Controller extends AbstractBaseController<<%-_entity.name.pascal().concat(dtoSuffix)%>> {
   constructor(
     protected readonly service: <%-_entity.name.pascal()%>Service,
   ) {
     super(service);
+  }
+
+
+  @Get("/")
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: "List all records",
+    type: <%-dto%>,
+  })
+  public override async getAll(@Req() req: Request): Promise<<%-dto%>[]> {
+    return super.getAll(req);
+  }
+
+  @Get("/_search")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Search entity (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "Search all records by keywords.",
+    type: <%-dto%>,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  public override async search(@Req() req: Request, @Query("keywords") keywords: string): Promise<<%-dto%>[]> {
+    return super.search(req, keywords);
+  }
+
+  @Get("/:id")
+  @Roles(RoleType.USER)
+  @ApiResponse({
+    status: 200,
+    description: "The found record",
+    type: <%-dto%>,
+  })
+  public override async getOne(@Param("id") id: number): Promise<<%-dto%>> {
+    return super.getOne(id);
+  }
+
+  @Post("/")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Create entity (default)" })
+  @ApiResponse({
+    status: 201,
+    description: "The record has been successfully created.",
+    type: <%-dto%>,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  public override async post(@Req() req: Request, @Body() dto: <%-dto%>): Promise<<%-dto%>> {
+    return super.post(req, dto);
+  }
+
+  @Put("/")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Update entity (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: <%-dto%>,
+  })
+  public override async put(@Req() req: Request, @Body() dto: <%-dto%>): Promise<<%-dto%>> {
+    return super.put(req, dto);
+  }
+
+  @Put("/:id")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: <%-dto%>,
+  })
+  public override async putId(@Req() req: Request, @Body() dto: <%-dto%>): Promise<<%-dto%>> {
+    return super.putId(req, dto);
+  }
+
+  @Delete("/:id")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Delete entity (default)" })
+  @ApiResponse({
+    status: 204,
+    description: "The record has been successfully deleted.",
+  })
+  public override async deleteById(@Req() req: Request, @Param("id") id: number): Promise<void> {
+    return super.deleteById(req, id);
   }
 }

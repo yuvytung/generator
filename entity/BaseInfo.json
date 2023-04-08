@@ -1,0 +1,104 @@
+{
+  "name": "BaseInfo",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "processStatus",
+      "fieldType": "ProcessStatus",
+      "javadoc": "processStatus *: @defaultValue( DONE ) -> tình trạng xử lý sử dụng trong phê duyệt",
+      "fieldValues": "NOT_PROCESSED,PROCESSING,PROCESSED,NEED_PROCESS,NEED_PROCESS_NOW,NEED_HANDLE,NEED_HANDLE_NOW,ERROR,DONE"
+    },
+    {
+      "fieldName": "modifiedClass",
+      "fieldType": "String",
+      "javadoc": "modifiedClass *: thực hiện sửa đổi bản ghi này ở service class nào"
+    },
+    {
+      "fieldName": "createdDate",
+      "fieldType": "Instant",
+      "javadoc": "createdDate *  : thời gian tạo ra bản ghi này (lần đầu tiên)"
+    },
+    {
+      "fieldName": "modifiedDate",
+      "fieldType": "Instant",
+      "javadoc": "modifiedDate * : thời gian sửa bản ghi này"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "byte[]",
+      "javadoc": "notes *        : @type Json -> chú thích thêm hoặc những lưu ý cho bản ghi này ở dưới dạng Json\"",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "deleted",
+      "fieldType": "Boolean",
+      "javadoc": "deleted *      : @defaultValue( false ) -> đánh dấu là đã xóa"
+    },
+    {
+      "fieldName": "priorityIndex",
+      "fieldType": "Long",
+      "javadoc": "priorityIndex *: chỉ số ưu tiên (số lớn nhỏ ưu tiên càng cao)"
+    },
+    {
+      "fieldName": "countUse",
+      "fieldType": "Long",
+      "javadoc": "countUse *     : đếm số lần truy cập vào bản ghi này để xem sửa xóa"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "historyUpdate",
+      "otherEntityRelationshipName": "baseInfo",
+      "relationshipName": "history"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "baseInfo",
+      "relationshipName": "createdBy"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "baseInfo",
+      "relationshipName": "modifiedBy"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "owned",
+      "relationshipName": "owner"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "classInfo",
+      "otherEntityRelationshipName": "baseInfo",
+      "relationshipName": "classInfo"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "permission",
+      "otherEntityRelationshipName": "baseInfo",
+      "relationshipName": "permission"
+    }
+  ],
+  "javadoc": "BaseInfo",
+  "entityTableName": "base_info",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143934",
+  "incrementalChangelog": false
+}

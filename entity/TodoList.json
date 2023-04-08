@@ -1,0 +1,42 @@
+{
+  "name": "TodoList",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "todoList",
+      "relationshipName": "info",
+      "ownerSide": true
+    }
+  ],
+  "javadoc": "<p>@what?            -> The TodoList entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu danh sách công việc gợi ý cho người dùng thực hiện\\n<p>@commonly-used-in -> Hiển thị bảng TodoList cho người dùng thực hiện\\n\\n<p>@describe         ->",
+  "entityTableName": "todo_list",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143932",
+  "incrementalChangelog": false
+}

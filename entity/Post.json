@@ -1,0 +1,105 @@
+{
+  "name": "Post",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "postInType",
+      "fieldType": "PostInType",
+      "javadoc": "postInType     : bài đăng này đăng ở đâu : người dùng , nhóm hay trang",
+      "fieldValues": "GROUP,USER,PAGE"
+    },
+    {
+      "fieldName": "postType",
+      "fieldType": "PostType",
+      "javadoc": "postType       : bài đăng này đơn giản , phức tạp hay dùng froala",
+      "fieldValues": "SIMPLE,ADVANCE,FROALA"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "javadoc": "content        : @type Json -> nội dùng bài đăng dữ liệu tùy theo postType",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "searchField",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "postComment",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "comment"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "postLike",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "like"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "parent",
+      "relationshipName": "children"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "groupPost",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "group"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "pagePost",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "page"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "children",
+      "relationshipName": "parent"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "newsFeed",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "newsFeed"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "topicInterest",
+      "otherEntityRelationshipName": "post",
+      "relationshipName": "topicInterest",
+      "ownerSide": false
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Post entity\\n<p>@why?             ->\\n<p>@use-to           -> lưu các bài viết của người dùng\\n<p>@commonly-used-in -> đăng và xem các bài viết\\n\\n<p>@describe         ->",
+  "entityTableName": "post",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143918",
+  "incrementalChangelog": false
+}

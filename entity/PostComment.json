@@ -1,0 +1,62 @@
+{
+  "name": "PostComment",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "postComment",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "postLike",
+      "otherEntityRelationshipName": "comment",
+      "relationshipName": "like"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "postComment",
+      "otherEntityRelationshipName": "parent",
+      "relationshipName": "reply"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "post",
+      "otherEntityRelationshipName": "comment",
+      "relationshipName": "post"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "postComment",
+      "otherEntityRelationshipName": "reply",
+      "relationshipName": "parent"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The PostComment entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu những bình luận của người dùng trong một bài đăng cụ thể\\n<p>@commonly-used-in -> được biết dưới dạng bình luận của các bài đăng\\n\\n<p>@describe         ->",
+  "entityTableName": "post_comment",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143919",
+  "incrementalChangelog": false
+}

@@ -1,0 +1,44 @@
+{
+  "name": "Friend",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "friendType",
+      "fieldType": "FriendType",
+      "fieldValues": "FRIEND,BEST_FRIEND,FAMILY,BLOCK"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "friend",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "friend",
+      "relationshipName": "friend"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The Friend entity.\\n<p>@why?             ->\\n<p>@use-to           -> Quản lý phần kết bạn, các mối liên hệ bạn bè ...\\n<p>@commonly-used-in -> Bạn bè và các liên kết bạn bè ...\\n\\n<p>@describe         ->",
+  "entityTableName": "friend",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143910",
+  "incrementalChangelog": false
+}

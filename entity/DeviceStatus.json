@@ -1,0 +1,66 @@
+{
+  "name": "DeviceStatus",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "deviceName",
+      "fieldType": "String",
+      "javadoc": "deviceName     : tên của thiết bị nếu có"
+    },
+    {
+      "fieldName": "deviceType",
+      "fieldType": "DeviceType",
+      "javadoc": "deviceName     : loại thiết bị",
+      "fieldValues": "MOBILE,TABLE,DESKTOP,LAPTOP,OTHER_DEVICE"
+    },
+    {
+      "fieldName": "deviceStatus",
+      "fieldType": "StatusName",
+      "javadoc": "deviceStatus   : trạng thái hiện tại của thiết bị là gì",
+      "fieldValues": "ONLINE,OFFLINE,BUSY,TEMPORARILY_ABSENT"
+    },
+    {
+      "fieldName": "lastVisited",
+      "fieldType": "Instant",
+      "javadoc": "lastVisited    : thời gian truy cập lần cuối cùng của thiết bị này"
+    },
+    {
+      "fieldName": "statusComment",
+      "fieldType": "String",
+      "javadoc": "statusComment  : người dùng comment lại trạng thái nếu muốn"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "deviceStatus",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "accountStatus",
+      "otherEntityRelationshipName": "deviceStatus",
+      "relationshipName": "accountStatus"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The DeviceStatus entity.\\n<p>@why?             ->\\n<p>@use-to           -> Những thiết bị đang truy cập thông tin chi tiết về chúng ...\\n<p>@commonly-used-in -> Những nghiệp vụ cần biết chi tiết trang thái của các thiết bị\\n\\n<p>@describe         ->",
+  "entityTableName": "device_status",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143909",
+  "incrementalChangelog": false
+}

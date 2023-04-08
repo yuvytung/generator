@@ -1,0 +1,55 @@
+{
+  "name": "MessageGroup",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "groupName",
+      "fieldType": "String",
+      "javadoc": "groupName"
+    },
+    {
+      "fieldName": "avatar",
+      "fieldType": "byte[]",
+      "javadoc": "avatar : @type Json -> ảnh đại diện của MessageGroup",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "addBy",
+      "fieldType": "String",
+      "javadoc": "addBy"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "messageGroup",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "messageContent",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "content"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The MessageGroup entity.\\n<p>@why?             ->\\n<p>@use-to           -> Chứa thông tin các nhóm mà hiện tại người dùng đang ở trong đó (phần nhắn tin)\\n<p>@commonly-used-in -> Hiển thị các tin nhắn\\n\\n<p>@describe         -> một nhóm tạo ra sẽ là một uuid . nếu nhắn tin cặp thì sẽ sắp xếp login sau đó hash md5 rồi chuyển thành định dạng uuid",
+  "entityTableName": "message_group",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210523062729",
+  "incrementalChangelog": false
+}

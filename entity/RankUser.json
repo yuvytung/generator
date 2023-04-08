@@ -1,0 +1,50 @@
+{
+  "name": "RankUser",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "ratingPoints",
+      "fieldType": "Float"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "rankUser",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "rankGroup",
+      "otherEntityRelationshipName": "rankUser",
+      "relationshipName": "rankGroup"
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "masterUser",
+      "otherEntityRelationshipName": "myRank",
+      "relationshipName": "owner",
+      "ownerSide": false
+    }
+  ],
+  "javadoc": "<p>@what?            -> The RankUser entity.\\n<p>@why?             ->\\n<p>@use-to           -> Xếp hạng của bản thân Trong toàn mạng , trong khu vực , trong nhóm người\\n<p>@commonly-used-in -> thường thấy trong phần\\n\\n<p>@describe         ->",
+  "entityTableName": "rank_user",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143923",
+  "incrementalChangelog": false
+}

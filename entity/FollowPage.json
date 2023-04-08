@@ -1,0 +1,39 @@
+{
+  "name": "FollowPage",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "followPage",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "pagePost",
+      "otherEntityRelationshipName": "followed",
+      "relationshipName": "pageDetails"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The FollowPage entity.\\n<p>@why?             ->\\n<p>@use-to           -> Quản lý các trang mà người dùng đăng ký theo dõi\\n<p>@commonly-used-in -> Chủ đề mà người dùng theo dõi\\n\\n<p>@describe         ->",
+  "entityTableName": "follow_page",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143913",
+  "incrementalChangelog": false
+}

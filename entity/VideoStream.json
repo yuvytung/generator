@@ -1,0 +1,50 @@
+{
+  "name": "VideoStream",
+  "fields": [
+    {
+      "fieldName": "uuid",
+      "fieldType": "UUID",
+      "javadoc": "uuid *         : this is reference key (client) .primary key được sử dụng trong các service còn uuid này để định danh giao tiếp với client(frontend)",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "isLivestreaming",
+      "fieldType": "Boolean"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "video",
+      "otherEntityRelationshipName": "videoStream",
+      "relationshipName": "video",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "baseInfo",
+      "otherEntityRelationshipName": "videoStream",
+      "relationshipName": "info",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "videoLiveStreamBuffer",
+      "otherEntityRelationshipName": "videoStream",
+      "relationshipName": "videoLiveStreamBuffer"
+    }
+  ],
+  "javadoc": "<p>@what?            -> The VideoStream entity.\\n<p>@why?             ->\\n<p>@use-to           -> Lưu thông tin video ... khi đã kết thúc stream\\n<p>@commonly-used-in -> Sau khi kết thức stream thì video lưu lai cũng chỉ tương tự như một video thông thường\\n\\n<p>@describe         ->",
+  "entityTableName": "video_stream",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "searchEngine": "elasticsearch",
+  "changelogDate": "20210710143929",
+  "incrementalChangelog": false
+}
