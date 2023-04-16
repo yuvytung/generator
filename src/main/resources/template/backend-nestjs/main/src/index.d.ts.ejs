@@ -1,6 +1,8 @@
 import { Logger } from "log4js";
 <%-modules.redis ? `import Redis from "ioredis";` : ``%>
+
 declare global {
+  // eslint-disable-next-line no-var
   var log: Logger;
 }
 <%-modules.redis ?

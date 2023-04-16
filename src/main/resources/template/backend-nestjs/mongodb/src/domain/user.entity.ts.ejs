@@ -1,0 +1,42 @@
+import { Authority } from "./authority.entity";
+import { BaseEntity } from "./base/base.entity";
+import { Exclude } from "class-transformer";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
+
+@Schema({ collection: User.Name })
+export class User extends BaseEntity {
+  static readonly Name = "nhi_user";
+  static Schema: mongoose.Schema<User>;
+
+  @Prop({ unique: true })
+  login: string;
+  @Prop({ nullable: true })
+  firstName?: string;
+  @Prop({ nullable: true })
+  lastName?: string;
+  @Prop()
+  email: string;
+  @Prop({ default: false })
+  activated?: boolean;
+  @Prop({ default: "en" })
+  langKey?: string;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Authority.Name }] })
+  authorities?: Authority[];
+
+  @Prop({})
+  @Exclude()
+  password: string;
+  @Prop({ nullable: true })
+  imageUrl?: string;
+  @Prop({ nullable: true })
+  activationKey?: string;
+  @Prop({ nullable: true })
+  resetKey?: string;
+  @Prop({ nullable: true })
+  resetDate?: Date;
+}
+
+User.Schema = SchemaFactory.createForClass(User);
+User.Schema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

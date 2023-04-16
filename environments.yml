@@ -1,15 +1,15 @@
 ejs:
   environment:
     original:
-      baseName: catiny
-      serverPort: 8081
-      prefix: nhi
+      baseName: SkillMapService
+      serverPort: 21200
+      prefix: sys
       suffix: ""
       entityPrefix: ""
       entitySuffix: ""
       dtoSuffix: DTO
       nativeLanguage: en
-      packageFolder: com/jhipster/node
+      packageFolder: com/regitiny/catiny/skillmap
       serviceDiscoveryType: true
       websocket: true
       searchEngine: elasticsearch
@@ -25,6 +25,7 @@ modules:
 #    entity: true
     elasticsearch: true
     redis: true
+    mongodb: true
 #  frontend-reactjs:
 #    cypress: true
 #    protractor: true

@@ -1,12 +1,20 @@
-require("dotenv").config({ path: ".env" });
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
+import { config as configEnv } from "dotenv";
+
+configEnv({ path: ".env" });
 import { NestFactory } from "@nestjs/core";
 import cloudConfigClient from "cloud-config-client";
 import { AppModule } from "./app.module";
 import { setupSwagger } from "./swagger";
 import { config } from "./config";
 import { LoggerConfig } from "./logger.config";
-import { Logger, ValidationPipe, BadRequestException } from "@nestjs/common";
+import { BadRequestException, Logger, ValidationPipe } from "@nestjs/common";
 import * as fs from "fs";
+
+import { Eureka } from "eureka-js-client";
+
+import { parse } from "url";
 
 const logger: Logger = new Logger("Main");
 const port = process.env.NODE_SERVER_PORT || config.get("server.port");
@@ -58,8 +66,7 @@ async function loadCloudConfig(): Promise<void> {
 function registerAsEurekaService(): void {
   if (useJHipsterRegistry) {
     logger.log(`Registering with eureka ${config.get("cloud.config.uri")}`);
-    const Eureka = require("eureka-js-client").Eureka;
-    const eurekaUrl = require("url").parse(config.get("cloud.config.uri"));
+    const eurekaUrl = parse(config.get("cloud.config.uri"));
     const client = new Eureka({
       instance: {
         app: config.get("eureka.instance.appname"),
@@ -93,7 +100,7 @@ function registerAsEurekaService(): void {
       },
     });
     client.logger.level("debug");
-    client.start(error => logger.log(error || "Eureka registration complete"));
+    client.start((error) => logger.log(error || "Eureka registration complete"));
   }
 }
 

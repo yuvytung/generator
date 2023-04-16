@@ -1,0 +1,17 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { BaseEntity } from "./base/base.entity";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
+
+@Schema({ collection: Authority.Name })
+export class Authority extends BaseEntity {
+  static readonly Name = "nhi_authority";
+  static Schema: mongoose.Schema<Authority>;
+
+  @ApiProperty({ example: "ROLE_USER", description: "User role" })
+  @Prop({ unique: true })
+  name: string;
+}
+
+Authority.Schema = SchemaFactory.createForClass(Authority);
+Authority.Schema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

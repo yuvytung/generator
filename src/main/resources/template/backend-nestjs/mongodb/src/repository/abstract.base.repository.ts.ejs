@@ -1,0 +1,153 @@
+import { FilterQuery, HydratedDocument, Model, ProjectionType, QueryOptions } from "mongoose";
+import { BaseEntity } from "../domain/base/base.entity";
+
+export type Options<Entity> = QueryOptions<Entity> | null | undefined;
+export type Projection<Entity> = ProjectionType<Entity> | null | undefined;
+
+export class AbstractBaseRepository<Entity extends BaseEntity> {
+  constructor(protected readonly _model: Model<Entity>) {}
+
+  private commonBuilder({
+    filter = {},
+    options = {},
+    projection = {},
+  }: {
+    filter?: FilterQuery<Entity>;
+    options?: Options<Entity>;
+    projection?: Projection<Entity>;
+  }) {
+    Object.assign(filter, { _isDeleted: false });
+    Object.assign(projection, {});
+    Object.assign(options, {});
+  }
+
+  public async findById(
+    id: string,
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<Entity> {
+    this.commonBuilder({ options, projection });
+    return this._model
+      .findById(id, projection, options)
+      .lean()
+      .exec()
+      .then((r) => r as Entity);
+  }
+
+  public async findOne(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<Entity> {
+    this.commonBuilder({ filter, options, projection });
+    return this._model
+      .findOne(filter, projection, options)
+      .lean()
+      .exec()
+      .then((r) => r as Entity);
+  }
+
+  public async find(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: ProjectionType<Entity> | null | undefined = {},
+  ): Promise<Entity[]> {
+    this.commonBuilder({ filter, options, projection });
+    return this._model
+      .find(filter, projection, options)
+      .lean()
+      .exec()
+      .then((r) => r as Entity[]);
+  }
+
+  public async findAndCount(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<[Entity[], number]> {
+    this.commonBuilder({ filter, options, projection });
+    const resultFind = await this._model.find(filter, projection, options).lean().exec();
+    const resultCount = await this._model.count(filter).exec();
+    return [resultFind, resultCount];
+  }
+
+  public async save(entity: Entity, options: Options<Entity> = {}): Promise<Entity> {
+    this.commonBuilder({ options });
+    if (entity.id || entity._id) {
+      return this._model
+        .findByIdAndUpdate(entity.id || entity._id, entity, options)
+        .lean()
+        .exec()
+        .then((r) => r as Entity);
+    }
+    return this._model.create(entity);
+  }
+
+  public async remove(entityOrId: string | Entity, options: Options<Entity> = {}) {
+    this.commonBuilder({ options });
+    if (typeof entityOrId === "string") {
+      return this._model
+        .findOneAndUpdate({ _id: entityOrId }, { _isDeleted: true }, options)
+        .lean()
+        .exec();
+    } else if (entityOrId?.id || entityOrId?._id) {
+      return this._model
+        .findOneAndUpdate({ _id: entityOrId?.id || entityOrId?._id }, { _isDeleted: true }, options)
+        .lean()
+        .exec();
+    }
+  }
+
+  public async _findById(
+    id: string,
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<HydratedDocument<Entity>> {
+    return this._model.findById(id, projection, options).exec();
+  }
+
+  public async _findOne(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<HydratedDocument<Entity>> {
+    return this._model.findOne(filter, projection, options).exec();
+  }
+
+  public async _find(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: ProjectionType<Entity> | null | undefined = {},
+  ): Promise<HydratedDocument<Entity>[]> {
+    return this._model.find(filter, projection, options).exec();
+  }
+
+  public async _findAndCount(
+    filter: FilterQuery<Entity> = {},
+    options: Options<Entity> = {},
+    projection: Projection<Entity> = {},
+  ): Promise<[HydratedDocument<Entity>[], number]> {
+    const resultFind = await this._model.find(filter, projection, options).exec();
+    const resultCount = await this._model.count(filter).exec();
+    return [resultFind, resultCount];
+  }
+
+  public async _save(
+    entity: Entity,
+    options: Options<Entity> = {},
+  ): Promise<HydratedDocument<Entity>> {
+    if (entity.id || entity._id) {
+      return this._model.findByIdAndUpdate(entity.id || entity._id, entity, options).exec();
+    } else {
+      return this._model.create(entity).then((r) => this._model.findById(r._id).exec());
+    }
+  }
+
+  public async _remove(entityOrId: string | Entity, options: Options<Entity> = {}) {
+    if (typeof entityOrId === "string") {
+      return this._model.findByIdAndRemove(entityOrId, options).lean().exec();
+    } else if (entityOrId?.id || entityOrId?._id) {
+      return this._model.findByIdAndRemove(entityOrId?.id || entityOrId?._id, options).exec();
+    }
+  }
+}
