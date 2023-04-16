@@ -6,14 +6,12 @@
   "description": "project generate code.",
   "scripts": {
     "postinstall": "husky install",
-    "coffeescript:build": "coffee -bct -o build/out/src/main/coffeescript src/main/coffeescript",
-    "coffeescript:render": "npm run coffeescript:build && node build/out/src/main/coffeescript/index.js",
-    "start": "node src/main/coffeescript/index.mjs",
-    "render": "node src/main/coffeescript/index.mjs render ",
-    "entity:render": "node src/main/coffeescript/index.mjs entity_render ",
-    "convert": "node src/main/coffeescript/index.mjs convert",
-    "lint": "eslint 'src/main/coffeescript/' --fix --ext .coffee",
-    "prettier": "prettier --write 'src/main/coffeescript/**/*.mjs'",
+    "start": "node src/main/javascript/index.mjs",
+    "render": "node src/main/javascript/index.mjs render ",
+    "entity:render": "node src/main/javascript/index.mjs entity_render ",
+    "convert": "node src/main/javascript/index.mjs convert",
+    "lint": "eslint 'src/main/javascript/' --fix --ext .mjs",
+    "prettier": "prettier --write 'src/main/javascript/**/*.mjs'",
     "clean": "rm -rf build",
     "test": "npm run clean && npm run render && chmod +x src/main/bash/main.sh && ./src/main/bash/main.sh"
   },
@@ -24,7 +22,7 @@
     }
   },
   "lint-staged": {
-    "{src,apps,libs}/**/*.coffee": [
+    "{src,apps,libs}/**/*.mjs": [
       "npm run lint",
       "npm run prettier"
     ]
@@ -37,11 +35,12 @@
     "yaml": "^2.1.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
     "@babel/core": "^7.19.0",
     "@babel/preset-env": "^7.19.0",
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "@nerevu/prettier-coffee": "^1.1.0",
+    "babel-eslint": "^10.1.0",
     "coffeescript": "^2.5.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "7.2.0",
@@ -54,5 +53,5 @@
     "prettier": "github:helixbass/prettier#prettier-v2.1.0-dev.100-gitpkg",
     "prettier-plugin-coffeescript": "^0.1.5"
   },
-  "main": "src/main/coffeescript"
+  "main": "src/main/javascript"
 }

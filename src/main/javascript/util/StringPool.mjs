@@ -1,6 +1,5 @@
 import Case from "case";
 
-// eslint-disable-next-line import/prefer-default-export
 export class StringPool {
   static BLANK = "";
 
@@ -9,7 +8,6 @@ export class StringPool {
   static caseProcessing = resource => {
     const result = {};
     Object.keys(resource).forEach(key => {
-      // eslint-disable-next-line coffee/no-return-assign
       result[`_${key}`] = {
         snake: Case.snake(resource[key]), // snake_case
         pascal: Case.pascal(resource[key]), // PascalCase

@@ -14,7 +14,7 @@ Object.assign(ejsEnv, StringPool.caseProcessing(environments.ejs.environment.ori
 const processTemplateEjs = moduleName => {
   const subModules = environments.modules[moduleName];
   const subModulesIncluded = ["main"]
-    .concat((subModules && Object.keys(subModules))?.filter(key => subModules[key]))
+    .concat((subModules && Object.keys(subModules)).filter(key => subModules[key]))
     .join("|");
   const moduleTemplatePath = `src/main/resources/template/${moduleName}`;
   const moduleOutputPath = `build/output/${moduleName}`;
@@ -22,7 +22,7 @@ const processTemplateEjs = moduleName => {
     .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.ejs`, {})
     .map(async pathInput => {
       const pathOutput = pathInput
-        .replace(new RegExp(`${moduleTemplatePath}/\w+`), moduleOutputPath)
+        .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
         .replace(/\.ejs$/g, "");
       fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
       fs.writeFileSync(
@@ -38,7 +38,7 @@ const processTemplateEjs = moduleName => {
 const processTemplateBinary = moduleName => {
   const subModules = environments.modules[moduleName];
   const subModulesIncluded = ["main"]
-    .concat((subModules && Object.keys(subModules))?.filter(key => subModules[key]))
+    .concat((subModules && Object.keys(subModules)).filter(key => subModules[key]))
     .join("|");
   const moduleTemplatePath = `src/main/resources/template/${moduleName}`;
   const moduleOutputPath = `build/output/${moduleName}`;
@@ -46,7 +46,7 @@ const processTemplateBinary = moduleName => {
     .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.binary`, {})
     .map(pathInput => {
       const pathOutput = pathInput
-        .replace(new RegExp(`${moduleTemplatePath}/\w+`), moduleOutputPath)
+        .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
         .replace(/\.binary$/g, "");
       fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
       fs.copyFileSync(pathInput, pathOutput);

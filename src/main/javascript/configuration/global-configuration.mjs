@@ -14,9 +14,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 global.app = {
-  workDirFullPath: dirname(__filename),
+  workDirFullPath: dirname(__dirname),
   rootDirPath: process.env.PWD,
-  workDirPath: dirname(__filename).replace(`${process.env.PWD}/`, StringPool.BLANK),
+  workDirPath: dirname(__dirname).replace(`${process.env.PWD}/`, StringPool.BLANK),
   template: "src/main/resources/template",
 };
 

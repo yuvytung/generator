@@ -68,7 +68,6 @@ const processTemplateEjs = moduleName => {
         const pathOutput = pathInput
           .replace(new RegExp(`${moduleTemplatePath}/[\\w]+`), moduleOutputPath)
           .replace(/\.ejs$/g, "")
-          // eslint-disable-next-line coffee/no-underscore-dangle
           .replace(/__entity/g, `${epCaseProcessed._name.kebab}`);
         fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
         fs.writeFileSync(
