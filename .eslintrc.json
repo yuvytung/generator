@@ -1,12 +1,7 @@
 {
-  "parser": "eslint-plugin-coffee",
-  "plugins": ["coffee"],
+  "parser": "esprima",
   "extends": [
     "eslint:recommended",
-    "plugin:coffee/eslint-recommended",
-    "plugin:coffee/disable-incompatible",
-    "plugin:coffee/airbnb-base",
-    "plugin:coffee/prettier",
     "prettier",
     "eslint-config-prettier"
   ],
