@@ -9,10 +9,13 @@ import { transformPassword } from "../security";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(User<%-entitySuffix%>)
+    private userRepository: UserRepository
+  ) {}
 
   async findById(id: number): Promise<User<%-dtoSuffix%> | undefined> {
-    const result = await this.userRepository.findOne(id);
+    const result = await this.userRepository.findById(id);
     return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
   }
 
@@ -50,10 +53,10 @@ export class UserService {
       await transformPassword(user);
     }
     if (creator) {
-      if (!user.createdBy) {
-        user.createdBy = creator;
+      if (!user._createdBy) {
+        user._createdBy = creator;
       }
-      user.lastModifiedBy = creator;
+      user._updatedBy = creator;
     }
     const result = await this.userRepository.save(user);
     return UserMapper.fromEntityToDTO(this.flatAuthorities(result));

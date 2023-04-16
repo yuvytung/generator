@@ -1,9 +1,11 @@
 import { Logger } from "log4js";
-<%-modules.redis && `import Redis from "ioredis";`%>
+<%-modules.redis ? `import Redis from "ioredis";` : ``%>
+
 declare global {
+  // eslint-disable-next-line no-var
   var log: Logger;
 }
-<%-modules.redis &&
+<%-modules.redis ?
 `export interface CacheService extends Redis {
   quick(key: string, callback);
-}`%>
+}` : ``%>

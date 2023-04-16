@@ -1,0 +1,29 @@
+<%
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+<%-Array.from(new Set(relationships.map(r => r.otherEntityName )))
+  .filter(v=> v.upper() !== name.upper())
+  .map(en => `import { I${en.pascal()} } from 'app/shared/model/${en.kebab()}.model';` ).join('\n')%>
+
+export interface I<%-name.pascal()%> {
+
+  id?: number;
+  <%-fields.map(field => {
+    return `
+  ${field.fieldName}?: ${typeDetect(field.fieldType)} | null;`
+  }).join('\n')%>
+  <%-relationships.map(relationship => {
+    const isArray = relationship.relationshipType.includes('to-many');
+  return `
+  ${relationship.relationshipName.camel()}${isArray ? "s":""}?: I${relationship.otherEntityName.pascal()}${isArray ? "[]":""} | null;`
+  }).join('\n')%>
+}
+
+export const defaultValue: Readonly<I<%-name.pascal()%>> = {};

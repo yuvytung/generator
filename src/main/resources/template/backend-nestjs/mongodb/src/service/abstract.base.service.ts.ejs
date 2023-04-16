@@ -1,0 +1,90 @@
+/* eslint-disable no-underscore-dangle */
+import { HttpException, HttpStatus, Logger } from "@nestjs/common";
+import {
+  AbstractBaseRepository,
+  Options,
+  Projection,
+} from "../repository/abstract.base.repository";
+import { AbstractBaseMapper } from "./mapper/abstract.base.mapper";
+import { BaseEntity } from "../domain/base/base.entity";
+import { BaseDTO } from "./dto/base.dto";
+import { AbstractBaseSearchRepository } from "../repository/search/abstract.base.search.repository";
+import { FilterQuery } from "mongoose";
+
+export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDTO> {
+  logger = new Logger("BaseService");
+
+  protected constructor(
+    protected _repository: AbstractBaseRepository<E>,
+    protected _mapper: AbstractBaseMapper<E, D> = new AbstractBaseMapper<E, D>(BaseEntity, BaseDTO),
+    protected _searchRepository?: AbstractBaseSearchRepository<E>,
+  ) {}
+
+  async findById(id: string): Promise<D | undefined> {
+    const result = await this._repository.findById(id);
+    return this._mapper.e2d(result) || (result as any);
+  }
+
+  async find(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<D[] | undefined> {
+    const result = await this._repository.find(filter, options, projection);
+    return this._mapper?.e2dList(result) || (result as []);
+  }
+
+  async _find(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<E[] | undefined> {
+    return await this._repository._find(filter, options, projection);
+  }
+
+  async search(keywords: string): Promise<D[] | undefined> {
+    const result = await this._searchRepository.search(keywords);
+    return this._mapper?.e2dList(result) || (result as []);
+  }
+
+  async findAndCount(filter: FilterQuery<E>): Promise<[D[], number]> {
+    const optionsCopy = AbstractBaseMapper.copy(filter);
+    return this._repository
+      .findAndCount(optionsCopy)
+      .then((r) => [this._mapper?.e2dList(r[0]) || [], r[1] || 0]);
+  }
+
+  async save(dto: D, creator?: string): Promise<D | undefined> {
+    const entity = this._mapper.d2e(dto);
+    if (creator) {
+      if (!entity._createdBy) {
+        entity._createdBy = creator;
+      }
+      entity._updatedBy = creator;
+    }
+    const result = await this._repository.save(entity);
+    this._searchRepository
+      .save(result)
+      .catch((error) => log.warn("error save search", result, error));
+    return this._mapper.e2d(result) || (result as any);
+  }
+
+  async update(dto: D, updater?: string): Promise<D | undefined> {
+    const entity = this._mapper.d2e(dto);
+    if (updater) {
+      entity._updatedBy = updater;
+    }
+    const result = await this._repository.save(entity);
+    await this._searchRepository.save(result);
+    return this._mapper.e2d(result) || (result as any);
+  }
+
+  async deleteById(id: string): Promise<void | undefined> {
+    await this._repository.remove(id);
+    const entityFind = await this.findById(id);
+    if (entityFind) {
+      throw new HttpException("Error, entity not deleted!", HttpStatus.NOT_FOUND);
+    }
+    this._searchRepository.delete(id).catch((error) => log.warn("error delete search", id, error));
+  }
+}

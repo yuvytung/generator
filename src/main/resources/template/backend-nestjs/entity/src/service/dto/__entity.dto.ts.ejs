@@ -1,23 +1,61 @@
+<%
+const { Case, typeDetect } = _;
+const { _name, name , javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApiProperty } from '@nestjs/swagger';
 import { Base<%-dtoSuffix%> } from './base.dto';
 
-//import { Task<%-dtoSuffix%> } from './task.dto';
+<%-Array.from(new Set(relationships
+    .map(r => r.otherEntityName)
+    .filter(v => v.lower() !== name.lower())))
+  .map((otherEntityName)=>
+`import { ${otherEntityName.pascal()+dtoSuffix} } from './${Case.kebab(otherEntityName)}.dto';`)
+.join(`\n`)
+%>
 
 /**
- * A Job<%-dtoSuffix%> object.
+ * <%-name.pascal().concat(dtoSuffix)%> DTO.
+ *
+ * <%-javadoc?.replace(/\\n/g,`
+ * `)%>
  */
-export class <%-_entity._name.pascal%><%-dtoSuffix%> extends Base<%-dtoSuffix%> {
-    @ApiProperty({ description: 'jobTitle field', required: false })
-    jobTitle: string;
+export class <%-_entity.name.pascal().concat(dtoSuffix)%> extends Base<%-dtoSuffix%> {
+  <%-
+  fields?.map(field =>
+  `/**
+   * ${field.javadoc?.replace(/\\n/g,`
+   * `) || field.fieldName}
+   */
+  @ApiProperty({
+    description: '${field.javadoc || field.fieldName}',
+    required: false
+  })
+  ${Case.camel(field.fieldName)}: ${typeDetect(field.fieldType)};`
+  ).join(`
 
-    @ApiProperty({ description: 'minSalary field', required: false })
-    minSalary: string;
+  `)
+  %>
 
-    @ApiProperty({ description: 'maxSalary field', required: false })
-    maxSalary: string;
-
-//    @ApiProperty({ type: Task<%-dtoSuffix%>, isArray: true, description: 'tasks relationship' })
-//    tasks: Task<%-dtoSuffix%>[];
+  <%-relationships?.map(relationship => {
+    // let propBuilder = `@ApiProperty({ type: ()=> ${relationship.otherEntityName.pascal().concat(dtoSuffix)},
+    let propBuilder = `@ApiProperty({ type: ()=> Base${dtoSuffix},
+  isArray: ${(relationshipType.O2O === relationship.relationshipType) || (relationshipType.M2O === relationship.relationshipType) ? 'false': 'true'},
+  description: '${relationship.otherEntityName.pascal()} relationship' })`;
+    if ((relationshipType.O2O === relationship.relationshipType)
+      || (relationshipType.M2O === relationship.relationshipType))
+      return propBuilder.concat(`${relationship.relationshipName.camel()}: ${relationship.otherEntityName.pascal().concat(dtoSuffix)};`);
+    else if ((relationshipType.O2M === relationship.relationshipType)
+      || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+    )
+      return propBuilder.concat(`${relationship.relationshipName.camel()}s: ${relationship.otherEntityName.pascal().concat(dtoSuffix)}[];`);
+  }).join(``)%>
 
 }

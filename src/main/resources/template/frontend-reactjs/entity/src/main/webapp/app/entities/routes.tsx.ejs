@@ -1,0 +1,31 @@
+<%
+const entitiesName = _entities.map((e)=> e._name )
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React from 'react';
+import { Route } from 'react-router-dom';
+
+import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+<%- entitiesName.map((name)=> `import ${name.pascal} from './${name.kebab}';`).join(`\n`)%>
+/* jhipster-needle-add-route-import - JHipster will add routes here */
+
+export default () => {
+  return (
+    <div>
+      <ErrorBoundaryRoutes>
+        {/* prettier-ignore */}
+          <%- entitiesName.map((name)=> `<Route path="${name.kebab}/*" element={<${name.pascal} />} />`).join(`\n`)%>
+
+
+        {/* jhipster-needle-add-route-path - JHipster will add routes here */}
+      </ErrorBoundaryRoutes>
+    </div>
+  );
+};

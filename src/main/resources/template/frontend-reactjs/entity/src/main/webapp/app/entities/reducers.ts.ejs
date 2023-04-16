@@ -1,0 +1,22 @@
+<%
+const entitiesName = _entities.map((e)=> e._name )
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+/* jhipster-needle-add-reducer-import - JHipster will add reducer here */
+
+<%- entitiesName.map((name)=> `import ${name.camel} from 'app/entities/${name.kebab}/${name.kebab}.reducer';`).join(`\n`)%>
+
+const entitiesReducers = {
+  /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
+  <%- entitiesName.map((name)=> `${name.camel},`).join(`\n`)%>
+
+};
+
+export default entitiesReducers;

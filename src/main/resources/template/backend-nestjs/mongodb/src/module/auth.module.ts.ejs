@@ -1,0 +1,30 @@
+import { Module } from "@nestjs/common";
+import { AuthService } from "../service/auth.service";
+import { UserModule } from "./user.module";
+import { PassportModule } from "@nestjs/passport";
+import { JwtModule } from "@nestjs/jwt";
+import { JwtStrategy } from "../security/passport.jwt.strategy";
+import { UserJWTController } from "../web/rest/user.jwt.controller";
+import { config } from "../config";
+
+import { PublicUserController } from "../web/rest/public.user.controller";
+import { AccountController } from "../web/rest/account.controller";
+import { MongooseModule } from "@nestjs/mongoose";
+import { AuthorityRepository } from "../repository/authority.repository";
+import { Authority } from "../domain/authority.entity";
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: Authority.Name, schema: Authority.Schema }]),
+    UserModule,
+    PassportModule,
+    JwtModule.register({
+      secret: config["jhipster.security.authentication.jwt.base64-secret"],
+      signOptions: { expiresIn: "300s" },
+    }),
+  ],
+  controllers: [UserJWTController, PublicUserController, AccountController],
+  providers: [AuthService, JwtStrategy, AuthorityRepository],
+  exports: [AuthService],
+})
+export class AuthModule {}

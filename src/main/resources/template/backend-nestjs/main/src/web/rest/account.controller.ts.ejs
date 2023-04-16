@@ -79,7 +79,7 @@ export class AccountController {
   })
   async getAccount(@Req() req: Request): Promise<any> {
     const user: any = req.user;
-    const userProfileFound = await this.authService.getAccount(user.id);
+    const userProfileFound = await this.authService.getAccount(user.id || user._id);
     return userProfileFound;
   }
 

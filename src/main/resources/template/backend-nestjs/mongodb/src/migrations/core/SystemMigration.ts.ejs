@@ -1,0 +1,34 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
+
+// eslint-disable-next-line no-shadow
+export enum MigrationStatus {
+  ERROR = "ERROR",
+  UP = "UP",
+  DOWN = "DOWN",
+  null = null,
+}
+
+@Schema({ collection: SystemMigration.Name })
+export class SystemMigration {
+  static readonly Name = "SystemMigration";
+  static Schema: mongoose.Schema<SystemMigration>;
+
+  @Prop({ unique: true })
+  name: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+
+  @Prop()
+  status: string;
+
+  @Prop()
+  error: string;
+}
+
+SystemMigration.Schema = SchemaFactory.createForClass(SystemMigration);
+SystemMigration.Schema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

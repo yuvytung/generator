@@ -1,0 +1,21 @@
+import { Prop } from "@nestjs/mongoose";
+import { v4 } from "uuid";
+
+export abstract class BaseEntity {
+  _id?;
+  id?: string;
+
+  @Prop({ name: "refId", unique: true, select: true, default: () => v4() })
+  refId?: string;
+
+  @Prop({ name: "_createdBy", select: false })
+  _createdBy?: string;
+  @Prop({ name: "_createdAt" })
+  _createdAt?: Date;
+  @Prop({ name: "_updatedBy", select: false })
+  _updatedBy?: string;
+  @Prop({ name: "_updatedAt" })
+  _updatedAt?: Date;
+  @Prop({ name: "_isDeleted", default: false, select: false })
+  _isDeleted?: boolean;
+}

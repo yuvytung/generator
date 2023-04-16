@@ -1,6 +1,6 @@
 <%
 const { Case, typeDetect } = _;
-const { _name , javadoc, fields, relationships } = _entity;
+const { _name, name , javadoc, fields, relationships } = _entity;
 const relationshipType = {
   O2O: "one-to-one",
   O2M: "one-to-many",
@@ -14,20 +14,20 @@ import { BaseEntity } from './base/base.entity';
 
 <%-Array.from(new Set(relationships
     .map(r => r.otherEntityName)
-    .filter(v => Case.lower(v) !== _name.lower)))
+    .filter(v => v.lower() !== name.lower())))
   .map((otherEntityName)=>
 `import { ${Case.pascal(otherEntityName)} } from './${Case.kebab(otherEntityName)}.entity';`)
 .join(`\n`)
 %>
 
 /**
- * <%-_name.pascal%> entity.
+ * <%-name.pascal()%> entity.
  *
  * <%-javadoc?.replace(/\\n/g,`
  * `)%>
  */
 @Entity('<%-_name.snake%>')
-export class <%-_name.pascal%> extends BaseEntity {
+export class <%-name.pascal()%> extends BaseEntity {
   <%-
   fields?.map(field =>
   `/**
@@ -35,7 +35,7 @@ export class <%-_name.pascal%> extends BaseEntity {
    * `) || field.fieldName}
    */
   @Column({
-    name: "${Case.snake(field.fieldName)}",
+    name: "${field.fieldName.snake()}",
     ${field.fieldValidateRules?.includes('required') ? "nullable: false," : ""}
     ${field.fieldValidateRules?.includes('unique') ? "unique: true," : ""}
   })
@@ -46,37 +46,44 @@ export class <%-_name.pascal%> extends BaseEntity {
   %>
 
   <%-relationships?.map(relationship => {
-    if (relationshipType.O2O === relationship.relationshipType)
-      return `
+    let propBuilder = '';
+    if (database === "mysql" || database === "mariadb" || database === 'postgresql')
+      if (relationshipType.O2O === relationship.relationshipType)
+      propBuilder = `
   @OneToOne((type) => ${Case.pascal(relationship.otherEntityName)})
   @JoinColumn()
-  ${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};
   `
-    else if (relationshipType.M2O === relationship.relationshipType)
-      return `
+      else if (relationshipType.M2O === relationship.relationshipType)
+      propBuilder = `
   @ManyToOne((type) => ${Case.pascal(relationship.otherEntityName)})
-  ${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};
   `
-    else if (relationshipType.O2M === relationship.relationshipType)
-      return `
+      else if (relationshipType.O2M === relationship.relationshipType)
+      propBuilder = `
   @OneToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)} )
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
-    else if (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
-      return `
+      else if (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      propBuilder = `
   @ManyToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)}s )
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
-    else if (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
-      return `
+      else if (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+      propBuilder = `
   @ManyToMany((type) => ${Case.pascal(relationship.otherEntityName)}, (other) => other.${Case.camel(relationship.otherEntityRelationshipName)}s )
   @JoinTable({
-    name: 'rel_${Case.snake(relationship.otherEntityRelationshipName)}__${Case.snake(relationship.relationshipName)}',
+    name: 'rel_${relationship.otherEntityRelationshipName.snake()}__${relationship.relationshipName.snake()}',
     joinColumn: { name: '${Case.snake(relationship.otherEntityRelationshipName)}_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: '${Case.snake(relationship.relationshipName)}_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: '${relationship.relationshipName.snake()}_id', referencedColumnName: 'id' },
   })
-  ${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];
   `
+    else if (database === 'mongodb') propBuilder = ``;
+
+    if ((relationshipType.O2O === relationship.relationshipType)
+      || (relationshipType.M2O === relationship.relationshipType))
+      return propBuilder.concat(`${Case.camel(relationship.relationshipName)}: ${Case.pascal(relationship.otherEntityName)};`);
+    else if ((relationshipType.O2M === relationship.relationshipType)
+      || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+    )
+      return propBuilder.concat(`${Case.camel(relationship.relationshipName)}s: ${Case.pascal(relationship.otherEntityName)}[];`);
   }).join(``)%>
 
 }

@@ -1,0 +1,31 @@
+<%
+const entitiesName = _entities.map((e)=> e._name )
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React from 'react';
+import { Translate } from 'react-jhipster';
+
+import MenuItem from 'app/shared/layout/menus/menu-item';
+
+const EntitiesMenu = () => {
+  return (
+    <>
+      {/* prettier-ignore */}
+      <%- entitiesName.map((name)=> `
+      <MenuItem icon="asterisk" to="/${name.kebab}">
+        <Translate contentKey="global.menu.entities.${name.camel}" />
+      </MenuItem>`).join(`\n`)%>
+
+      {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
+    </>
+  );
+};
+
+export default EntitiesMenu;
