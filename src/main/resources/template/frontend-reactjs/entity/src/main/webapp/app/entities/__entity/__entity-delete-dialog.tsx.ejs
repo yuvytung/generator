@@ -1,0 +1,78 @@
+<%
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Translate } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntity, deleteEntity } from './<%-name.kebab()%>.reducer';
+
+export const <%-name.pascal()%>DeleteDialog = () => {
+  const dispatch = useAppDispatch();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { id } = useParams<'id'>();
+
+  const [loadModal, setLoadModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(getEntity(id));
+    setLoadModal(true);
+  }, []);
+
+  const <%-name.camel()%>Entity = useAppSelector(state => state.<%-name.camel()%>.entity);
+  const updateSuccess = useAppSelector(state => state.<%-name.camel()%>.updateSuccess);
+
+  const handleClose = () => {
+    navigate('/<%-name.kebab()%>' + location.search);
+  };
+
+  useEffect(() => {
+    if (updateSuccess && loadModal) {
+      handleClose();
+      setLoadModal(false);
+    }
+  }, [updateSuccess]);
+
+  const confirmDelete = () => {
+    dispatch(deleteEntity(<%-name.camel()%>Entity.id));
+  };
+
+  return (
+    <Modal isOpen toggle={handleClose}>
+      <ModalHeader toggle={handleClose} data-cy="<%-name.camel()%>DeleteDialogHeading">
+        <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
+      </ModalHeader>
+      <ModalBody id="catinybaseNameApp.<%-name.camel()%>.delete.question">
+        <Translate contentKey="catinybaseNameApp.<%-name.camel()%>.delete.question" interpolate={{ id: <%-name.camel()%>Entity.id }}>
+          Are you sure you want to delete this <%-name.pascal()%>?
+        </Translate>
+      </ModalBody>
+      <ModalFooter>
+        <Button color="secondary" onClick={handleClose}>
+          <FontAwesomeIcon icon="ban" />
+          &nbsp;
+          <Translate contentKey="entity.action.cancel">Cancel</Translate>
+        </Button>
+        <Button id="catinyjhi-confirm-delete-<%-name.kebab()%>" data-cy="entityConfirmDeleteButton" color="danger" onClick={confirmDelete}>
+          <FontAwesomeIcon icon="trash" />
+          &nbsp;
+          <Translate contentKey="entity.action.delete">Delete</Translate>
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default <%-name.pascal()%>DeleteDialog;

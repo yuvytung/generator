@@ -1,0 +1,176 @@
+<%
+const { typeDetect } = _;
+const { name, javadoc, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+-%>
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Row, Col, FormText } from 'reactstrap';
+import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { mapIdList } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+<%-Array.from(new Set(relationships.map(r => r.otherEntityName )))
+  .filter(v=> v.upper() !== name.upper())
+  .map(oen =>
+`import { I${oen.pascal()} } from 'app/shared/model/${oen.kebab()}.model';
+import { getEntities as get${oen.pascal()}s } from 'app/entities/${oen.kebab()}/${oen.kebab()}.reducer';`)
+  .join('\n')%>
+
+
+import { I<%-name.pascal()%> } from 'app/shared/model/<%-name.kebab()%>.model';
+import { getEntity, updateEntity, createEntity, reset } from './<%-name.kebab()%>.reducer';
+
+export const <%-name.pascal()%>Update = () => {
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
+
+  <%-relationships?.map(relationship => `const ${relationship.relationshipName}s = useAppSelector(state => state.${relationship.relationshipName}.entities);`).join('\n')%>
+  const <%-name.camel()%>Entity = useAppSelector(state => state.<%-name.camel()%>.entity);
+  const loading = useAppSelector(state => state.<%-name.camel()%>.loading);
+  const updating = useAppSelector(state => state.<%-name.camel()%>.updating);
+  const updateSuccess = useAppSelector(state => state.<%-name.camel()%>.updateSuccess);
+
+  const handleClose = () => {
+    navigate('/<%-name.kebab()%>' + location.search);
+  };
+
+  useEffect(() => {
+    if (isNew) {
+      dispatch(reset());
+    } else {
+      dispatch(getEntity(id));
+    }
+
+    <%-Array.from(new Set(relationships.map(r => r.otherEntityName )))
+      .filter(v=> v.upper() !== name.upper())
+      .map(oen => `dispatch(get${oen.pascal()}s({}));`).join('\n')%>
+  }, []);
+
+  useEffect(() => {
+    if (updateSuccess) {
+      handleClose();
+    }
+  }, [updateSuccess]);
+
+  const saveEntity = values => {
+    const entity = {
+      ...<%-name.camel()%>Entity,
+      ...values,
+      <%-relationships?.map(relationship =>{
+        if (relationship.relationshipType === relationshipType.M2M) return `
+        ${relationship.relationshipName}s: mapIdList(values.${relationship.relationshipName}s),`
+        else if (relationship.relationshipType === relationshipType.M2O)return `
+        ${relationship.relationshipName}: ${relationship.relationshipName}s.find(it => it.id.toString() === values.${relationship.relationshipName}.toString()),`
+      }).join('\n')%>
+
+
+
+    };
+
+    if (isNew) {
+      dispatch(createEntity(entity));
+    } else {
+      dispatch(updateEntity(entity));
+    }
+  };
+
+  const defaultValues = () =>
+    isNew
+      ? {}
+      : {
+          ...<%-name.camel()%>Entity,
+          tasks: <%-name.camel()%>Entity?.tasks?.map(e => e.id.toString()),
+          employee: <%-name.camel()%>Entity?.employee?.id,
+        };
+
+  return (
+    <div>
+      <Row className="justify-content-center">
+        <Col md="8">
+          <h2 id="<%-baseName.camel()%>App.<%-name.camel()%>.home.createOrEditLabel" data-cy="<%-name.pascal()%>CreateUpdateHeading">
+            <Translate contentKey="<%-baseName.camel()%>App.<%-name.camel()%>.home.createOrEditLabel">Create or edit a <%-name.pascal()%></Translate>
+          </h2>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col md="8">
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
+              {!isNew ? (
+                <ValidatedField
+                  name="id"
+                  required
+                  readOnly
+                  id="<%-name.kebab()%>-id"
+                  label={translate('global.field.id')}
+                  validate={{ required: true }}
+                />
+              ) : null}
+              <%-fields?.map(field =>{
+                return `
+              <ValidatedField
+                label={translate('${baseName.camel()}App.${name.camel()}.${field.fieldName.camel()}')}
+                id="${name.camel()}-${field.fieldName.camel()}"
+                name="${field.fieldName.camel()}"
+                data-cy="${field.fieldName.camel()}"
+                type="text"
+              />`
+              })
+              %>
+              <%-relationships?.map(relationship =>{
+                return `
+              <ValidatedField
+                label={translate('${baseName.camel()}App.${name.camel()}.${relationship.relationshipName.camel()}')}
+                id="${name.camel()}-${relationship.relationshipName.camel()}"
+                name="${relationship.relationshipName.camel()}"
+                data-cy="${relationship.relationshipName.camel()}"
+                type="select"
+                multiple
+              >
+              <option value="" key="0" />
+                {${relationship.relationshipName.camel()}s
+                  ? ${relationship.relationshipName.camel()}s.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.title}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>`
+              })
+              %>
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/<%-name.kebab()%>" replace color="info">
+                <FontAwesomeIcon icon="arrow-left" />
+                &nbsp;
+                <span className="d-none d-md-inline">
+                  <Translate contentKey="entity.action.back">Back</Translate>
+                </span>
+              </Button>
+              &nbsp;
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+                <FontAwesomeIcon icon="save" />
+                &nbsp;
+                <Translate contentKey="entity.action.save">Save</Translate>
+              </Button>
+            </ValidatedForm>
+          )}
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default <%-name.pascal()%>Update;

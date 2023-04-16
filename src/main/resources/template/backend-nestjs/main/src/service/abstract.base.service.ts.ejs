@@ -14,19 +14,19 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
     protected _repository: AbstractBaseRepository<E>,
     protected _mapper: AbstractBaseMapper<E, D>,
     protected _relationshipNames: string[] = [],
-    <%-modules.elasticsearch && `protected _searchRepository: AbstractBaseSearchRepository<E>,`%>
+    <%-modules.elasticsearch ? `protected _searchRepository: AbstractBaseSearchRepository<E>,` : ``%>
   ) {}
 
   async findById(id: number): Promise<D | undefined> {
     const options = { relations: this._relationshipNames };
-    const result = await this._repository.findOne(id, options);
+    const result = await this._repository.findById(id);
     return this._mapper.e2d(result);
   }
 
-  <%-modules.elasticsearch && `async search(keywords: string): Promise<D[] | undefined> {
+  <%-modules.elasticsearch ? `async search(keywords: string): Promise<D[] | undefined> {
     const result = await this._searchRepository.search(keywords);
     return result.map(this._mapper.e2d);
-  }`%>
+  }` : ``%>
 
   async findByFields(options: FindOneOptions<D>): Promise<D | undefined> {
     const result = await this._repository.findOne(AbstractBaseMapper.copy(options));
@@ -48,19 +48,19 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
   async save(dto: D, creator?: string): Promise<D | undefined> {
     const entity = this._mapper.d2e(dto);
     if (creator) {
-      if (!entity.createdBy) entity.createdBy = creator;
-      entity.lastModifiedBy = creator;
+      if (!entity._createdBy) entity._createdBy = creator;
+      entity._updatedBy = creator;
     }
     const result = await this._repository.save(entity as any);
-    <%-modules.elasticsearch && `this._searchRepository.save(result);`%>
+    <%-modules.elasticsearch ? `this._searchRepository.save(result);` : ``%>
     return this._mapper.e2d(result);
   }
 
   async update(dto: D, updater?: string): Promise<D | undefined> {
     const entity = this._mapper.d2e(dto);
-    if (updater) entity.lastModifiedBy = updater;
+    if (updater) entity._updatedBy = updater;
     const result = await this._repository.save(entity as any);
-    <%-modules.elasticsearch && `this._searchRepository.save(result);`%>
+    <%-modules.elasticsearch ? `this._searchRepository.save(result);` : ``%>
     return this._mapper.e2d(result);
   }
 
@@ -70,6 +70,6 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
     if (entityFind) {
       throw new HttpException("Error, entity not deleted!", HttpStatus.NOT_FOUND);
     }
-    <%-modules.elasticsearch && `this._searchRepository.delete(id);`%>
+    <%-modules.elasticsearch ? `this._searchRepository.delete(id);` : ``%>
   }
 }

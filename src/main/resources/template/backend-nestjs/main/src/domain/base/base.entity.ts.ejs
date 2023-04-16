@@ -1,15 +1,27 @@
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { <%-
+(database === "mysql" || database === "mariadb") ? `PrimaryGeneratedColumn,` :
+database === "mongodb" ? `ObjectIdColumn,` :
+``%> Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+<%-database === "mongodb" ? `import { ObjectId } from "mongodb";` : ``%>
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn()
-  id?: number;
+  <%-(database === "mysql" || database === "mariadb") ?
+  `@PrimaryGeneratedColumn()
+  id?: number;` :
+  database === "mongodb" ?
+  `@ObjectIdColumn({ name: '_id', select: false })
+  _id?: ObjectId | string;
+
+  @ObjectIdColumn({ name: '_id' })
+  id?: string;` : ``%>
+
 
   @Column({ nullable: true })
-  createdBy?: string;
+  _createdBy?: string;
   @CreateDateColumn({ nullable: true })
-  createdDate?: Date;
+  _createdAt?: Date;
   @Column({ nullable: true })
-  lastModifiedBy?: string;
+  _updatedBy?: string;
   @UpdateDateColumn({ nullable: true })
-  lastModifiedDate?: Date;
+  _updatedAt?: Date;
 }

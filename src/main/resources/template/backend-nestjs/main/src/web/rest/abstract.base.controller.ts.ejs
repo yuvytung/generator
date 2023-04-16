@@ -21,20 +21,13 @@ import { LoggingInterceptor } from "../../client/interceptors/logging.intercepto
 import { AbstractBaseService } from "../../service/abstract.base.service";
 import { Base<%-dtoSuffix%> } from "../../service/dto/base.dto";
 
-@Controller("api/jobs")
-@UseGuards(AuthGuard, RolesGuard)
-@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
-@ApiBearerAuth()
-@ApiTags("jobs")
 export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   constructor(protected readonly service: AbstractBaseService<any, any>) {}
 
   @Get("/")
-  @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: "List all records",
-    type: "<%-dtoSuffix%>[]",
   })
   async getAll(@Req() req: Request): Promise<D[]> {
     const pageRequest: PageRequest = new PageRequest(
@@ -51,40 +44,34 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
     return results;
   }
 
-  <%-modules.elasticsearch &&
+  <%-modules.elasticsearch ?
   `@Get("/_search")
-  @Roles(RoleType.ADMIN)
   @ApiOperation({summary: "Search entity (default)"})
   @ApiResponse({
     status: 200,
     description: "Search all records by keywords.",
-    type: "${dtoSuffix}[]",
   })
   @ApiResponse({status: 403, description: "Forbidden."})
   async search(@Req() req: Request,@Query("keywords") keywords: string): Promise<D[]> {
     const results = await this.service.search(keywords);
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", results);
     return results;
-  }`%>
+  }` : ``%>
 
   @Get("/:id")
-  @Roles(RoleType.USER)
   @ApiResponse({
     status: 200,
     description: "The found record",
-    type: "<%-dtoSuffix%>",
   })
   async getOne(@Param("id") id: number): Promise<D> {
     return this.service.findById(id);
   }
 
   @Post("/")
-  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: "Create entity (default)" })
   @ApiResponse({
     status: 201,
     description: "The record has been successfully created.",
-    type: "<%-dtoSuffix%>",
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
   async post(@Req() req: Request, @Body() dto: D): Promise<D> {
@@ -94,12 +81,10 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   }
 
   @Put("/")
-  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: "Update entity (default)" })
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
-    type: "<%-dtoSuffix%>",
   })
   async put(@Req() req: Request, @Body() dto: D): Promise<D> {
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
@@ -107,12 +92,10 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   }
 
   @Put("/:id")
-  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: "Update entity with id (default)" })
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
-    type: "<%-dtoSuffix%>",
   })
   async putId(@Req() req: Request, @Body() dto: D): Promise<D> {
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
@@ -120,7 +103,6 @@ export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
   }
 
   @Delete("/:id")
-  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: "Delete entity (default)" })
   @ApiResponse({
     status: 204,

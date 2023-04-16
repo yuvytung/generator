@@ -9,7 +9,7 @@ import {
 import { LoggingInterceptor } from "../../client/interceptors/logging.interceptor";
 import { PageRequest, Page } from "../../domain/base/pagination.entity";
 import { User<%-dtoSuffix %> } from "../../service/dto/user.dto";
-import { Request } from "express";
+import { Request } from  "../../client/request";
 import { HeaderUtil } from "../../client/header-util";
 import { ApiTags, ApiResponse, ApiOperation } from "@nestjs/swagger";
 import { AuthService } from "../../service/auth.service";

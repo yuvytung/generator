@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, getRepository } from "typeorm";
+import { MigrationInterface, QueryRunner } from "typeorm";
 import { User<%-entitySuffix%> } from "../domain/user.entity";
 import { transformPassword } from "../security";
 import { Authority } from "../domain/authority.entity";
@@ -17,8 +17,8 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     imageUrl: "",
     activated: true,
     langKey: "en",
-    createdBy: "system",
-    lastModifiedBy: "system",
+    _createdBy: "system",
+    _updatedBy: "system",
   };
 
   user2: User<%-entitySuffix%> = {
@@ -30,8 +30,8 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     imageUrl: "",
     activated: true,
     langKey: "en",
-    createdBy: "system",
-    lastModifiedBy: "system",
+    _createdBy: "system",
+    _updatedBy: "system",
   };
 
   user3: User<%-entitySuffix%> = {
@@ -43,8 +43,8 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     imageUrl: "",
     activated: true,
     langKey: "en",
-    createdBy: "system",
-    lastModifiedBy: "system",
+    _createdBy: "system",
+    _updatedBy: "system",
   };
 
   user4: User<%-entitySuffix%> = {
@@ -56,18 +56,19 @@ export class SeedUsersRoles1570200490072 implements MigrationInterface {
     imageUrl: "",
     activated: true,
     langKey: "en",
-    createdBy: "system",
-    lastModifiedBy: "system",
+    _createdBy: "system",
+    _updatedBy: "system",
   };
 
   // eslint-disable-next-line
   public async up(queryRunner: QueryRunner): Promise<any> {
-    const authorityRepository = getRepository("<%-`${prefix}_`%>authority");
+    await queryRunner.connection.synchronize();
+    const authorityRepository = queryRunner.connection.getRepository("<%-`${prefix}_`%>authority");
 
     const adminRole = await authorityRepository.save(this.role1);
     const userRole = await authorityRepository.save(this.role2);
 
-    const userRepository = getRepository("<%-`${prefix}_`%>user");
+    const userRepository = queryRunner.connection.getRepository("<%-`${prefix}_`%>user");
 
     this.user1.authorities = [adminRole, userRole];
     this.user3.authorities = [adminRole, userRole];

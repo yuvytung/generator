@@ -16,15 +16,18 @@ ejs:
       messageBroker: kafka
       clientPackageManager: yarn
       buildTool: gradle
+      database: mongodb # mysql, mariadb, postgres
+      devDatabase: mongodb # sqlite , mongodb
+      prodDatabase: mongodb
       clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
 modules:
   backend-nestjs:
 #    entity: true
     elasticsearch: true
     redis: true
-  frontend-reactjs:
-    cypress: true
-    protractor: true
+#  frontend-reactjs:
+#    cypress: true
+#    protractor: true
 
 
 file:

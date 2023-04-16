@@ -1,20 +1,23 @@
 import { Injectable, HttpException, HttpStatus, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { UserLogin<%-dtoSuffix%> } from "../service/dto/user-login.dto";
+import { UserLogin<%-dtoSuffix%> } from "./dto/user-login.dto";
 import { Payload } from "../security/payload.interface";
 import * as bcrypt from "bcrypt";
 import { AuthorityRepository } from "../repository/authority.repository";
-import { UserService } from "../service/user.service";
+import { UserService } from "./user.service";
 import { User<%-dtoSuffix%> } from "./dto/user.dto";
 import { FindManyOptions } from "typeorm";
+import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
+<%-database === 'mongodb' ? `import { ObjectId } from "mongodb";` : `` %>
 
 @Injectable()
 export class AuthService {
   logger = new Logger("AuthService");
   constructor(
     private readonly jwtService: JwtService,
-    @InjectRepository(AuthorityRepository) private authorityRepository: AuthorityRepository,
+    @InjectRepository(Authority<%-entitySuffix%>)
+    private authorityRepository: AuthorityRepository,
     private userService: UserService,
   ) {}
 
@@ -47,12 +50,12 @@ export class AuthService {
     return await this.findUserWithAuthById(payload.id);
   }
 
-  async findUserWithAuthById(userId: number): Promise<User<%-dtoSuffix%> | undefined> {
-    const user<%-dtoSuffix%>: User<%-dtoSuffix%> = await this.userService.findByFields({ where: { id: userId } });
+  async findUserWithAuthById(userId: <%-database === "mongodb" ? `string` : `number`%>): Promise<User<%-dtoSuffix%> | undefined> {
+    const user<%-dtoSuffix%>: User<%-dtoSuffix%> = await this.userService.findByFields({ where: { <%-database === "mongodb" ? `_id: new ObjectId(userId?.toString())` : `id: userId`%> } });
     return user<%-dtoSuffix%>;
   }
 
-  async getAccount(userId: number): Promise<User<%-dtoSuffix%> | undefined> {
+  async getAccount(userId: <%-database === "mongodb" ? `string` : `number`%>): Promise<User<%-dtoSuffix%> | undefined> {
     const user<%-dtoSuffix%>: User<%-dtoSuffix%> = await this.findUserWithAuthById(userId);
     if (!user<%-dtoSuffix%>) {
       return;
