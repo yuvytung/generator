@@ -20,11 +20,14 @@ export class AbstractBaseController<D extends BaseDTO> {
       req.query.size,
       req.query.sort,
     );
-    const [results, count] = await this.service.findAndCount({
-      skip: +pageRequest.page * pageRequest.size,
-      take: +pageRequest.size,
-      order: pageRequest.sort.asOrder(),
-    });
+    const [results, count] = await this.service.findAndCount(
+      {},
+      {
+        skip: +pageRequest.page * pageRequest.size,
+        limit: +pageRequest.size,
+        sort: pageRequest.sort.asOrder(),
+      },
+      {});
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
   }

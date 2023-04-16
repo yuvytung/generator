@@ -1,7 +1,10 @@
 import { Prop } from "@nestjs/mongoose";
 import { v4 } from "uuid";
+import { Transform } from "class-transformer";
+
 
 export abstract class BaseEntity {
+  @Transform(({ value }) => value.toString())
   _id?;
   id?: string;
 

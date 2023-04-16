@@ -1,0 +1,23 @@
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import { <%-_entity.name.pascal()%>Controller } from '../web/rest/<%-_entity.name.kebab()%>.controller';
+import { <%-_entity.name.pascal()%><%-entitySuffix%> } from '../domain/<%-_entity.name.kebab()%>.entity';
+import { <%-_entity.name.pascal()%>Service } from '../service/<%-_entity.name.kebab()%>.service';
+<%-modules.search === "elasticsearch" ?
+`import {ElasticSearchModule} from "./elasticsearch.module";
+import {${_entity.name.pascal()}SearchRepository} from "../repository/search/${_entity.name.kebab()}.search.repository";` : ``
+%>
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([<%-_entity.name.pascal()%><%-entitySuffix%>]),
+    <%-modules.search === "elasticsearch" ? `ElasticSearchModule,` : ``%>
+  ],
+  controllers: [<%-_entity.name.pascal()%>Controller],
+  providers: [
+    <%-_entity.name.pascal()%>Service,
+    <%-modules.search === "elasticsearch" ? `${_entity.name.pascal()}SearchRepository,` : ``%>
+  ],
+  exports: [<%-_entity.name.pascal()%>Service],
+})
+export class <%-_entity.name.pascal()%>Module {}

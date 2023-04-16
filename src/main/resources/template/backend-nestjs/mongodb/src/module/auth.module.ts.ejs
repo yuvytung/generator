@@ -11,11 +11,12 @@ import { PublicUserController } from "../web/rest/public.user.controller";
 import { AccountController } from "../web/rest/account.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthorityRepository } from "../repository/authority.repository";
-import { Authority } from "../domain/authority.entity";
+import { AuthoritySchema } from "../domain/authority.entity";
+import { MongooseCollection } from "../domain/base/mongoose.collection";
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Authority.Name, schema: Authority.Schema }]),
+    MongooseModule.forFeature([{ name: MongooseCollection.Authority, schema: AuthoritySchema }]),
     UserModule,
     PassportModule,
     JwtModule.register({

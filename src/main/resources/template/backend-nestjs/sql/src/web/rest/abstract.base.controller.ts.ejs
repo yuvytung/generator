@@ -1,0 +1,115 @@
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Page, PageRequest } from "../../domain/base/pagination.entity";
+import { AuthGuard, Roles, RolesGuard, RoleType } from "../../security";
+import { HeaderUtil } from "../../client/header-util";
+import { Request } from "../../client/request";
+import { LoggingInterceptor } from "../../client/interceptors/logging.interceptor";
+import { AbstractBaseService } from "../../service/abstract.base.service";
+import { Base<%-dtoSuffix%> } from "../../service/dto/base.dto";
+
+export class AbstractBaseController<D extends Base<%-dtoSuffix%>> {
+  constructor(protected readonly service: AbstractBaseService<any, any>) {}
+
+  @Get("/")
+  @ApiResponse({
+    status: 200,
+    description: "List all records",
+  })
+  async getAll(@Req() req: Request): Promise<D[]> {
+    const pageRequest: PageRequest = new PageRequest(
+      req.query.page,
+      req.query.size,
+      req.query.sort,
+    );
+    const [results, count] = await this.service.findAndCount({
+      skip: +pageRequest.page * pageRequest.size,
+      take: +pageRequest.size,
+      order: pageRequest.sort.asOrder(),
+    });
+    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+  <%-modules.search === "elasticsearch" ?
+  `@Get("/_search")
+  @ApiOperation({summary: "Search entity (default)"})
+  @ApiResponse({
+    status: 200,
+    description: "Search all records by keywords.",
+  })
+  @ApiResponse({status: 403, description: "Forbidden."})
+  async search(@Req() req: Request,@Query("keywords") keywords: string): Promise<D[]> {
+    const results = await this.service.search(keywords);
+    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", results);
+    return results;
+  }` : ``%>
+
+  @Get("/:id")
+  @ApiResponse({
+    status: 200,
+    description: "The found record",
+  })
+  async getOne(@Param("id") id: number): Promise<D> {
+    return this.service.findById(id);
+  }
+
+  @Post("/")
+  @ApiOperation({ summary: "Create entity (default)" })
+  @ApiResponse({
+    status: 201,
+    description: "The record has been successfully created.",
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  async post(@Req() req: Request, @Body() dto: D): Promise<D> {
+    const created = await this.service.save(dto, req.user?.login);
+    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", created.id);
+    return created;
+  }
+
+  @Put("/")
+  @ApiOperation({ summary: "Update entity (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+  })
+  async put(@Req() req: Request, @Body() dto: D): Promise<D> {
+    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
+    return this.service.update(dto, req.user?.login);
+  }
+
+  @Put("/:id")
+  @ApiOperation({ summary: "Update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+  })
+  async putId(@Req() req: Request, @Body() dto: D): Promise<D> {
+    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
+    return this.service.update(dto, req.user?.login);
+  }
+
+  @Delete("/:id")
+  @ApiOperation({ summary: "Delete entity (default)" })
+  @ApiResponse({
+    status: 204,
+    description: "The record has been successfully deleted.",
+  })
+  async deleteById(@Req() req: Request, @Param("id") id: number): Promise<void> {
+    HeaderUtil.addEntityDeletedHeaders(req.res, "Job", id);
+    return this.service.deleteById(id);
+  }
+}

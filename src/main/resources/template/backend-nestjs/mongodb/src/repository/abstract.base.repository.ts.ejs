@@ -80,7 +80,7 @@ export class AbstractBaseRepository<Entity extends BaseEntity> {
         .exec()
         .then((r) => r as Entity);
     }
-    return this._model.create(entity);
+    return this._model.create(entity).then((r) => r.toObject() as Entity);
   }
 
   public async remove(entityOrId: string | Entity, options: Options<Entity> = {}) {
