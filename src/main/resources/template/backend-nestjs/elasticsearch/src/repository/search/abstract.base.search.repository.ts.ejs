@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { BaseEntity } from "../../domain/base/base.entity";
+import Case from "case";
+import {MongooseCollection} from "../../domain/base/mongoose.collection";
 
 export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
   protected _entity: { name: string };
@@ -14,7 +16,9 @@ export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
       log.warn("Format of class name not right:", this.constructor.name);
     }
     this._entity = {
-      name: this.constructor.name.replace(/SearchRepository$/g, "").toLowerCase(),
+      name: <%- database === 'mongodb'
+            ? `MongooseCollection[this.constructor.name.replace(/SearchRepository$/g, "")],`
+            : `Case.snake(this.constructor.name.replace(/SearchRepository$/g, "")),` %>
     };
   }
 
@@ -33,16 +37,34 @@ export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
       })
       .then((r) => (r.body?.hits?.hits?.map((v) => v._source) as E[]) || []);
   }
-
+<%- database === 'mongodb' ? `
   async save(entity: E) {
+    const searchEntity: E = {} as any;
+    Object.assign(searchEntity, entity);
+    searchEntity.id = (searchEntity.id || searchEntity._id)?.toString();
+    delete searchEntity._id;
     return this.model.index({
       index: this._entity.name,
-      id: entity.id?.toString(),
+      id: searchEntity.id,
       body: {
-        ...entity,
+        ...searchEntity,
       },
     });
   }
+` : `
+  async save(entity: E) {
+    const searchEntity: E = {} as any;
+    Object.assign(searchEntity, entity);
+    return this.model.index({
+      index: this._entity.name,
+      id: searchEntity.id.toString(),
+      body: {
+        ...searchEntity,
+      },
+    });
+  }
+`
+%>
 
   async delete(entityOrId: any) {
     const id = (entityOrId?.id || entityOrId)?.toString();

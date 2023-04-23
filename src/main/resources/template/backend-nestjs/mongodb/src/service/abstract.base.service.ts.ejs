@@ -47,10 +47,13 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     return this._mapper?.e2dList(result) || (result as []);
   }
 
-  async findAndCount(filter: FilterQuery<E>): Promise<[D[], number]> {
-    const optionsCopy = AbstractBaseMapper.copy(filter);
+  async findAndCount(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<[D[], number]> {
     return this._repository
-      .findAndCount(optionsCopy)
+      .findAndCount(filter, options, projection)
       .then((r) => [this._mapper?.e2dList(r[0]) || [], r[1] || 0]);
   }
 

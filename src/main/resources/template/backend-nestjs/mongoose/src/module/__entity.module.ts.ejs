@@ -1,0 +1,29 @@
+<%
+const entityName = _entity.name.pascal().concat(entitySuffix);
+-%>
+import { Module } from '@nestjs/common';
+import { MongooseModule } from "@nestjs/mongoose";
+import { <%-_entity.name.pascal()%>Controller } from '../web/rest/<%-_entity.name.kebab()%>.controller';
+import { <%-entityName%>Schema } from '../domain/<%-_entity.name.kebab()%>.entity';
+import { <%-_entity.name.pascal()%>Service } from '../service/<%-_entity.name.kebab()%>.service';
+import { <%-_entity.name.pascal()%>Repository } from '../repository/<%-_entity.name.kebab()%>.repository';
+import { MongooseCollection } from "../domain/base/mongoose.collection";
+<%-modules.search === "elasticsearch" ?
+`import {ElasticSearchModule} from "./elasticsearch.module";
+import {${_entity.name.pascal()}SearchRepository} from "../repository/search/${_entity.name.kebab()}.search.repository";` : ``
+%>
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: MongooseCollection.<%-entityName%> , schema: <%-entityName%>Schema }]),
+    <%-modules.search === "elasticsearch" ? `ElasticSearchModule,` : ``%>
+  ],
+  controllers: [<%-_entity.name.pascal()%>Controller],
+  providers: [
+    <%-_entity.name.pascal()%>Service,
+    <%-_entity.name.pascal()%>Repository,
+    <%-modules.search === "elasticsearch" ? `${_entity.name.pascal()}SearchRepository,` : ``%>
+  ],
+  exports: [<%-_entity.name.pascal()%>Service,],
+})
+export class <%-_entity.name.pascal()%>Module {}

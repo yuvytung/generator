@@ -3,11 +3,10 @@ import { BaseEntity } from "./base/base.entity";
 import { Exclude } from "class-transformer";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
+import { MongooseCollection } from './base/mongoose.collection';
 
-@Schema({ collection: User.Name })
+@Schema({ collection: MongooseCollection.User  })
 export class User extends BaseEntity {
-  static readonly Name = "nhi_user";
-  static Schema: mongoose.Schema<User>;
 
   @Prop({ unique: true })
   login: string;
@@ -22,7 +21,7 @@ export class User extends BaseEntity {
   @Prop({ default: "en" })
   langKey?: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Authority.Name }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.Authority }] })
   authorities?: Authority[];
 
   @Prop({})
@@ -38,5 +37,5 @@ export class User extends BaseEntity {
   resetDate?: Date;
 }
 
-User.Schema = SchemaFactory.createForClass(User);
-User.Schema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });
+export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

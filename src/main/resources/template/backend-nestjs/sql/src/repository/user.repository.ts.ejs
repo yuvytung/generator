@@ -1,0 +1,11 @@
+import { User<%-entitySuffix%> } from "../domain/user.entity";
+import { AbstractBaseRepository } from "./abstract.base.repository";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+
+@Injectable()
+export class UserRepository extends AbstractBaseRepository<User<%-entitySuffix%>> {
+  constructor(@InjectRepository(User<%-entitySuffix%>) repository: AbstractBaseRepository<User<%-entitySuffix%>>) {
+    super(repository);
+  }
+}

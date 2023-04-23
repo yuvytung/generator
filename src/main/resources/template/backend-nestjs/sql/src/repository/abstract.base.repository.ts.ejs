@@ -1,0 +1,13 @@
+import { Repository } from 'typeorm';
+<%-database === "mongodb" ? `import { ObjectId } from "mongodb";` : ``%>
+
+export class AbstractBaseRepository<Entity> extends Repository<Entity> {
+  constructor(repository: Repository<Entity>) {
+    super(repository.target, repository.manager, repository.queryRunner);
+  }
+
+  public async findById(id: number) {
+    // @ts-ignore
+    return await this.findOne({ where: { <%-database === "mongodb" ? `_id: new ObjectId(id.toString())` : `id: id`%> } });
+  }
+}

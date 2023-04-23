@@ -11,7 +11,7 @@ export enum MigrationStatus {
 
 @Schema({ collection: SystemMigration.Name })
 export class SystemMigration {
-  static readonly Name = "SystemMigration";
+  static readonly Name = "sys_migrations";
   static Schema: mongoose.Schema<SystemMigration>;
 
   @Prop({ unique: true })

@@ -1,8 +1,9 @@
-import { Authority } from "../domain/authority.entity";
 import { Mongoose } from "mongoose";
 import { Migration } from "./core/Migration";
-import { User } from "../domain/user.entity";
 import { transformPassword } from "../security";
+import { MongooseCollection } from "../domain/base/mongoose.collection";
+import { Authority, AuthoritySchema } from "../domain/authority.entity";
+import { User, UserSchema } from "../domain/user.entity";
 
 export default class Migration0000000000000 implements Migration {
   public async up(mongoose: Mongoose): Promise<any> {
@@ -62,12 +63,12 @@ export default class Migration0000000000000 implements Migration {
       _updatedBy: "system",
     };
 
-    const authorityRepository = mongoose.model(Authority.Name, Authority.Schema);
+    const authorityRepository = mongoose.model(MongooseCollection.Authority, AuthoritySchema);
 
     const adminRole = await authorityRepository.create(role1);
     const userRole = await authorityRepository.create(role2);
 
-    const userRepository = mongoose.model(User.Name, User.Schema);
+    const userRepository = mongoose.model(MongooseCollection.User, UserSchema);
 
     user1.authorities = [adminRole, userRole];
     user3.authorities = [adminRole, userRole];
