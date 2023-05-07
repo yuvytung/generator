@@ -8,6 +8,7 @@
     "clean": "rimraf dist ../target/db/",
     <%-database === "mongodb" ? `"migration:up": "ts-node ./src/migrations",` : ``%>
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
+    "build:container": "docker build -t <%-baseName.lower()-%>:latest .",
     "webpack:prod": "npm run clean && webpack --config webpack.server.prod.config.js && npm run copy-resources",
     "copy-resources": "ts-node scripts/copy-resources.ts",
     "format": "prettier --write \"src/**/*.ts\"",

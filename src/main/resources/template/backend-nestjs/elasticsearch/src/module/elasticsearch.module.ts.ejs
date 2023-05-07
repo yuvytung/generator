@@ -5,7 +5,7 @@ import { ElasticsearchModule } from "@nestjs/elasticsearch";
   imports: [
     ElasticsearchModule.registerAsync({
       useFactory: () => ({
-        nodes: ["http://localhost:9200"],
+        nodes: [getEnv("elasticsearch.url", "http://localhost:9200")],
       }),
     }),
   ],

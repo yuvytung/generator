@@ -1,0 +1,19 @@
+ARG GIT_COMMIT=null
+ARG GIT_VERSION=null
+ARG GIT_BRANCH=null
+
+FROM node:16.20.0 AS build
+WORKDIR /application
+COPY ./ /application/
+RUN yarn
+RUN yarn build
+
+FROM node:16.20.0 AS release
+WORKDIR /application
+COPY --from=build /application/ /application/
+
+ENV EUREKA_INSTANCE_METADATA_MAP_GIT_VERSION=$GIT_VERSION
+ENV EUREKA_INSTANCE_METADATA_MAP_GIT_COMMIT=$GIT_COMMIT
+ENV EUREKA_INSTANCE_METADATA_MAP_GIT_BRANCH=$GIT_BRANCH
+
+CMD yarn start:prod

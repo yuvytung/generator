@@ -1,6 +1,5 @@
 import { config as envConfig } from "dotenv";
 import mongoose from "mongoose";
-import { databaseConfig } from "../../database.config";
 import * as fs from "fs";
 import { MigrationStatus, SystemMigration } from "./SystemMigration";
 import * as console from "console";
@@ -8,11 +7,10 @@ import * as console from "console";
 envConfig();
 
 (async () => {
-  const dbConfig = await databaseConfig();
-  const mongo = await mongoose.connect(dbConfig.uri, {
-    dbName: dbConfig.dbName,
-    user: dbConfig.user,
-    pass: dbConfig.pass,
+  const mongo = await mongoose.connect(process.env.MONGODB_URI, {
+    dbName: process.env.MONGODB_DB_NAME,
+    user: process.env.MONGODB_USER,
+    pass: process.env.MONGODB_PASS,
   });
 
   const systemMigrationRepository = mongo.model(SystemMigration.Name, SystemMigration.Schema);

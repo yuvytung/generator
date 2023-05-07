@@ -1,0 +1,91 @@
+import { config } from "./config";
+import { parse } from "url";
+import cloudConfigClient from "cloud-config-client";
+import { Logger } from "@nestjs/common";
+import { Eureka } from "eureka-js-client";
+
+const logger: Logger = new Logger("Main");
+const port = process.env.NODE_SERVER_PORT || getEnv("server.port");
+const useJHipsterRegistry = getEnv("eureka.client.enabled");
+
+export async function loadCloudConfig(): Promise<void> {
+  if (useJHipsterRegistry) {
+    const endpoint = getEnv("cloud.config.uri") || "http://admin:admin@localhost:8761/config";
+    log.log(`Loading cloud config from ${endpoint}`);
+
+    const cloudConfig = await cloudConfigClient.load({
+      context: process.env,
+      endpoint,
+      name: getEnv("cloud.config.name"),
+      profiles: getEnv("cloud.config.profile") || ["prod"],
+      auth: {
+        user: getEnv("jhipster.registry.username") || "admin",
+        pass: getEnv("jhipster.registry.password") || "admin",
+      },
+    });
+    config.addAll(cloudConfig.properties);
+  }
+}
+
+let eurekaClient;
+
+export function registerAsEurekaService(): void {
+  if (useJHipsterRegistry) {
+    log.info(`Registering with eureka ${getEnv("cloud.config.uri")}`);
+    const eurekaUrl = parse(getEnv("cloud.config.uri"));
+    const ipAddress = getEnv("ipAddress");
+
+    eurekaClient = new Eureka({
+      instance: {
+        app: getEnv("eureka.instance.appname"),
+        instanceId: getEnv("eureka.instance.instanceId"),
+        hostName: ipAddress || "localhost",
+        ipAddr: ipAddress || "127.0.0.1",
+        status: "UP",
+        port: {
+          $: port,
+          "@enabled": "true",
+        },
+        metadata: {
+          "git-branch": getEnv("eureka.instance.metadata-map.git-branch"),
+          "git-version": getEnv("eureka.instance.metadata-map.git-version"),
+          zone: getEnv("eureka.instance.metadata-map.zone"),
+          profile: getEnv("eureka.instance.metadata-map.profile"),
+          version: "1.0.0",
+          "git-commit": getEnv("eureka.instance.metadata-map.git-commit"),
+        },
+        vipAddress: "CatinySkillMapService" || ipAddress || "localhost",
+        homePageUrl: `http://${ipAddress}:${port}/`,
+        healthCheckUrl: `http://${ipAddress}:${port}/management/health`,
+        statusPageUrl: `http://${ipAddress}:${port}/management/info`,
+        dataCenterInfo: {
+          "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+          name: "MyOwn",
+        },
+      },
+      eureka: {
+        // eureka server host / port
+        host: eurekaUrl.hostname || "127.0.0.1",
+        port: eurekaUrl.port || 8761,
+        servicePath: "/eureka/apps",
+        heartbeatInterval: 60000,
+        clusterRefreshInterval: 60000,
+
+        // serviceUrls: {
+        //   default: ["http://admin:admin@localhost:20060/eureka/"],
+        // },
+      },
+      requestMiddleware: (requestOpts, done): any => {
+        requestOpts.auth = {
+          user: getEnv("jhipster.registry.username", "admin"),
+          password: getEnv("jhipster.registry.password", "admin"),
+        };
+        done(requestOpts);
+      },
+    });
+    eurekaClient.logger.level("info");
+    eurekaClient.start((error) => logger.log(error || "Eureka registration complete"));
+  }
+}
+
+export { eurekaClient };

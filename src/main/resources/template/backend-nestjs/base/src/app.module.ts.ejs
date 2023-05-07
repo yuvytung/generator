@@ -34,8 +34,8 @@ export class GlobalInit {
       useFactory: () => ({
         config: [
           {
-            host: "localhost",
-            port: 6379
+            host: getEnv("redis.host", "localhost"),
+            port: parseInt(getEnv("redis.port", "6379"), 10),
           }
         ]
       })

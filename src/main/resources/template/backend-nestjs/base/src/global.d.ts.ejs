@@ -1,5 +1,6 @@
 declare namespace NodeJS {
   interface Global {
     log: any;
+    getEnv(key: string, defaultValue: any);
   }
 }

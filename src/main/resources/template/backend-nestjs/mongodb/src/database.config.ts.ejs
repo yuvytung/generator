@@ -9,26 +9,21 @@ async function databaseConfig(): Promise<MongooseModuleFactoryOptions> {
 
   let dbConfig: MongooseModuleFactoryOptions = {
     uri: await mongoMemory?.getUri(),
-    dbName: "default",
+    dbName: "dev",
   };
 
   if (process.env.BACKEND_ENV === "prod") {
     dbConfig = {
-      dbName: "admin",
-      uri: "mongodb://localhost:27018",
-      user: "sa",
-      pass: "yourStrong(!)Password",
+      dbName: getEnv("mongodb.db.name", "prod"),
+      uri: getEnv("mongodb.uri", "mongodb://localhost:27018"),
+      user: getEnv("mongodb.user", "sa"),
+      pass: getEnv("mongodb.pass", "yourStrong(!)Password"),
     };
   }
 
   if (process.env.BACKEND_ENV === "test") {
     dbConfig = {
-      name: "default",
-      type: "sqlite",
-      database: ":memory:",
-      keepConnectionAlive: true,
-      logging: true,
-      synchronize: true,
+      dbName: "test",
     };
   }
   return dbConfig;

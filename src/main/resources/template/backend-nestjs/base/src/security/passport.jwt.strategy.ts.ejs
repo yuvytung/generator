@@ -2,7 +2,6 @@ import { ExtractJwt, Strategy, VerifiedCallback } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Payload } from "./payload.interface";
-import { config } from "../config";
 import { AuthService } from "../service/auth.service";
 
 @Injectable()
@@ -11,7 +10,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: true,
-      secretOrKey: config["jhipster.security.authentication.jwt.base64-secret"],
+      secretOrKey: new Buffer(
+        getEnv("jhipster.security.authentication.jwt.base64-secret"),
+        "base64",
+      ),
     });
   }
 

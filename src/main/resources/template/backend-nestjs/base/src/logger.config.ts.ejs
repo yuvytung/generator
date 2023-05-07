@@ -9,17 +9,17 @@ const log4jsConfig = () => {
         type: "console",
         layout: {
           type: "pattern",
-          pattern: `${chalk.gray("%d{hh:mm:ss.SSS}")} ${chalk.bold(
+          pattern: `${chalk.gray("%d{yyyy/MM/dd hh:mm:ss.SSS}")} ${chalk.bold(
             "%[%5.-5p%]",
           )}%-0.-20c%-40.-50x{fileName} ${chalk.hex("#FFC16BFF").italic("%m")}`,
           tokens: {
-            fileName: logEvent =>
+            fileName: (logEvent) =>
               chalk.italic(
                 logEvent.fileName
                   .replace(`${process.env.PWD}/`, "")
                   .replace(/(.js|.ts)$/g, "")
                   .concat(`:${logEvent.lineNumber}`)
-                  .replace(/src\/logger.config:\d*/, chalk.gray("NestJS Logger")),
+                  .replace(/(src|dist)\/logger.config:\d*/, "NestJS"),
               ),
           },
         },
@@ -35,12 +35,9 @@ const log4jsConfig = () => {
   });
   global.log = log4js.getLogger(" ");
 };
+log4jsConfig();
 
 export class LoggerConfig implements LoggerService {
-  constructor() {
-    log4jsConfig();
-  }
-
   /**
    * Write a 'log' level log.
    */

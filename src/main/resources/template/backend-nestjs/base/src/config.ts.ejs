@@ -5,6 +5,9 @@ import * as path from "path";
 import { Logger } from "@nestjs/common";
 import { config as configEnv } from "dotenv";
 import { networkInterfaces } from "os";
+import { v4 } from "uuid";
+import * as process from "process";
+import * as Case from "case";
 
 const logger = new Logger("Config");
 configEnv();
@@ -12,6 +15,7 @@ configEnv();
 export class Config {
   debugLogging = "debug";
   "server.port" = "<%-serverPort%>";
+  "random.value" = v4().replace(/-/g, "");
   "jhipster.clientApp.name" = "<%-baseName%>";
   "jhipster.registry.password" = "admin";
   "jhipster.security.authentication.jwt.base64-secret" = "";
@@ -38,7 +42,7 @@ export class Config {
   "eureka.instance.status-page-url-path" = "${management.endpoints.web.base-path}/info";
   "eureka.instance.health-check-url-path" = "${management.endpoints.web.base-path}/health";
   "eureka.instance.metadata-map.zone" = "primary";
-  // 'eureka.instance.metadata-map.profile' = '${profiles.active}';
+  "eureka.instance.metadata-map.profile" = "${profiles.active}";
   "eureka.instance.metadata-map.git-version" = "${git.commit.id.describe:}";
   "eureka.instance.metadata-map.git-commit" = "${git.commit.id.abbrev:}";
   "eureka.instance.metadata-map.git-branch" = "${git.branch:}";
@@ -55,7 +59,8 @@ export class Config {
   }
 
   public get(key: string): any {
-    return this[key];
+    const envKey = Case.constant(key);
+    return process.env[envKey] !== undefined ? process.env[envKey] : this[key];
   }
 
   public getClientPath(): string {
@@ -120,8 +125,6 @@ const config = new Config({
   ipAddress: ipAddress(),
 });
 
-export { config };
-
 function objectToArray(source, currentKey?, target?): any {
   target = target || {};
   for (const property in source) {
@@ -154,3 +157,6 @@ function ipAddress(): any {
 
   return null;
 }
+
+global.getEnv = (key: string, defaultValue: string = undefined) => config.get(key) || defaultValue;
+export { config };

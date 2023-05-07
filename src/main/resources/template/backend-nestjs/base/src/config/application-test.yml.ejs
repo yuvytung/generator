@@ -1,4 +1,4 @@
-# ===================================================================
+===================================================================
 # Configuration for the "test" profile.
 #
 # This configuration overrides the application.yml file.
@@ -12,20 +12,19 @@
 # ===================================================================
 
 eureka:
-    instance:
-        prefer-ip-address: true
-    client:
-        service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 server:
-    port: <%-serverPort%>
-
-    mail:
-        host: localhost
-        port: 25
-        username:
-        password:
+  port: <%-serverPort%>
+  mail:
+    host: localhost
+    port: 25
+    username:
+    password:
 
 # ===================================================================
 # JHipster specific properties
@@ -34,9 +33,9 @@ server:
 # ===================================================================
 
 jhipster:
-    mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: <%-baseName%>@localhost
-        base-url: http://127.0.0.1:8082
+  mail: # specific JHipster mail property, for standard properties see MailProperties
+    from: <%-baseName%>@localhost
+    base-url: http://127.0.0.1:8082
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

@@ -20,7 +20,10 @@ import { MongooseCollection } from "../domain/base/mongoose.collection";
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: config["jhipster.security.authentication.jwt.base64-secret"],
+      secret: new Buffer(
+        getEnv("jhipster.security.authentication.jwt.base64-secret"),
+        "base64",
+      ).toString(),
       signOptions: { expiresIn: "300s" },
     }),
   ],
