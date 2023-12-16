@@ -1,0 +1,11 @@
+const common = [
+  "./test/cucumber/features/**/*.feature",
+  "--require-module ts-node/register",
+  "--require ./test/cucumber/steps/**/*.ts",
+  "--publish-quiet",
+  '--format-options \'{"snippetInterface": "synchronous"}\'',
+].join(" ");
+
+module.exports = {
+  default: common,
+};

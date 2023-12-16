@@ -19,11 +19,12 @@
     "start": "npm run clean && npm run copy-resources && nodemon --watch src -e ts,tsx --exec ts-node --files src/main.ts",
     "lint": "eslint . --ignore-path .eslintignore --no-eslintrc --config .eslintrc --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && npm run lint && jest",
-    "test:cov": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test": "npm run test:unit && npm run test:e2e && npm run test:cucumber && npm run test:integration",
+    "test:unit": "jest --config test/unit/jest.config.json",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --silent --force-exit --coverage --config ./e2e/jest.e2e.config.json"
+    "test:e2e": "jest --silent --force-exit --coverage --config test/e2e/jest.config.json",
+    "test:cucumber": "cucumber-js --config test/cucumber/cucumber.setup.js",
+    "test:integration": "cucumber-js --config test/cucumber/cucumber.setup.js"
   },
   "jest": {
     "coverageDirectory": "coverage",

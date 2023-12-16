@@ -5,9 +5,9 @@ export class StringPool {
 
   static case = Case;
 
-  static caseProcessing = resource => {
+  static caseProcessing = (resource) => {
     const result = {};
-    Object.keys(resource).forEach(key => {
+    Object.keys(resource).forEach((key) => {
       result[`_${key}`] = {
         snake: Case.snake(resource[key]), // snake_case
         pascal: Case.pascal(resource[key]), // PascalCase

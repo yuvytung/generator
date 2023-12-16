@@ -11,7 +11,7 @@ const modules = Object.keys(environments.modules);
 const ejsEnv = environments.ejs.environment.original;
 Object.assign(ejsEnv, StringPool.caseProcessing(environments.ejs.environment.original));
 
-const fieldTypeProcessing = type => {
+const fieldTypeProcessing = (type) => {
   switch (type) {
     case "UUID":
       return "string";
@@ -36,7 +36,7 @@ const fieldTypeProcessing = type => {
     case "Duration":
       return "Date";
     default:
-      return "string";
+      return type;
   }
 };
 
@@ -47,22 +47,60 @@ const fieldType = {
   date: "Date",
 };
 
-const processTemplateEjs = moduleName => {
+const processTemplateEjs = (moduleName) => {
   const subModulesIncluded = [ejsEnv.entityType].join("|");
   const moduleTemplatePath = `src/main/resources/template/${moduleName}`;
   const moduleOutputPath = `build/output/${moduleName}`;
 
   const entityProperty = glob
     .sync("entity/*.json", {})
-    .map(entityPathJson => JSON.parseFile(entityPathJson));
+    .map((entityPathJson) => JSON.parseFile(entityPathJson));
+
+  // enum processing
+  const allEnum = {};
+  entityProperty.map((ep) =>
+    ep.fields
+      .filter((f) => f.fieldValues?.match(/[\w,]+/g))
+      .map((enumField) => {
+        enumField.enumValues = enumField.fieldValues.split(",").map((v) => ({
+          key: v.split(" ")[0],
+          value: v.split(" ")[1]?.replace(/[()]/g, "") || v.split(" ")[0],
+        }));
+        allEnum[enumField.fieldType] = enumField;
+      }),
+  );
 
   glob
+    .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/__enum.{.??,}*.ejs`, {})
+    .map((pathInput) => {
+      Object.keys(allEnum)
+        .map((v) => allEnum[v])
+        .map(async (en) => {
+          const pathOutput = pathInput
+            .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
+            .replace(/\.ejs$/g, "")
+            .replace(/__enum/g, `${en.fieldType.kebab()}`);
+          fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
+          fs.writeFileSync(
+            pathOutput,
+            await ejs
+              .renderFile(
+                pathInput,
+                {
+                  enumObject: en,
+                },
+                { charset: "utf8" },
+              )
+              .catch((err) => log.error(err)),
+          );
+        });
+    });
+  // entity processing
+  glob
     .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.ejs`, {})
-    //    .filter (pathInput) ->
-    //      environments?.modules?["backend-nestjs"]?.elasticsearch and
-    //      pathInput.match(/.*__entity\.search\.repository\.ts\.ejs/g)?.length
-    .map(pathInput => {
-      entityProperty.map(async ep => {
+    .filter((pathInput) => !pathInput.includes("__enum."))
+    .map((pathInput) => {
+      entityProperty.map(async (ep) => {
         const pathOutput = pathInput
           .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
           .replace(/\.ejs$/g, "")
@@ -77,6 +115,7 @@ const processTemplateEjs = moduleName => {
                 ...ejsEnv,
                 _entity: ep,
                 _entities: entityProperty,
+                _allEnum: allEnum,
                 _: {
                   fieldType,
                   Case: StringPool.case,
@@ -84,9 +123,9 @@ const processTemplateEjs = moduleName => {
                 },
                 modules: environments.modules[moduleName],
               },
-              { charset: "utf8" }
+              { charset: "utf8" },
             )
-            .catch(err => log.error(err))
+            .catch((err) => log.error(err)),
         );
       });
     });
@@ -94,5 +133,5 @@ const processTemplateEjs = moduleName => {
 
 export default () => {
   log.debug("render", environments.modules);
-  modules.map(moduleName => processTemplateEjs(moduleName));
+  modules.map((moduleName) => processTemplateEjs(moduleName));
 };

@@ -4,5 +4,4 @@ package-lock.json
 .git
 .idea
 
-build
 src/main/resource

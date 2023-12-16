@@ -2,7 +2,7 @@ import "./configuration/index.mjs";
 import Case from "case";
 
 // eslint-disable-next-line no-extend-native
-String.prototype.execute = callback => callback(this);
+String.prototype.execute = (callback) => callback(this);
 // eslint-disable-next-line no-extend-native
 Object.assign(String.prototype, {
   /**

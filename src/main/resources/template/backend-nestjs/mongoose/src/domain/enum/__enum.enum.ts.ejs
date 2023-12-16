@@ -1,0 +1,5 @@
+// eslint-disable-next-line no-shadow
+export enum <%-enumObject.fieldType.pascal()%> {
+  <%-enumObject.enumValues.map((en) => `${en.key} = "${en.value}",`).join(`
+  `) %>
+}

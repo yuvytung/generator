@@ -1,9 +1,6 @@
 {
   "parser": "babel-eslint",
-  "extends": [
-    "eslint:recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
@@ -20,6 +17,5 @@
     "app": true,
     "APP_ENV": true
   },
-  "rules": {
-  }
+  "rules": {}
 }

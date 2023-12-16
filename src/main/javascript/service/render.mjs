@@ -11,18 +11,18 @@ const modules = Object.keys(environments.modules);
 const ejsEnv = environments.ejs.environment.original;
 Object.assign(ejsEnv, StringPool.caseProcessing(environments.ejs.environment.original));
 
-const renderProcessing = moduleName => {
+const renderProcessing = (moduleName) => {
   const subModules = environments.modules[moduleName];
   const subModulesIncluded = []
-    .concat((subModules && Object.keys(subModules)).filter(key => subModules[key]))
-    .map(key => subModules[key])
+    .concat((subModules && Object.keys(subModules)).filter((key) => subModules[key]))
+    .map((key) => subModules[key])
     .join("|");
   const moduleTemplatePath = `src/main/resources/template/${moduleName}`;
   const moduleOutputPath = `build/output/${moduleName}`;
   glob
     .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.ejs`, {})
-    .filter(pathInput => !pathInput.match(/^.*\/__.*.ts$/g))
-    .map(async pathInput => {
+    .filter((pathInput) => !pathInput.match(/^.*\/__.*.ts$/g))
+    .map(async (pathInput) => {
       const pathOutput = pathInput
         .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
         .replace(/\.ejs$/g, "");
@@ -32,13 +32,13 @@ const renderProcessing = moduleName => {
         await ejs.renderFile(
           pathInput,
           { ...ejsEnv, modules: environments.modules[moduleName] },
-          { charset: "utf8" }
-        )
+          { charset: "utf8" },
+        ),
       );
     });
   glob
     .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.binary`, {})
-    .map(pathInput => {
+    .map((pathInput) => {
       const pathOutput = pathInput
         .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
         .replace(/\.binary$/g, "");
@@ -49,7 +49,7 @@ const renderProcessing = moduleName => {
 
 export default () => {
   log.debug("render", environments.modules);
-  modules.map(moduleName => {
+  modules.map((moduleName) => {
     renderProcessing(moduleName);
     log.info(`render module: ${moduleName} done!, output: build/output/${moduleName}`);
   });

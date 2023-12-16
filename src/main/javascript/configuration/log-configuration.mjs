@@ -8,7 +8,7 @@ log4js.configure({
         type: "pattern",
         pattern: "%d{hh:mm:ss.SSS} %[%5.-5p%]|%-0.-20c|%-40.-50x{fileName} --> %m",
         tokens: {
-          fileName: logEvent =>
+          fileName: (logEvent) =>
             logEvent.fileName
               .replace(`${app.rootDirPath}/src/main/coffeescript/`, "")
               .replace(/.js$/g, "")

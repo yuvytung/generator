@@ -19,6 +19,9 @@ import { Base<%-dtoSuffix%> } from './base.dto';
 `import { ${otherEntityName.pascal()+dtoSuffix} } from './${Case.kebab(otherEntityName)}.dto';`)
 .join(`\n`)
 %>
+<%-fields.filter(f => f.fieldValues)
+        .map((f)=> `import { ${f.fieldType.pascal()} } from "../../domain/enum/${f.fieldType.kebab()}.enum";`)
+%>
 
 /**
  * <%-name.pascal().concat(dtoSuffix)%> DTO.
@@ -37,7 +40,7 @@ export class <%-_entity.name.pascal().concat(dtoSuffix)%> extends Base<%-dtoSuff
     description: '${field.javadoc || field.fieldName}',
     required: false
   })
-  ${Case.camel(field.fieldName)}: ${typeDetect(field.fieldType)};`
+  ${Case.camel(field.fieldName)}: ${field.options?.any ? "any" : typeDetect(field.fieldType)};`
   ).join(`
 
   `)
@@ -49,11 +52,12 @@ export class <%-_entity.name.pascal().concat(dtoSuffix)%> extends Base<%-dtoSuff
   isArray: ${(relationshipType.O2O === relationship.relationshipType) || (relationshipType.M2O === relationship.relationshipType) ? 'false': 'true'},
   description: '${relationship.otherEntityName.pascal()} relationship' })`;
     if ((relationshipType.O2O === relationship.relationshipType)
-      || (relationshipType.M2O === relationship.relationshipType))
+      // || (relationshipType.M2O === relationship.relationshipType)
+    )
       return propBuilder.concat(`${relationship.relationshipName.camel()}: ${relationship.otherEntityName.pascal().concat(dtoSuffix)};`);
     else if ((relationshipType.O2M === relationship.relationshipType)
-      || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
-      || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+      // || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      // || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
     )
       return propBuilder.concat(`${relationship.relationshipName.camel()}s: ${relationship.otherEntityName.pascal().concat(dtoSuffix)}[];`);
   }).join(``)%>

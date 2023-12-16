@@ -1,4 +1,4 @@
-import { Body, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
+import { BadRequestException, Body, Delete, Get, Param, Patch, Post, Put, Query, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Page, PageRequest } from "../../domain/base/pagination.entity";
 import { HeaderUtil } from "../../client/header-util";
@@ -67,24 +67,32 @@ export class AbstractBaseController<D extends BaseDTO> {
     return created;
   }
 
-  @Put("/")
-  @ApiOperation({ summary: "Update entity (default)" })
-  @ApiResponse({
-    status: 200,
-    description: "The record has been successfully updated.",
-  })
-  async put(@Req() req: Request, @Body() dto: D): Promise<D> {
-    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
-    return this.service.update(dto, req.user?.login);
-  }
-
   @Put("/:id")
   @ApiOperation({ summary: "Update entity with id (default)" })
   @ApiResponse({
     status: 200,
     description: "The record has been successfully updated.",
   })
-  async putId(@Req() req: Request, @Body() dto: D): Promise<D> {
+  async put(@Req() req: Request, @Body() dto: D, @Param("id") id: string): Promise<D> {
+    dto.id = dto.id || id;
+    if (dto.id !== id) {
+      throw new BadRequestException("id conflict");
+    }
+    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
+    return this.service.update(dto, req.user?.login);
+  }
+
+  @Patch("/:id")
+  @ApiOperation({ summary: "Partial update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+  })
+  async patch(@Req() req: Request, @Body() dto: D, @Param("id") id: string): Promise<D> {
+    dto.id = dto.id || id;
+    if (dto.id !== id) {
+      throw new BadRequestException("id conflict");
+    }
     HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
     return this.service.update(dto, req.user?.login);
   }

@@ -8,6 +8,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -94,18 +95,6 @@ export class <%-_entity.name.pascal()%>Controller extends AbstractBaseController
     return super.post(req, dto);
   }
 
-  @Put("/")
-  @Roles(RoleType.ADMIN)
-  @ApiOperation({ summary: "Update entity (default)" })
-  @ApiResponse({
-    status: 200,
-    description: "The record has been successfully updated.",
-    type: <%-dto%>,
-  })
-  public override async put(@Req() req: Request, @Body() dto: <%-dto%>): Promise<<%-dto%>> {
-    return super.put(req, dto);
-  }
-
   @Put("/:id")
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: "Update entity with id (default)" })
@@ -114,8 +103,20 @@ export class <%-_entity.name.pascal()%>Controller extends AbstractBaseController
     description: "The record has been successfully updated.",
     type: <%-dto%>,
   })
-  public override async putId(@Req() req: Request, @Body() dto: <%-dto%>): Promise<<%-dto%>> {
-    return super.putId(req, dto);
+  public override async put(@Req() req: Request, @Body() dto: <%-dto%>, @Param("id") id: string): Promise<<%-dto%>> {
+    return super.put(req, dto, id);
+  }
+
+  @Patch("/:id")
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: "Partial update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: <%-dto%>,
+  })
+  public override async patch(@Req() req: Request, @Body() dto: <%-dto%>, @Param("id") id: string): Promise<<%-dto%>> {
+    return super.patch(req, dto, id);
   }
 
   @Delete("/:id")

@@ -22,6 +22,10 @@ import { MongooseCollection } from './base/mongoose.collection';
 `import { ${otherEntityName.pascal().concat(entitySuffix)} } from './${Case.kebab(otherEntityName)}.entity';`)
 .join(`\n`)
 %>
+<%-fields.filter(f => f.fieldValues)
+  .map((f)=> `import { ${f.fieldType.pascal()} } from "./enum/${f.fieldType.kebab()}.enum";`)
+%>
+
 
 /**
  * <%-name.pascal()%> entity.
@@ -41,8 +45,10 @@ export class <%-entityName%> extends BaseEntity {
     name: "${field.fieldName.snake()}",
     ${field.fieldValidateRules?.includes('required') ? "nullable: true," : ""}
     ${field.fieldValidateRules?.includes('unique') ? "unique: true," : ""}
+    ${field.options?.any ? "type: Object," : ""}
+    ${field.fieldValues ? "type: String, enum: ".concat(typeDetect(field.fieldType).pascal()) : ""}
   })
-  ${Case.camel(field.fieldName)}: ${typeDetect(field.fieldType)};`
+  ${Case.camel(field.fieldName).concat(field.fieldValidateRules?.includes('unique') ? "" : "?")}: ${field.options?.any ? "any" : typeDetect(field.fieldType)};`
   ).join(`
 
   `)
@@ -51,36 +57,44 @@ export class <%-entityName%> extends BaseEntity {
   <%-relationships?.map(relationship => {
     let propBuilder = '';
     if (relationshipType.O2O === relationship.relationshipType)
-      propBuilder = relationship.options?.ref ? `
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} })
+      propBuilder = relationship.options?.ref || !relationship.options?.any ? `
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()},
+    select: true,
+  })
   ` : `
   @Prop({ type: Object })
   `;
-    else if (relationshipType.M2O === relationship.relationshipType)
-      propBuilder = relationship.options?.ref ? `
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} })
-  ` : `
-  @Prop({ type: Object })
-  `;
+  //   else if (relationshipType.M2O === relationship.relationshipType)
+  //     propBuilder = relationship.options?.ref ? `
+  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} })
+  // ` : `
+  // @Prop({ type: Object })
+  // `;
     else if (relationshipType.O2M === relationship.relationshipType)
-      propBuilder =  relationship.options?.ref ? `
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} }] })
+      propBuilder =  relationship.options?.ref || !relationship.options?.any ? `
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} }],
+    select: false,
+  })
   ` : `
   @Prop({ type: [{ type: Object }] })
   `;
-    else if (relationshipType.M2M === relationship.relationshipType)
-      propBuilder =  relationship.options?.ref ? `
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} }] })
-  ` : `
-  @Prop({ type: [{ type: Object }] })
-  `;
+  //   else if (relationshipType.M2M === relationship.relationshipType)
+  //     propBuilder =  relationship.options?.ref ? `
+  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: MongooseCollection.${relationship.otherEntityName.pascal()} }] })
+  // ` : `
+  // @Prop({ type: [{ type: Object }] })
+  // `;
 
-    if ((relationshipType.O2O === relationship.relationshipType)
-      || (relationshipType.M2O === relationship.relationshipType))
+    if (
+      (relationshipType.O2O === relationship.relationshipType)
+      // || (relationshipType.M2O === relationship.relationshipType)
+    )
       return propBuilder.concat(`${Case.camel(relationship.relationshipName)}?: ${Case.pascal(relationship.otherEntityName)};`);
     else if ((relationshipType.O2M === relationship.relationshipType)
-      || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
-      || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+      // || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+      // || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
     )
       return propBuilder.concat(`${Case.camel(relationship.relationshipName)}s?: ${Case.pascal(relationship.otherEntityName)}[];`);
   }).join(``)%>

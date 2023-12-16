@@ -1,6 +1,6 @@
 # Prettier configuration
 
-printWidth: 90
+printWidth: 100
 singleQuote: false
 tabWidth: 2
 useTabs: false
@@ -10,7 +10,6 @@ endOfLine: lf
 arrowParens: avoid
 
 # jsx and tsx rules:
-
 
 # java rules:
 overrides:

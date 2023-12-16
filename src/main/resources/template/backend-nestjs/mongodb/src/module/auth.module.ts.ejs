@@ -19,12 +19,14 @@ import { MongooseCollection } from "../domain/base/mongoose.collection";
     MongooseModule.forFeature([{ name: MongooseCollection.Authority, schema: AuthoritySchema }]),
     UserModule,
     PassportModule,
-    JwtModule.register({
-      secret: new Buffer(
-        getEnv("jhipster.security.authentication.jwt.base64-secret"),
-        "base64",
-      ).toString(),
-      signOptions: { expiresIn: "300s" },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: new Buffer(
+          getEnv("jhipster.security.authentication.jwt.base64-secret"),
+          "base64",
+        ).toString(),
+        signOptions: { expiresIn: "300s" },
+      }),
     }),
   ],
   controllers: [UserJWTController, PublicUserController, AccountController],

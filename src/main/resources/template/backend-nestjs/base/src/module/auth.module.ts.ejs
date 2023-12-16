@@ -16,12 +16,14 @@ import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
     TypeOrmModule.forFeature([Authority<%-entitySuffix%>]),
     UserModule,
     PassportModule,
-    JwtModule.register({
-      secret: new Buffer(
-        getEnv("jhipster.security.authentication.jwt.base64-secret"),
-        "base64",
-      ).toString(),
-      signOptions: { expiresIn: "300s" },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: new Buffer(
+          getEnv("jhipster.security.authentication.jwt.base64-secret"),
+          "base64",
+        ).toString(),
+        signOptions: { expiresIn: "300s" },
+      }),
     }),
   ],
   controllers: [UserJWTController, PublicUserController, AccountController],

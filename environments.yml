@@ -1,7 +1,7 @@
 ejs:
   environment:
     original:
-      baseName: SkillMapService
+      baseName: CatinyBackend
       serverPort: 21200
       prefix: sys
       suffix: ""
@@ -9,7 +9,7 @@ ejs:
       entitySuffix: ""
       dtoSuffix: DTO
       nativeLanguage: en
-      packageFolder: com/regitiny/catiny/skillmap
+      packageFolder: com/regitiny/catiny/backend
       serviceDiscoveryType: true
       websocket: true
       searchEngine: elasticsearch
@@ -17,15 +17,15 @@ ejs:
       clientPackageManager: yarn
       buildTool: gradle
       entityType: mongoose
-#      entityType: typeorm
+      #      entityType: typeorm
       database: mongodb # mysql, mariadb, postgres
-#      database: mysql # mysql, mariadb, postgres
+      #      database: mysql # mysql, mariadb, postgres
       devDatabase: mongodb # sqlite , mongodb
-#      devDatabase: sqlite # sqlite , mongodb
+      #      devDatabase: sqlite # sqlite , mongodb
       prodDatabase: mongodb
-#      prodDatabase: mysql
+      #      prodDatabase: mysql
       clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
-modules:  # Note : that the order will affect the result
+modules: # Note : that the order will affect the result
   backend-nestjs:
     base: base # tất cả đều cần chạy base
     search: elasticsearch
@@ -33,10 +33,9 @@ modules:  # Note : that the order will affect the result
     database: mongodb
 #    database: sql
 
-  frontend-reactjs:
-    test: cypress
+#  frontend-reactjs:
+#    test: cypress
 #    protractor: true
-
 
 file:
   typeExtensions:
