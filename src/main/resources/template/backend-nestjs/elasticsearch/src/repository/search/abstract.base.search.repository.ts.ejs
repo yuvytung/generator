@@ -1,31 +1,31 @@
 /* eslint-disable no-underscore-dangle */
+import { OnModuleInit } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { BaseEntity } from "../../domain/base/base.entity";
 import Case from "case";
 import {MongooseCollection} from "../../domain/base/mongoose.collection";
 
-export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
-  protected _entity: { name: string };
+export abstract class AbstractBaseSearchRepository<E extends BaseEntity> implements OnModuleInit {
+  protected _entity: { name: string } = { name: "UNKNOWN_ENTITY" } as any;
 
-  protected constructor(protected readonly model: ElasticsearchService) {
-    this.init();
-  }
+  protected constructor(protected readonly model: ElasticsearchService) {}
 
-  init() {
+  onModuleInit() {
     if (this.constructor.name.search(/SearchRepository$/g) < 0) {
       log.warn("Format of class name not right:", this.constructor.name);
     }
-    this._entity = {
-      name: <%- database === 'mongodb'
-            ? `MongooseCollection[this.constructor.name.replace(/SearchRepository$/g, "")],`
-            : `Case.snake(this.constructor.name.replace(/SearchRepository$/g, "")),` %>
-    };
+    this._entity.name = <%- database === 'mongodb'
+            ? `MongooseCollection[this.constructor.name.replace(/SearchRepository$/g, "")]`
+            : `Case.snake(this.constructor.name.replace(/SearchRepository$/g, ""))` %> || this._entity.name;
   }
 
-  async search(keyword: string): Promise<E[] | undefined> {
+
+  async searchAndCount(keyword: string, params: any = {}): Promise<[E[], number]> {
     return this.model
       .search({
         index: this._entity.name,
+        size: 20,
+        from: 0,
         body: {
           query: {
             // eslint-disable-next-line camelcase
@@ -34,9 +34,14 @@ export abstract class AbstractBaseSearchRepository<E extends BaseEntity> {
             },
           },
         },
+        ...params,
       })
-      .then((r) => (r.body?.hits?.hits?.map((v) => v._source) as E[]) || []);
+      .then((r) => [
+        [...(r?.body?.hits?.hits || [])].map((v) => v?._source) as E[],
+        r.body?.hits?.total?.value || 0,
+      ]);
   }
+
 <%- database === 'mongodb' ? `
   async save(entity: E) {
     const searchEntity: E = {} as any;

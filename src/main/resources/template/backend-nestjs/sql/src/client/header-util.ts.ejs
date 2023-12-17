@@ -2,8 +2,9 @@ import { config } from "../config";
 import { Response } from "express";
 import { Page } from "../domain/base/pagination.entity";
 import { URL } from "url";
+import { BaseDTO } from "../service/dto/base.dto";
 
-const applicationName = config.get("jhipster.clientApp.name");
+const applicationName: string = config.get("jhipster.clientApp.name") as string;
 const enableTranslation = true;
 
 export class HeaderUtil {
@@ -36,19 +37,20 @@ export class HeaderUtil {
     this.createAlert(res, message, param);
   }
 
-  static addPaginationHeaders<T>(res: Response, page: Page<T>): any {
+  static addPaginationHeaders<T extends BaseDTO>(res: Response, page: Page<T>): any {
     const url = res.req.url;
+    const lastPage = Math.floor(page.total / page.pageable.size);
     res.set("X-Total-Count", page.total.toString());
     const pageNumber = page.pageable.page;
     const pageSize = page.pageable.size;
     const links = [];
-    if (pageNumber < page.total - 1) {
+    if (pageNumber < lastPage) {
       links.push(this.prepareLink(url, pageNumber + 1, pageSize, "next"));
     }
     if (pageNumber > 0) {
       links.push(this.prepareLink(url, pageNumber - 1, pageSize, "prev"));
     }
-    links.push(this.prepareLink(url, page.total - 1, pageSize, "last"));
+    links.push(this.prepareLink(url, lastPage, pageSize, "last"));
     links.push(this.prepareLink(url, 0, pageSize, "first"));
     res.set("Link", links.join(","));
   }

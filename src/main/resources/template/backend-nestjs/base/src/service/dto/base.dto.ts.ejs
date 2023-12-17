@@ -1,4 +1,4 @@
-<%-database==="mongodb" ? `import { Transform } from 'class-transformer';` : ''%>
+<%-database==="mongodb" ? `import { Transform, Expose } from 'class-transformer';` : ''%>
 <%-database === "mongodb" ? `import { ObjectId } from "mongodb";` : ``%>
 
 /**
@@ -9,7 +9,9 @@ export class Base<%-dtoSuffix%> {
   ?`_id?: ObjectId | string;
   @Transform((id) => (id?.value.toHexString ? id?.value.toHexString() : id), { toPlainOnly: true })
   id?: string;`
-  : `id?: number;`%>
+  : `
+  @Expose()
+  id?: number;`%>
 
 
 }

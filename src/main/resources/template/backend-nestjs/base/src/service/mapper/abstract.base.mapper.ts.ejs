@@ -1,22 +1,50 @@
+import { ClassConstructor, ClassTransformOptions, plainToInstance } from "class-transformer";
+
 /**
  * A base mapper object.
  */
 export class AbstractBaseMapper<E, D> {
-  constructor(protected readonly Entity: any, protected readonly <%-dtoSuffix%>: any) {}
+  constructor(protected readonly Entity: any, protected readonly DTO: any) {}
 
   static copy(resource) {
     return JSON.parse(JSON.stringify(resource));
   }
 
   d2e(dto: D): E {
-    if (!dto) return;
+    if (!dto) {
+      return;
+    }
     const entity = new this.Entity();
-    return AbstractBaseMapper.copy(dto) as E;
+    return Object.assign(entity, AbstractBaseMapper.copy(dto));
   }
 
-  e2d(entity: E): D {
-    if (!entity) return;
-    const dto = new this.<%-dtoSuffix%>();
-    return AbstractBaseMapper.copy(entity) as D;
+  e2d(
+    entity: E | E[],
+    {
+      TargetClass,
+      options,
+    }: { TargetClass?: ClassConstructor<E>; options?: ClassTransformOptions } = {},
+  ): D | D[] {
+    if (!entity) {
+      return;
+    }
+    return plainToInstance<D, any>(TargetClass || this.DTO, AbstractBaseMapper.copy(entity), {
+      excludeExtraneousValues: true,
+      ...options,
+    });
+  }
+
+  e2dList(entities: E[]): D[] {
+    if (!entities) {
+      return [];
+    }
+    return this.e2d(entities) as D[];
+  }
+
+  d2eList(dtos: D[]): E[] {
+    if (!dtos) {
+      return [];
+    }
+    return dtos.map((dto) => this.d2e(dto));
   }
 }

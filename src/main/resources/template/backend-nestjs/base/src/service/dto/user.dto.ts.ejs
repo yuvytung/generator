@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsEmail } from "class-validator";
 import { Base<%-dtoSuffix%> } from "./base.dto";
-import { Exclude } from "class-transformer";
+import { Exclude, Expose } from "class-transformer";
 
 /**
  * An User <%-dtoSuffix%> object.
@@ -9,22 +9,28 @@ import { Exclude } from "class-transformer";
 export class User<%-dtoSuffix%> extends Base<%-dtoSuffix%> {
   @ApiProperty({ uniqueItems: true, example: "myuser", description: "User login" })
   @IsString()
+  @Expose()
   login: string;
 
   @ApiProperty({ example: "MyUser", description: "User first name", required: false })
+  @Expose()
   firstName?: string;
 
   @ApiProperty({ example: "MyUser", description: "User last name", required: false })
+  @Expose()
   lastName?: string;
 
   @ApiProperty({ example: "myuser@localhost.it", description: "User email" })
   @IsEmail()
+  @Expose()
   email: string;
 
   @ApiProperty({ example: "true", description: "User activation", required: false })
+  @Expose()
   activated?: boolean;
 
   @ApiProperty({ example: "en", description: "User language", required: false })
+  @Expose()
   langKey?: string;
 
   @ApiProperty({
@@ -33,6 +39,7 @@ export class User<%-dtoSuffix%> extends Base<%-dtoSuffix%> {
     description: "Array of permissions",
     required: false,
   })
+  @Expose()
   authorities?: any[];
 
   @Exclude()
@@ -40,11 +47,24 @@ export class User<%-dtoSuffix%> extends Base<%-dtoSuffix%> {
   password: string;
 
   @ApiProperty({ example: "http://my-image-url", description: "Image url", required: false })
+  @Expose()
   imageUrl?: string;
 
+  @Expose()
   activationKey?: string;
 
+  @Expose()
   resetKey?: string;
 
+  @Expose()
   resetDate?: Date;
+
+  @Expose()
+  createdBy?: string;
+  @Expose()
+  createdDate?: Date;
+  @Expose()
+  lastModifiedBy?: string;
+  @Expose()
+  lastModifiedDate?: Date;
 }

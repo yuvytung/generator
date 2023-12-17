@@ -53,7 +53,7 @@ const processTemplateEjs = (moduleName) => {
   const moduleOutputPath = `build/output/${moduleName}`;
 
   const entityProperty = glob
-    .sync("entity/*.json", {})
+    .sync(".jhipster/*.json", {})
     .map((entityPathJson) => JSON.parseFile(entityPathJson));
 
   // enum processing

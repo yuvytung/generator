@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
+import { Expose } from "class-transformer";
 
 /**
  * A <%-dtoSuffix%> representing a login user.
@@ -7,12 +8,15 @@ import { IsString } from "class-validator";
 export class UserLogin<%-dtoSuffix%> {
   @ApiProperty({ description: "User password" })
   @IsString()
+  @Expose()
   readonly password: string;
 
   @ApiProperty({ description: "User remember login", required: false })
+  @Expose()
   readonly rememberMe?: boolean;
 
   @ApiProperty({ description: "User login name" })
   @IsString()
+  @Expose()
   readonly username: string;
 }

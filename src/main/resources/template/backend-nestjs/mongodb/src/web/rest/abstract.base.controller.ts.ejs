@@ -1,13 +1,35 @@
-import { BadRequestException, Body, Delete, Get, Param, Patch, Post, Put, Query, Req } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Delete,
+  Get,
+  OnModuleInit,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  Req,
+} from "@nestjs/common";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Page, PageRequest } from "../../domain/base/pagination.entity";
 import { HeaderUtil } from "../../client/header-util";
 import { Request } from "../../client/request";
 import { AbstractBaseService } from "../../service/abstract.base.service";
 import { BaseDTO } from "../../service/dto/base.dto";
+import { MongooseCollection } from "../../domain/base/mongoose.collection";
 
-export class AbstractBaseController<D extends BaseDTO> {
-  constructor(protected readonly service: AbstractBaseService<any, any>) {}
+export abstract class AbstractBaseController<D extends BaseDTO> implements OnModuleInit {
+  protected _entity: { name: string } = { name: "UNKNOWN_ENTITY" } as any;
+  protected constructor(protected readonly service: AbstractBaseService<any, any>) {}
+
+  onModuleInit() {
+    if (this.constructor.name.search(/Controller$/g) < 0) {
+      log.warn("Format of class name not right:", this.constructor.name);
+    }
+    this._entity.name =
+      MongooseCollection[this.constructor.name.replace(/Controller$/g, "")] || this._entity.name;
+  }
 
   @Get("/")
   @ApiResponse({
@@ -27,7 +49,8 @@ export class AbstractBaseController<D extends BaseDTO> {
         limit: +pageRequest.size,
         sort: pageRequest.sort.asOrder(),
       },
-      {});
+      {},
+    );
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
   }
@@ -40,8 +63,16 @@ export class AbstractBaseController<D extends BaseDTO> {
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
   async search(@Req() req: Request, @Query("keywords") keywords: string): Promise<D[]> {
-    const results = await this.service.search(keywords);
-    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", results);
+    const pageRequest: PageRequest = new PageRequest(
+      req.query.page,
+      req.query.size,
+      req.query.sort,
+    );
+    const [results, count] = await this.service.searchAndCount(keywords, {
+      size: +pageRequest.size,
+      from: +pageRequest.page * pageRequest.size,
+    });
+    HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
   }
 
@@ -63,7 +94,7 @@ export class AbstractBaseController<D extends BaseDTO> {
   @ApiResponse({ status: 403, description: "Forbidden." })
   async post(@Req() req: Request, @Body() dto: D): Promise<D> {
     const created = await this.service.save(dto, req.user?.login);
-    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", created.id);
+    HeaderUtil.addEntityUpdatedHeaders(req.res, this._entity.name, created.id);
     return created;
   }
 
@@ -78,7 +109,7 @@ export class AbstractBaseController<D extends BaseDTO> {
     if (dto.id !== id) {
       throw new BadRequestException("id conflict");
     }
-    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
+    HeaderUtil.addEntityUpdatedHeaders(req.res, this._entity.name, dto.id);
     return this.service.update(dto, req.user?.login);
   }
 
@@ -93,7 +124,7 @@ export class AbstractBaseController<D extends BaseDTO> {
     if (dto.id !== id) {
       throw new BadRequestException("id conflict");
     }
-    HeaderUtil.addEntityCreatedHeaders(req.res, "Job", dto.id);
+    HeaderUtil.addEntityUpdatedHeaders(req.res, this._entity.name, dto.id);
     return this.service.update(dto, req.user?.login);
   }
 
@@ -104,7 +135,8 @@ export class AbstractBaseController<D extends BaseDTO> {
     description: "The record has been successfully deleted.",
   })
   async deleteById(@Req() req: Request, @Param("id") id: string): Promise<void> {
-    HeaderUtil.addEntityDeletedHeaders(req.res, "Job", id);
-    return this.service.deleteById(id);
+    return this.service
+      .deleteById(id)
+      .then(() => HeaderUtil.addEntityDeletedHeaders(req.res, this._entity.name, id));
   }
 }

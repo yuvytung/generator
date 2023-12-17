@@ -6,7 +6,7 @@
   "description": "project generate code.",
   "scripts": {
     "postinstall": "husky install",
-    "start": "node src/main/javascript/index.mjs",
+    "start": "rm -rf .jhipster && jhipster jdl catiny.jdl --json-only && npm run render:all",
     "render": "node src/main/javascript/index.mjs render ",
     "entity:render": "node src/main/javascript/index.mjs entity_render ",
     "render:all": "npm run render:base && npm run render:entity && npm run prettier:render ",

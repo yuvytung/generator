@@ -68,7 +68,7 @@ export class AbstractBaseRepository<Entity extends BaseEntity> {
     this.commonBuilder({ filter, options, projection });
     const resultFind = await this._model.find(filter, projection, options).lean().exec();
     const resultCount = await this._model.count(filter).exec();
-    return [resultFind, resultCount];
+    return [resultFind as any, resultCount];
   }
 
   public async save(entity: Entity, options: Options<Entity> = {}): Promise<Entity> {
@@ -129,7 +129,7 @@ export class AbstractBaseRepository<Entity extends BaseEntity> {
   ): Promise<[HydratedDocument<Entity>[], number]> {
     const resultFind = await this._model.find(filter, projection, options).exec();
     const resultCount = await this._model.count(filter).exec();
-    return [resultFind, resultCount];
+    return [resultFind as any, resultCount];
   }
 
   public async _save(
