@@ -21,7 +21,7 @@ import { MongooseCollection } from "../domain/base/mongoose.collection";
     PassportModule,
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: new Buffer(
+        secret: Buffer.from(
           getEnv("jhipster.security.authentication.jwt.base64-secret"),
           "base64",
         ).toString(),

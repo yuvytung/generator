@@ -7,11 +7,14 @@
 export class Base<%-dtoSuffix%> {
   <%-database==="mongodb"
   ?`_id?: ObjectId | string;
-  @Transform((id) => (id?.value.toHexString ? id?.value.toHexString() : id), { toPlainOnly: true })
+  // @Transform((id) => (id?.value.toHexString ? id?.value.toHexString() : id), { toPlainOnly: true })
+  @Expose()
   id?: string;`
   : `
   @Expose()
   id?: number;`%>
 
+  @Expose()
+  refId?: string;
 
 }

@@ -13,7 +13,6 @@ import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
 
 @Injectable()
 export class AuthService {
-  logger = new Logger("AuthService");
   constructor(
     private readonly jwtService: JwtService,
     @InjectRepository(Authority<%-entitySuffix%>)

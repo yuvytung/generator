@@ -12,8 +12,6 @@ import { AbstractBaseSearchRepository } from "../repository/search/abstract.base
 import { FilterQuery } from "mongoose";
 
 export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDTO> {
-  logger = new Logger("BaseService");
-
   protected constructor(
     protected _repository: AbstractBaseRepository<E>,
     protected _mapper: AbstractBaseMapper<E, D> = new AbstractBaseMapper<E, D>(BaseEntity, BaseDTO),

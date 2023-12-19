@@ -8,7 +8,6 @@ import { Base<%-dtoSuffix%> } from "./dto/base.dto";
 `import { AbstractBaseSearchRepository } from "../repository/search/abstract.base.search.repository";`%>
 
 export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%-dtoSuffix%>> {
-  logger = new Logger("BaseService");
 
   protected constructor(
     protected _repository: AbstractBaseRepository<E>,

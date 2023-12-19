@@ -27,7 +27,6 @@ import { UserService } from "../../service/user.service";
 @ApiBearerAuth()
 @ApiTags("user-resource")
 export class UserController {
-  logger = new Logger("UserController");
 
   constructor(private readonly userService: UserService) {}
 

@@ -19,7 +19,6 @@ import { RoleType } from "../../security";
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
 @ApiTags("public-user-controller")
 export class PublicUserController {
-  logger = new Logger("PublicUserController");
 
   constructor(private readonly authService: AuthService) {}
 

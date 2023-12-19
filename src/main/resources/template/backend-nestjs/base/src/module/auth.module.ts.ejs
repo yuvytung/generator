@@ -18,7 +18,7 @@ import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
     PassportModule,
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: new Buffer(
+        secret: Buffer.from(
           getEnv("jhipster.security.authentication.jwt.base64-secret"),
           "base64",
         ).toString(),

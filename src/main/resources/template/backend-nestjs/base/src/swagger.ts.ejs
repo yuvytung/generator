@@ -14,5 +14,5 @@ export function setupSwagger(app: INestApplication): any {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup(swaggerEndpoint, app, document);
-  logger.log(`Added swagger on endpoint ${swaggerEndpoint}`);
+  log.log(`Added swagger on endpoint: ${swaggerEndpoint}`);
 }

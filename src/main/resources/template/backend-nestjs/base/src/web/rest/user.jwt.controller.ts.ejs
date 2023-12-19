@@ -9,8 +9,6 @@ import { ApiTags, ApiResponse, ApiOperation } from "@nestjs/swagger";
 @UseInterceptors(LoggingInterceptor)
 @ApiTags("user-jwt-controller")
 export class UserJWTController {
-  logger = new Logger("UserJWTController");
-
   constructor(private readonly authService: AuthService) {}
 
   @Post("/authenticate")

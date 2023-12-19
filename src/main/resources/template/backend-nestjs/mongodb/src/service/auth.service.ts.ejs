@@ -13,7 +13,6 @@ import { AbstractBaseService } from "./abstract.base.service";
 
 @Injectable()
 export class AuthService extends AbstractBaseService<Authority, any> {
-  logger = new Logger("AuthService");
   constructor(
     private readonly jwtService: JwtService,
     private authorityRepository: AuthorityRepository,
