@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity } from "./base/base.entity";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
 import { MongooseCollection } from './base/mongoose.collection';
 
 @Schema({ collection: MongooseCollection.Authority })

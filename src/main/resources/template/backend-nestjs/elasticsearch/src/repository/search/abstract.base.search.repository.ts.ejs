@@ -2,7 +2,6 @@
 import { OnModuleInit } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { BaseEntity } from "../../domain/base/base.entity";
-import Case from "case";
 import {MongooseCollection} from "../../domain/base/mongoose.collection";
 
 export abstract class AbstractBaseSearchRepository<E extends BaseEntity> implements OnModuleInit {

@@ -1,33 +1,35 @@
-import { User } from "../../domain/user.entity";
-import { UserDTO } from "../dto/user.dto";
+import { User<%-entitySuffix%> } from "../../domain/user.entity";
+import { User<%-dtoSuffix%> } from "../dto/user.dto";
 
 /**
  * An User mapper object.
  */
 export class UserMapper {
-  static fromDTOtoEntity(userDTO: UserDTO): User {
-    if (!userDTO) {
+  static fromDTOtoEntity(user<%-dtoSuffix%>: User<%-dtoSuffix%>): User {
+    if (!user<%-dtoSuffix%>) {
       return;
     }
     const user = new User();
-    const fields = Object.getOwnPropertyNames(userDTO);
+    const fields = Object.getOwnPropertyNames(user<%-dtoSuffix%>);
     fields.forEach((field) => {
-      user[field] = userDTO[field];
+      user[field] = user<%-dtoSuffix%>[field];
     });
     return user;
   }
 
-  static fromEntityToDTO(user: User): UserDTO {
+  static fromEntityToDTO(user: User): User<%-dtoSuffix%> {
     if (!user) {
       return;
     }
-    const userDTO = new UserDTO();
+    const user<%-dtoSuffix%> = new User<%-dtoSuffix%>();
 
     const fields = Object.getOwnPropertyNames(user);
 
     fields.forEach((field) => {
-      userDTO[field] = user[field];
+      user<%-dtoSuffix%>[field] = user[field];
     });
+
+
 
     userDTO._id = user._id.toString();
     userDTO.id = user._id.toString();
@@ -36,6 +38,6 @@ export class UserMapper {
     userDTO.lastModifiedBy = user._updatedBy;
     userDTO.lastModifiedDate = user._updatedAt;
 
-    return userDTO;
+    return user<%-dtoSuffix%>;
   }
 }

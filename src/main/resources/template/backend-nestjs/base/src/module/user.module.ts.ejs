@@ -1,14 +1,42 @@
-import { Module } from "@nestjs/common";
+<%
+const builder = (arr) => arr.concat([[true, '']])
+  .filter(([condition]) => condition)
+  .map(([condition, value]) => value)
+  .join('\n'),
+addImport = builder([
+    [entityType === "typeorm",             `import { TypeOrmModule } from "@nestjs/typeorm";`],
+    [entityType === "typeorm",             `import { User${entitySuffix} } from "../domain/user.entity";`],
+    [entityType === "typeorm",             `import { Module } from "@nestjs/common";`],
+    [entityType === "mongoose",            `import { forwardRef, Module } from "@nestjs/common";`],
+    [entityType === "mongoose",            `import { MongooseModule } from "@nestjs/mongoose";`],
+    [entityType === "mongoose",            `import { User${entitySuffix}Repository } from "../repository/user.repository";`],
+    [entityType === "mongoose",            `import { User${entitySuffix}Schema } from "../domain/user.entity";`],
+    [entityType === "mongoose",            `import { MongooseCollection } from "../domain/base/mongoose.collection";`],
+    [entityType === "mongoose",            `import { AuthModule } from "./auth.module";`]
+  ]),
+addModuleImports = builder([
+    [entityType === "mongoose",             `MongooseModule.forFeature([{ name: MongooseCollection.User${entitySuffix}, schema: User${entitySuffix}Schema }]),`],
+    [entityType === "mongoose",             `forwardRef(() => AuthModule),`],
+    [entityType === "typeorm",              `TypeOrmModule.forFeature([User${entitySuffix}]),`]
+  ]),
+addModuleProviders = builder([
+    [entityType === "mongoose",             `User${entitySuffix}Repository,`]
+  ]);
+-%>
 import { UserController } from "../web/rest/user.controller";
 import { ManagementController } from "../web/rest/management.controller";
-import { User<%-entitySuffix%> } from "../domain/user.entity";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserService } from "../service/user.service";
+<%-addImport%>
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User<%-entitySuffix%>])],
+  imports: [
+    <%-addModuleImports%>
+  ],
   controllers: [UserController, ManagementController],
-  providers: [UserService],
+  providers: [
+    <%-addModuleProviders%>
+    UserService,
+  ],
   exports: [UserService],
 })
 export class UserModule {}

@@ -36,6 +36,7 @@
       2
     ],
     "complexity": "off",
+    "no-prototype-builtins": "warn",
     "dot-notation": "warn",
     "import/order": "off",
     "valid-typeof": "off",
@@ -60,6 +61,17 @@
     ],
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-floating-promises": "warn",
+    "prettier/prettier": [
+      "warn", {
+        "singleQuote": false,
+        "endOfLine": "auto",
+        "tabWidth": 2,
+        "trailingComma": "all",
+        "semi": true,
+        "printWidth": 100,
+        "arrowParens": "always"
+      }
+    ],
     "curly": "error",
     "radix": "error",
     "no-var": "error",
@@ -123,7 +135,7 @@
       "smart"
     ],
     "@typescript-eslint/quotes": [
-      "error",
+      "warn",
       "double"
     ],
     "@typescript-eslint/semi": [

@@ -1,3 +1,27 @@
+<%
+const builder = (arr) => arr.concat([[true, '']])
+                .filter(([condition]) => condition)
+                .map(([condition, value]) => value)
+                .join('\n'),
+addImport = builder([
+    [entityType === "typeorm",             `import { TypeOrmModule } from "@nestjs/typeorm";`],
+    [entityType === "typeorm",             `import { Authority${entitySuffix} } from "../domain/authority.entity";`],
+    [entityType === "mongoose",            `import { MongooseModule } from "@nestjs/mongoose";`],
+    [entityType === "mongoose",            `import { Authority${entitySuffix}Repository } from "../repository/authority.repository";`],
+    [entityType === "mongoose",            `import { Authority${entitySuffix}Schema } from "../domain/authority.entity";`],
+    [entityType === "mongoose",            `import { MongooseCollection } from "../domain/base/mongoose.collection";`]
+  ]),
+addModuleImports = builder([
+    [entityType === "mongoose",             `MongooseModule.forFeature([{ name: MongooseCollection.Authority${entitySuffix}, schema: Authority${entitySuffix}Schema }]),`],
+    [entityType === "typeorm",              `TypeOrmModule.forFeature([Authority${entitySuffix}]),`]
+  ]),
+addModuleProviders = builder([
+    [entityType === "mongoose",             `Authority${entitySuffix}Repository,`]
+]);
+-%>
+
+
+
 import { Module } from "@nestjs/common";
 import { AuthService } from "../service/auth.service";
 import { UserModule } from "./user.module";
@@ -5,15 +29,14 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "../security/passport.jwt.strategy";
 import { UserJWTController } from "../web/rest/user.jwt.controller";
-import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { PublicUserController } from "../web/rest/public.user.controller";
 import { AccountController } from "../web/rest/account.controller";
-import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
+<%-addImport%>
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Authority<%-entitySuffix%>]),
+    <%-addModuleImports%>
     UserModule,
     PassportModule,
     JwtModule.registerAsync({
@@ -27,7 +50,11 @@ import { Authority<%-entitySuffix%> } from "../domain/authority.entity";
     }),
   ],
   controllers: [UserJWTController, PublicUserController, AccountController],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    <%-addModuleProviders%>
+    AuthService,
+    JwtStrategy
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

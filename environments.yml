@@ -2,6 +2,7 @@ ejs:
   environment:
     original:
       baseName: CatinyBackend
+      author: yuvytung
       serverPort: 21200
       prefix: sys
       suffix: ""
@@ -20,7 +21,7 @@ ejs:
       #      entityType: typeorm
       database: mongodb # mysql, mariadb, postgres
       #      database: mysql # mysql, mariadb, postgres
-      devDatabase: mongodb # sqlite , mongodb
+      devDatabase: mongodb-memory # sqlite , mongodb-memory
       #      devDatabase: sqlite # sqlite , mongodb
       prodDatabase: mongodb
       #      prodDatabase: mysql

@@ -1,46 +1,83 @@
+<%
+var _entities;
+_entities = _entities || [];
+
+const builder = (arr) => arr.concat([[true, '']])
+  .filter(([condition]) => condition)
+  .map(([condition, value]) => value)
+  .join('\n'),
+entitiesName = _entities?.map((e)=> e.name ) || []
+addImport = builder([
+    [entityType === "mongoose",            `import { MongooseModule } from "@nestjs/mongoose";`],
+    [modules.cache === "redis",            `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";`],
+    [modules.cache === "redis",            `import { CacheService } from "./index";`],
+    [true,                                 `import { PrometheusModule } from "@willsoto/nestjs-prometheus";`]
+  ]),
+addGlobalInitConstructorParam = builder([
+    [modules.cache === "redis",            `@InjectRedis() private readonly cache: CacheService,`]
+  ]),
+addGlobalInitConstructorBody = builder([
+    [
+      modules.cache === "redis",
+      `this.cache.quick = async (key, callback) => {
+        let result = await this.cache.get(key.toString()).then(r => JSON.parse(r));
+        if (!result) {
+          result = await callback();
+          void this.cache.set(key, JSON.stringify(result));
+        }
+        return result;
+      };`
+    ]
+  ]),
+addModuleImports = builder([
+    [
+      modules.cache === "redis",
+      `RedisModule.forRootAsync({
+        useFactory: () => ({
+          config: [
+            {
+              host: getEnv("redis.host", "localhost"),
+              port: getEnv("redis.port", "6379"),
+            },
+          ],
+        }),
+      }),`
+    ],
+    [
+      true,
+      `PrometheusModule.register({
+        path: "/management/prometheus",
+      }),`
+    ]
+  ]);
+-%>
+// eslint-disable-next-line max-classes-per-file
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./module/auth.module";
-import { ormConfig } from "./database.config";
+import { databaseConfig } from "./database.config";
 import { config } from "./config";
 import { ServeStaticModule } from "@nestjs/serve-static";
-<%-modules.cache === "redis" ? `import { InjectRedis, RedisModule } from "@liaoliaots/nestjs-redis";
-import { CacheService } from "./index";` : ``%>
+<%-addImport%>
+<%-entitiesName.map((name)=> `import { ${name.pascal()}Module } from "./module/${name.kebab()}.module";`).join(`\n`)%>
 
-export class GlobalInit {
+
+class GlobalInit {
   constructor(
-    <%-modules.cache === "redis" ? `@InjectRedis() private readonly cache: CacheService,` : ``%>
+    <%-addGlobalInitConstructorParam%>
   ) {
-    <%-modules.cache === "redis" ?
-    `this.cache.quick = async (key, callback) => {
-      let result = await this.cache.get(key.toString()).then(r => JSON.parse(r));
-      if (!result) {
-        result = await callback();
-        this.cache.set(key, JSON.stringify(result));
-      }
-      return result;
-    };` : ``%>
+    <%-addGlobalInitConstructorBody%>
   }
 }
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
-    ServeStaticModule.forRoot({
-      rootPath: config.getClientPath()
-    }),
-    <%-modules.cache === "redis" ?
-    `RedisModule.forRootAsync({
-      useFactory: () => ({
-        config: [
-          {
-            host: getEnv("redis.host", "localhost"),
-            port: parseInt(getEnv("redis.port", "6379"), 10),
-          }
-        ]
-      })
-    }),` : ``%>
     AuthModule,
+    MongooseModule.forRootAsync({ useFactory: databaseConfig }),
+    ServeStaticModule.forRoot({
+      rootPath: config.getClientPath(),
+    }),
+    <%-addModuleImports%>
+    <%-entitiesName.map((name)=> `${name.pascal()}Module`).join(',')%>
   ],
   controllers: [
   ],

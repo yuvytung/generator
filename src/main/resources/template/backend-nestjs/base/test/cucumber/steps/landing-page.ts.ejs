@@ -1,11 +1,11 @@
-import assert from "assert";
 import { When, Then, Given } from "@cucumber/cucumber";
 
 Given(
   "a administrator named {string}",
-  (strings) =>
-    // Write code here that turns the phrase above into concrete actions
-    "done!",
+  (strings) => {
+    expect(1).toEqual(1)
+    return "done!"
+  }
 );
 Given(
   "role of {string} is ADMIN",

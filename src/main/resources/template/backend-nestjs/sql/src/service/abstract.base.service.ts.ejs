@@ -25,7 +25,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends Base<%
   <%-modules.search === "elasticsearch" ? `async searchAndCount(keywords: string, params: any = {}): Promise<[D[], number]> {
     return this._searchRepository
       .searchAndCount(keywords, params)
-      .then((r) => [this._mapper?.e2dList(r[0]), r[1]]);
+      .then((r) => [this._mapper?.e2d(r[0]), r[1]]);
   }` : ``%>
 
   async findByFields(options: FindOneOptions<D>): Promise<D | undefined> {

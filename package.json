@@ -12,7 +12,7 @@
     "render:all": "npm run render:base && npm run render:entity && npm run prettier:render ",
     "render:base": "node src/main/javascript/index.mjs render ",
     "render:entity": "node src/main/javascript/index.mjs entity_render ",
-    "prettier:render": "prettier 'build/output/backend-nestjs/**/*.{js,jsx,ts,tsx,json,md,html,css,less,scss}' --config build/output/backend-nestjs/.prettierrc.js --write --ignore-path .prettierignore" ,
+    "prettier:render": "prettier 'build/output/backend-nestjs/**/*.{js,jsx,ts,tsx,json,md,html,css,less,scss,yml,yaml}' --config build/output/backend-nestjs/.prettierrc --write --ignore-path .prettierignore" ,
     "convert": "node src/main/javascript/index.mjs convert",
     "lint": "eslint 'src/main/javascript/' --fix --ext .mjs",
     "prettier": "prettier --write 'src/main/javascript/**/*.mjs'",

@@ -20,7 +20,7 @@ const renderProcessing = (moduleName) => {
   const moduleTemplatePath = `src/main/resources/template/${moduleName}`;
   const moduleOutputPath = `build/output/${moduleName}`;
   glob
-    .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/**/{.??,}*.ejs`, {})
+    .sync(`${moduleTemplatePath}/@(${subModulesIncluded})/{.??,}**/{.??,}*.ejs`, {})
     .filter((pathInput) => !pathInput.match(/^.*\/__.*.ts$/g))
     .map(async (pathInput) => {
       const pathOutput = pathInput

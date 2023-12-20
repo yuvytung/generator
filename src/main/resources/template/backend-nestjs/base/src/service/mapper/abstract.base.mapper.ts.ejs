@@ -1,4 +1,5 @@
 import { ClassConstructor, ClassTransformOptions, plainToInstance } from "class-transformer";
+import { cloneDeep } from "lodash";
 
 /**
  * A base mapper object.
@@ -6,45 +7,25 @@ import { ClassConstructor, ClassTransformOptions, plainToInstance } from "class-
 export class AbstractBaseMapper<E, D> {
   constructor(protected readonly Entity: any, protected readonly DTO: any) {}
 
-  static copy(resource) {
-    return JSON.parse(JSON.stringify(resource));
+  d2e(dto: D): E;
+  d2e(dto: D[]): E[];
+  d2e(dto: D | D[]): E | E[] {
+    const result = [].concat(dto).map((d) => Object.assign(new this.Entity(), cloneDeep(d)));
+    return Array.isArray(dto) ? result : [result[0]];
   }
 
-  d2e(dto: D): E {
-    if (!dto) {
-      return;
-    }
-    const entity = new this.Entity();
-    return Object.assign(entity, AbstractBaseMapper.copy(dto));
-  }
-
-  e2d(
-    entity: E | E[],
-    {
-      TargetClass,
-      options,
-    }: { TargetClass?: ClassConstructor<E>; options?: ClassTransformOptions } = {},
-  ): D | D[] {
-    if (!entity) {
-      return;
-    }
-    return plainToInstance<D, any>(TargetClass || this.DTO, AbstractBaseMapper.copy(entity), {
+  e2d(dto: E): D;
+  e2d(dto: E[]): D[];
+  e2d(entity: E | E[], { TargetClass, options }: TargetOptionsType<E> = {}): D | D[] {
+    const result = [].concat(entity).map((e) => Object.assign(new this.DTO(), cloneDeep(e)));
+    return plainToInstance<D, E>(TargetClass || this.DTO, result, {
       excludeExtraneousValues: true,
       ...options,
     });
   }
+}
 
-  e2dList(entities: E[]): D[] {
-    if (!entities) {
-      return [];
-    }
-    return this.e2d(entities) as D[];
-  }
-
-  d2eList(dtos: D[]): E[] {
-    if (!dtos) {
-      return [];
-    }
-    return dtos.map((dto) => this.d2e(dto));
-  }
+interface TargetOptionsType<T> {
+  TargetClass?: ClassConstructor<T>;
+  options?: ClassTransformOptions;
 }

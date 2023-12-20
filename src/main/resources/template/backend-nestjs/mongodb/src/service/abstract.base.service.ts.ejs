@@ -29,7 +29,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
     projection: Projection<E> = {},
   ): Promise<D[] | undefined> {
     const result = await this._repository.find(filter, options, projection);
-    return this._mapper?.e2dList(result) || (result as []);
+    return this._mapper?.e2d(result) || (result as []);
   }
 
   async _find(
@@ -43,7 +43,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
   async searchAndCount(keywords: string, params: any = {}): Promise<[D[], number]> {
     return this._searchRepository
       .searchAndCount(keywords, params)
-      .then((r) => [this._mapper?.e2dList(r[0]), r[1]]);
+      .then((r) => [this._mapper?.e2d(r[0]), r[1]]);
   }
 
   async findAndCount(
@@ -53,7 +53,7 @@ export abstract class AbstractBaseService<E extends BaseEntity, D extends BaseDT
   ): Promise<[D[], number]> {
     return this._repository
       .findAndCount(filter, options, projection)
-      .then((r) => [this._mapper?.e2dList(r[0]) || [], r[1] || 0]);
+      .then((r) => [this._mapper?.e2d(r[0]) || [], r[1] || 0]);
   }
 
   async save(dto: D, creator?: string): Promise<D | undefined> {

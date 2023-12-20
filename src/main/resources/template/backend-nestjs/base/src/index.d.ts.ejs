@@ -8,5 +8,8 @@ declare global {
 }
 <%-modules.cache === "redis" ?
 `export interface CacheService extends Redis {
-  quick(key: string, callback);
+  quick<T>(key: string, callback: () => Promise<T>): Promise<T>;
 }` : ``%>
+
+
+

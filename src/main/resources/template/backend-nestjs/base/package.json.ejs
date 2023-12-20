@@ -1,17 +1,42 @@
+<%
+const builder = (arr) => arr.concat([[true, '']])
+  .filter(([condition]) => condition)
+  .map(([condition, value]) => value)
+  .join(','),
+addDependencies = builder([
+  [database === "mariadb",               `"mysql2": "2.2.5"`],
+  [database === "mysql",                 `"mysql2": "2.2.5"`],
+  [database === "mongodb",               `"mongodb": "6.3.0"`],
+  [devDatabase === "sqlite",             `"sqlite3": "5.1.4"`],
+  [devDatabase === "mongodb-memory",     `"mongodb-memory-server": "8.12.1"`],
+  [entityType === "mongoose",            `"@nestjs/mongoose": "9.2.2"`],
+  [entityType === "typeorm",             `"@nestjs/typeorm": "9.0.1"`],
+  [entityType === "typeorm",             `"typeorm": "0.3.12"`],
+  [entityType === "typeorm",             `"typeorm-encrypted": "0.8.0"`],
+  [modules.search === "elasticsearch",   `"@elastic/elasticsearch": "^7.0.0"`],
+  [modules.search === "elasticsearch",   `"@nestjs/elasticsearch": "^9.0.0"`],
+  [modules.cache === "redis",            `"@liaoliaots/nestjs-redis": "^9.0.0"`],
+  [modules.cache === "redis",            `"ioredis": "^5.2.3"`]
+]),
+addScripts = builder([
+  [database === "mongodb",               `"migration:up": "ts-node ./src/migrations"`]
+])
+-%>
 {
   "name": "<%-baseName-%>",
   "version": "0.0.1",
-  "description": "",
+  "description": "<%-baseName.capital()-%> Project",
   "license": "MIT",
-  "author": "",
+  "author": "<%-author%>",
   "scripts": {
+    <%-addScripts%>
+    "postinstall": "husky install",
     "clean": "rimraf dist ../target/db/",
-    <%-database === "mongodb" ? `"migration:up": "ts-node ./src/migrations",` : ``%>
     "build": "npm run clean && tsc -p tsconfig.build.json && npm run copy-resources",
     "build:container": "docker build -t <%-baseName.lower()-%>:latest .",
     "webpack:prod": "npm run clean && webpack --config webpack.server.prod.config.js && npm run copy-resources",
     "copy-resources": "ts-node scripts/copy-resources.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier './**/*.{js,jsx,ts,tsx,json,md,html,css,less,scss,yml,yaml}' --config .prettierrc --write --ignore-path .prettierignore",
     "sonar:scanner": "sonar-scanner",
     "start:node": "npm run copy-resources && ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "npm run copy-resources && tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
@@ -27,23 +52,8 @@
     "test:cucumber": "cucumber-js --config test/cucumber/cucumber.setup.js",
     "test:integration": "cucumber-js --config test/cucumber/cucumber.setup.js"
   },
-  "jest": {
-    "coverageDirectory": "coverage",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "setupFiles": [
-      "./e2e/setup.test.js"
-    ],
-    "testEnvironment": "node",
-    "testRegex": "(/test/.*|\\.(spec))\\.(ts)$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    }
-  },
   "dependencies": {
+    <%-addDependencies%>
     "@nestjs/common": "9.3.9",
     "@nestjs/core": "9.3.9",
     "@nestjs/jwt": "10.0.2",
@@ -51,6 +61,7 @@
     "@nestjs/platform-express": "9.3.9",
     "@nestjs/serve-static": "3.0.1",
     "@nestjs/swagger": "6.2.1",
+    "@willsoto/nestjs-prometheus": "6.0.0",
     "bcrypt": "5.1.0",
     "case": "^1.6.3",
     "chalk": "4.1.2",
@@ -64,28 +75,16 @@
     "log4js": "6.6.1",
     "passport": "0.6.0",
     "passport-jwt": "4.0.1",
+    "prom-client": "15.1.0",
     "reflect-metadata": "0.1.13",
     "rxjs": "7.8.0",
     "shelljs": "0.8.5",
     "swagger-ui-express": "4.6.2",
-    "@nestjs/typeorm": "9.0.1",
-    "typeorm": "0.3.12",
-    "typeorm-encrypted": "0.8.0",
-    "@nestjs/mongoose": "9.2.2",
-    <%-(database === "mysql" || database === "mariadb") ? `"mysql2": "2.2.5",` :
-    database === "mongodb" ? `"mongodb": "3.6.3",` : ``%>
-    <%-devDatabase === "sqlite" ? `"sqlite3": "5.1.4",` :
-    devDatabase === "mongodb" ?
-    `"mongodb-memory-server": "8.12.1",` : ``%>
-    <%-modules.search === "elasticsearch" ?
-    `"@elastic/elasticsearch": "^7.0.0",
-    "@nestjs/elasticsearch": "^9.0.0",` : ``%>
-    <%-modules.cache === "redis" ?
-    `"@liaoliaots/nestjs-redis": "^9.0.0",
-    "ioredis": "^5.2.3",` : ``%>
-    "uuid": "9.0.0"
+    "uuid": "9.0.0",
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.1",
+    "@commitlint/config-conventional": "^18.4.0",
     "@cucumber/cucumber": "10.0.1",
     "@nestjs/testing": "9.3.12",
     "@types/bcrypt": "5.0.0",
@@ -103,10 +102,11 @@
     "eslint": "8.56.0",
     "eslint-config-airbnb-typescript": "17.1.0",
     "eslint-config-prettier": "8.8.0",
-    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-prettier": "5.1.1",
     "jest": "29.5.0",
+    "expect": "29.5.0",
     "nodemon": "2.0.22",
-    "prettier": "2.8.7",
+    "prettier": "^3.1.1",
     "rimraf": "4.4.1",
     "sonarqube-scanner": "3.0.1",
     "supertest": "6.3.3",
@@ -115,7 +115,21 @@
     "tsc-watch": "6.0.0",
     "tsconfig-paths": "4.2.0",
     "tslint": "6.1.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
     "typescript": "5.0.3",
     "webpack": "5.77.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "{src,apps,libs,test}/**/*.ts": [
+      "npm run format",
+      "npm run lint:fix"
+    ]
   }
 }

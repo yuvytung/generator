@@ -1,9 +1,10 @@
 /* eslint-disable max-classes-per-file */
-import { BaseEntity } from "./base.entity";
-import { Type, Expose as JsonProperty } from "class-transformer";
+import { Expose as JsonProperty, Type } from "class-transformer";
+import { BaseDTO } from "../../service/dto/base.dto";
 
 export class Sort {
   public property: string;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   public direction: "ASC" | "DESC" | string;
   constructor(sort: string) {
     if (sort) {
@@ -33,6 +34,6 @@ export class PageRequest {
   }
 }
 
-export class Page<T extends BaseEntity> {
+export class Page<T extends BaseDTO> {
   constructor(public content: T[], public total: number, public pageable: PageRequest) {}
 }
