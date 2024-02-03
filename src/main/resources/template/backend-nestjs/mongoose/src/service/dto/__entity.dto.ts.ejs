@@ -1,6 +1,6 @@
 <%
 const { Case, typeDetect } = _;
-const { _name, name , javadoc, fields, relationships } = _entity;
+const { _name, name , documentation, fields, relationships } = _entity;
 const relationshipType = {
     O2O: "one-to-one",
     O2M: "one-to-many",
@@ -27,18 +27,18 @@ import { Base<%-dtoSuffix%> } from './base.dto';
 /**
  * <%-name.pascal().concat(dtoSuffix)%> DTO.
  *
- * <%-javadoc?.replace(/\\n/g,`
+ * <%-documentation?.replace(/\\n/g,`
  * `)%>
  */
 export class <%-_entity.name.pascal().concat(dtoSuffix)%> extends Base<%-dtoSuffix%> {
   <%-
   fields?.map(field =>
   `/**
-   * ${field.javadoc?.replace(/\\n/g,`
+   * ${field.documentation?.replace(/\\n/g,`
    * `) || field.fieldName}
    */
   @ApiProperty({
-    description: '${field.javadoc || field.fieldName}',
+    description: '${field.documentation || field.fieldName}',
     required: false
   })
   @Expose()
