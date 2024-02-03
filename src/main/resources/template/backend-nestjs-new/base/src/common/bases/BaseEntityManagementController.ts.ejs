@@ -1,0 +1,96 @@
+import { BadRequestException, OnModuleInit } from "@nestjs/common";
+import { Page, PageRequest } from "../../domain/base/pagination.entity";
+import { HeaderUtil } from "../util/HeaderUtil";
+import { Request } from "../interfaces/Request";
+import { BaseDTO, BaseEntity, BaseMapper, BaseService } from ".";
+import { EntitiesEnum } from "../enums/EntitiesEnum";
+
+export abstract class BaseEntityManagementController<E extends BaseEntity, D extends BaseDTO>
+  implements OnModuleInit
+{
+  protected entity: { name: string } = { name: "UNKNOWN_ENTITY" } as any;
+  protected abstract readonly service: BaseService<E>;
+  protected abstract readonly request: Request;
+  protected abstract readonly mapper: BaseMapper<E, D>;
+
+  onModuleInit() {
+    if (this.constructor.name.search(/Controller$/g) < 0) {
+      log.warn("Format of class name not right:", this.constructor.name);
+    }
+    this.entity.name =
+      EntitiesEnum[this.constructor.name.replace(/Controller$/g, "")] || this.entity.name;
+  }
+  async getAll(): Promise<D[]> {
+    const pageRequest: PageRequest = this.pageRequest();
+    const [results, count] = await this.service.findAndCount(
+      {},
+      {
+        ...this.pageRequestToSkipLimitSort(),
+      },
+      {},
+    );
+    HeaderUtil.addPaginationHeaders(this.request.res, new Page(results, count, pageRequest));
+    return this.mapper.e2d(results);
+  }
+  async search(keywords: string): Promise<D[]> {
+    const pageRequest: PageRequest = this.pageRequest();
+    const [result, count] = await this.service.searchAndCount(keywords, {
+      size: +pageRequest.size,
+      from: +pageRequest.page * pageRequest.size,
+    });
+    HeaderUtil.addPaginationHeaders(this.request.res, new Page(result, count, pageRequest));
+    return this.mapper.e2d(result);
+  }
+
+  async getOne(id: string): Promise<D> {
+    const result = await this.service.findById(id);
+    return this.mapper.e2d(result);
+  }
+
+  async post(dto: D): Promise<D> {
+    HeaderUtil.addEntityUpdatedHeaders(this.request.res, this.entity.name, dto.id);
+    const entity = this.mapper.d2e(dto);
+    const result = await this.service.save(entity, this.request.user?.login);
+    HeaderUtil.addEntityUpdatedHeaders(this.request.res, this.entity.name, result.id);
+    return this.mapper.e2d(result);
+  }
+
+  async put(id: string, dto: D): Promise<D> {
+    if (dto.id && id && dto.id !== id) {
+      throw new BadRequestException("id conflict");
+    }
+    HeaderUtil.addEntityUpdatedHeaders(this.request.res, this.entity.name, dto.id);
+    const entity = this.mapper.d2e(dto);
+    const result = await this.service.update(entity, this.request.user?.login);
+    return this.mapper.e2d(result);
+  }
+
+  async patch(id: string, dto: D): Promise<D> {
+    if (dto.id && id && dto.id !== id) {
+      throw new BadRequestException("id conflict");
+    }
+    HeaderUtil.addEntityUpdatedHeaders(this.request.res, this.entity.name, dto.id);
+    const entity = this.mapper.d2e(dto);
+    const result = await this.service.update(entity, this.request.user?.login);
+    return this.mapper.e2d(result);
+  }
+
+  async deleteById(id: string): Promise<void> {
+    return this.service
+      .deleteById(id)
+      .then(() => HeaderUtil.addEntityDeletedHeaders(this.request.res, this.entity.name, id));
+  }
+
+  private pageRequest(): PageRequest {
+    return new PageRequest(this.request);
+  }
+
+  private pageRequestToSkipLimitSort() {
+    const pageRequest: PageRequest = this.pageRequest();
+    return {
+      skip: +pageRequest.page * pageRequest.size,
+      limit: +pageRequest.size,
+      sort: pageRequest.sort.asOrder(),
+    };
+  }
+}

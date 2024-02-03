@@ -1,0 +1,50 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
+import { BaseEntity } from "../common/bases";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+
+/**
+ * ContentTag entity.
+ *
+ * Document này sẽ chứa danh sách các tag có thể có trong Post.contentTags nó phục vụ cho fuzzy search on typing
+ */
+@Schema({ collection: EntitiesEnum.ContentTag })
+export class ContentTag extends BaseEntity {
+  /**
+   * tên tag
+   */
+  @Prop({
+    name: "name",
+    nullable: true,
+    unique: true,
+  })
+  name: string;
+
+  /**
+   * giới thiệu
+   */
+  @Prop({
+    name: "summary",
+  })
+  summary?: string;
+
+  /**
+   * mô tả về tag
+   */
+  @Prop({
+    name: "description",
+  })
+  description?: string;
+
+  /**
+   * chỉ số ưu tiên
+   */
+  @Prop({
+    name: "priority",
+  })
+  priority?: number;
+}
+
+export const ContentTagSchema = SchemaFactory.createForClass(ContentTag);
+ContentTagSchema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

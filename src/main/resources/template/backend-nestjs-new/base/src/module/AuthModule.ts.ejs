@@ -1,0 +1,44 @@
+import { Module } from "@nestjs/common";
+import AuthServiceImpl from "../service/impl/AuthServiceImpl";
+import { UserModule } from "./UserModule";
+import { PassportModule } from "@nestjs/passport";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportJwtStrategy } from "../internal/security/PassportJwtStrategy";
+
+import { AuthUserJwtRestImpl } from "../controller/rest/impl/AuthUserJwtRestImpl";
+import { AuthAccountRestImpl } from "../controller/rest/impl/AuthAccountRestImpl";
+import { AuthPublicUserRestImpl } from "../controller/rest/impl/AuthPublicUserRestImpl";
+import { MongooseModule } from "@nestjs/mongoose";
+import { AuthorityRepository } from "../repository";
+import { AuthoritySchema } from "../domain";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+import { AuthService } from "../service";
+import AuthorityRepositoryImpl from "../repository/impl/AuthorityRepositoryImpl";
+import { AuthControllerImpl } from "../controller/impl/AuthControllerImpl";
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: EntitiesEnum.Authority, schema: AuthoritySchema }]),
+
+    UserModule,
+    PassportModule,
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: Buffer.from(
+          getEnv("jhipster.security.authentication.jwt.base64-secret"),
+          "base64",
+        ).toString(),
+        signOptions: { expiresIn: "300s" },
+      }),
+    }),
+  ],
+  controllers: [AuthUserJwtRestImpl, AuthPublicUserRestImpl, AuthAccountRestImpl],
+  providers: [
+    AuthServiceImpl,
+    AuthorityRepositoryImpl,
+    AuthControllerImpl,
+    PassportJwtStrategy,
+  ],
+  exports: [AuthService],
+})
+export class AuthModule {}

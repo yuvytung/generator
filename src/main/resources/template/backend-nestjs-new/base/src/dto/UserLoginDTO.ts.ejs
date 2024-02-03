@@ -1,0 +1,22 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { IsString } from "class-validator";
+import { Expose } from "class-transformer";
+
+/**
+ * A DTO representing a login user.
+ */
+export class UserLoginDTO {
+  @ApiProperty({ description: "User password" })
+  @IsString()
+  @Expose()
+  readonly password: string;
+
+  @ApiProperty({ description: "User remember login", required: false })
+  @Expose()
+  readonly rememberMe?: boolean;
+
+  @ApiProperty({ description: "User login name" })
+  @IsString()
+  @Expose()
+  readonly username: string;
+}

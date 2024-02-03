@@ -1,0 +1,48 @@
+import { config as envConfig } from "dotenv";
+import mongoose from "mongoose";
+import * as fs from "fs";
+import { MigrationStatus, SystemMigration } from "./SystemMigration";
+import * as console from "console";
+
+envConfig();
+
+(async () => {
+  const mongo = await mongoose.connect(process.env.MONGODB_URI, {
+    dbName: process.env.MONGODB_DB_NAME,
+    user: process.env.MONGODB_USER,
+    pass: process.env.MONGODB_PASS,
+  });
+
+  const systemMigrationRepository = mongo.model(SystemMigration.Name, SystemMigration.Schema);
+  const ups = await systemMigrationRepository.find({
+    status: { $in: [MigrationStatus.UP, MigrationStatus.ERROR, MigrationStatus.DOWN] },
+  });
+
+  const fileNames = fs
+    .readdirSync(__dirname.slice(0, __dirname.length - "/core".length))
+    .filter((fileName) => fileName.match(/^\d{13}_\w*.(ts|js)$/g))
+    .sort((a, b) => +a.slice(0, 13) - +b.slice(0, 13))
+    .filter((fileName) => !ups.find((up) => up.name === fileName));
+
+  for (const fileName of fileNames) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const migration = require("../".concat(fileName)).default;
+      await new migration().up(mongo);
+      await systemMigrationRepository.create({
+        name: fileName,
+        status: MigrationStatus.UP,
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("Error when executing migration", e);
+      await systemMigrationRepository.create({
+        name: fileName,
+        status: MigrationStatus.ERROR,
+        error: e.toString(),
+      });
+      throw new Error(e);
+    }
+  }
+  await mongo.disconnect();
+}).call(this);

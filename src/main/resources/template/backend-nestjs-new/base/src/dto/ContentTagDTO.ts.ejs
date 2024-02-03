@@ -1,0 +1,51 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ApiProperty } from "@nestjs/swagger";
+import { Expose } from "class-transformer";
+import { BaseDTO } from "../common/bases";
+
+/**
+ * ContentTagDTO DTO.
+ *
+ * Document này sẽ chứa danh sách các tag có thể có trong Post.contentTags nó phục vụ cho fuzzy search on typing
+ */
+export class ContentTagDTO extends BaseDTO {
+  /**
+   * tên tag
+   */
+  @ApiProperty({
+    description: "tên tag",
+    required: false,
+  })
+  @Expose()
+  name: string;
+
+  /**
+   * giới thiệu
+   */
+  @ApiProperty({
+    description: "giới thiệu",
+    required: false,
+  })
+  @Expose()
+  summary: string;
+
+  /**
+   * mô tả về tag
+   */
+  @ApiProperty({
+    description: "mô tả về tag",
+    required: false,
+  })
+  @Expose()
+  description: string;
+
+  /**
+   * chỉ số ưu tiên
+   */
+  @ApiProperty({
+    description: "chỉ số ưu tiên",
+    required: false,
+  })
+  @Expose()
+  priority: number;
+}

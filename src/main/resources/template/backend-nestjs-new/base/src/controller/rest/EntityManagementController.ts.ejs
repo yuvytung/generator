@@ -1,0 +1,9 @@
+export abstract class EntityManagementController<DTO> {
+  public abstract getAll(): Promise<DTO[]>;
+  public abstract search(keywords: string): Promise<DTO[]>;
+  public abstract getOne(id: string): Promise<DTO>;
+  public abstract post(dto: DTO): Promise<DTO>;
+  public abstract put(id: string, dto: DTO): Promise<DTO>;
+  public abstract patch(id: string, dto: DTO): Promise<DTO>;
+  public abstract deleteById(id: string): Promise<void>;
+}

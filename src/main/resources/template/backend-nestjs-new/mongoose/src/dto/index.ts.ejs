@@ -1,0 +1,9 @@
+<%
+const entitiesName = _entities.map((e)=> e.name)
+const exportAll = entitiesName.map((name)=> `export * from "./${name.pascal()}${dtoSuffix}"`).join(`;\n`)
+-%>
+
+export * from "./PasswordChangeDTO";
+export * from "./UserDTO";
+export * from "./UserLoginDTO";
+<%-exportAll%>

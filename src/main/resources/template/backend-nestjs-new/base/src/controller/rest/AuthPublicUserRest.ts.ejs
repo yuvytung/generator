@@ -1,0 +1,6 @@
+import { UserDTO } from "../../dto";
+
+export abstract class AuthPublicUserRest {
+  public abstract getAllPublicUsers(): Promise<UserDTO[]>;
+  public abstract getAuthorities(): Promise<any>;
+}

@@ -1,0 +1,22 @@
+import { Controller, Get, UseInterceptors } from "@nestjs/common";
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+import { ApiTags, ApiResponse, ApiOperation, ApiExcludeEndpoint } from "@nestjs/swagger";
+
+@Controller("management")
+@UseInterceptors(LoggingInterceptor)
+@ApiTags("management-controller")
+export class ManagementControllerImpl {
+  @ApiExcludeEndpoint()
+  @Get("/info")
+  @ApiOperation({ summary: "Microservice Info" })
+  @ApiResponse({
+    status: 200,
+    description: "Check if the microservice is up",
+  })
+  info(): any {
+    return {
+      activeProfiles: "dev",
+      "display-ribbon-on-profiles": "dev",
+    };
+  }
+}

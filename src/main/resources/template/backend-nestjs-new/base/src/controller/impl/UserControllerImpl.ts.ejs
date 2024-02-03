@@ -1,0 +1,48 @@
+import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Page, PageRequest } from "../../domain/base/pagination.entity";
+import { UserDTO } from "../../dto";
+import { Request } from "../../common/interfaces/Request";
+import { HeaderUtil } from "../../common/util/HeaderUtil";
+import { AuthService } from "../../service";
+import { RoleTypeEnum } from "../../internal/security";
+import { REQUEST } from "@nestjs/core";
+import { AuthPublicUserRest } from "../rest";
+
+@Injectable({ scope: Scope.REQUEST })
+export class UserControllerImpl implements AuthPublicUserRest {
+  constructor(
+    @Inject(REQUEST)
+    private readonly request: Request,
+    private readonly authService: AuthService,
+  ) {}
+  async getAllPublicUsers(): Promise<UserDTO[]> {
+    const pageRequest: PageRequest = new PageRequest(this.request);
+    const [results, count] = await this.authService.getAllUsers(
+      {},
+      {
+        skip: +pageRequest.page * pageRequest.size,
+        limit: +pageRequest.size,
+        sort: pageRequest.sort.asOrder(),
+      },
+    );
+    HeaderUtil.addPaginationHeaders(this.request.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+  async getAuthorities(): Promise<any> {
+    const user: any = this.request.user;
+    if (!user) {
+      return await this.authService
+        .find()
+        .then(
+          (auth) =>
+            auth.map((value) => value.name) || [
+              RoleTypeEnum.USER,
+              RoleTypeEnum.USER,
+              RoleTypeEnum.ANONYMOUS,
+            ],
+        );
+    }
+    return user.authorities;
+  }
+}

@@ -1,0 +1,22 @@
+Feature: Landing page management
+  The User have permission update landing page will be able to update
+  the content in landing page
+
+  Background:
+    Given a administrator named "Admin"
+    And role of "Admin" is ADMIN
+    And this user have permission update landing page
+    And a customer named "User"
+    And role of "User" is USER
+    And this user haven't permission update landing page
+
+  Scenario: Admin update content in landing page
+    Given I am logged in as Admin
+    When I try to update content in landing page
+    Then I should see "Success, Updated Landing page successfuly."
+
+  Scenario: User update content in landing pae
+    Given I am logged in as User
+    Given I am logged in as User
+    When I try to update content in landing page
+    Then I should see "Failure, Access denied."

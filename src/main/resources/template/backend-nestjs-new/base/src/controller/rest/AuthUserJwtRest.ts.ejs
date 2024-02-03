@@ -1,0 +1,5 @@
+import { UserLoginDTO } from "../../dto";
+
+export abstract class AuthUserJwtRest {
+  public abstract authorize(user: UserLoginDTO): Promise<any>;
+}

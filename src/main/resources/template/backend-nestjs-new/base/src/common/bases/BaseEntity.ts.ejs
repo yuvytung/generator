@@ -1,0 +1,23 @@
+import { Prop } from "@nestjs/mongoose";
+import { v4 } from "uuid";
+import { Transform } from "class-transformer";
+
+export abstract class BaseEntity {
+  @Transform(({ value }) => value.toString())
+  _id?: any;
+  id?: string;
+
+  @Prop({ name: "refId", unique: true, select: true, default: () => v4() })
+  refId?: string;
+
+  @Prop({ name: "_createdBy", select: false })
+  _createdBy?: string;
+  @Prop({ name: "_createdAt" })
+  _createdAt?: Date;
+  @Prop({ name: "_updatedBy", select: false })
+  _updatedBy?: string;
+  @Prop({ name: "_updatedAt" })
+  _updatedAt?: Date;
+  @Prop({ name: "_isDeleted", default: false, select: false })
+  _isDeleted?: boolean;
+}

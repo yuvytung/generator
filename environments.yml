@@ -27,7 +27,7 @@ ejs:
       #      prodDatabase: mysql
       clientTheme: cerulean # cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, morph, pulse, quartz, sandstone, simplex, sketchy, slate, solar, spacelab, superhero, united, vapor, yeti, zephyr,
 modules: # Note : that the order will affect the result
-  backend-nestjs:
+  backend-nestjs-new:
     base: base # tất cả đều cần chạy base
     search: elasticsearch
     cache: redis

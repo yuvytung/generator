@@ -1,0 +1,9 @@
+<%
+const entitiesName = _entities.map((e)=> e.name)
+const exportAll = entitiesName.map((name)=> `export * from "./${name.pascal()}Entity"`).join(`;\n`)
+-%>
+
+export * from "./UserEntity";
+export * from "./AuthorityEntity";
+<%-exportAll%>
+

@@ -1,0 +1,26 @@
+import { Injectable } from "@nestjs/common";
+import { UserLoginDTO, UserDTO } from "../dto";
+import { Payload } from "../internal/security/Payload";
+import { ObjectId } from "mongodb";
+import { FilterQuery, QueryOptions } from "mongoose";
+import { Authority } from "../domain";
+import { BaseService } from "../common/bases";
+
+@Injectable()
+export abstract class AuthService extends BaseService<Authority> {
+  abstract login(userLogin: UserLoginDTO): Promise<any>;
+  abstract validateUser(payload: Payload): Promise<UserDTO | undefined>;
+  abstract findUserWithAuthById(userId: string | ObjectId): Promise<UserDTO | undefined>;
+  abstract changePassword(
+    userLogin: string,
+    currentClearTextPassword: string,
+    newPassword: string,
+  ): Promise<void>;
+  abstract registerNewUser(newUser: UserDTO): Promise<UserDTO>;
+  abstract updateUserSettings(userLogin: string, newUserInfo: UserDTO): Promise<UserDTO>;
+  abstract getAllUsers(
+    filter: FilterQuery<Authority>,
+    options?: QueryOptions<Authority> | null | undefined,
+  ): Promise<[UserDTO[], number]>;
+  abstract getAccount(userId: string): Promise<UserDTO | undefined>;
+}

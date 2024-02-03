@@ -1,0 +1,14 @@
+import { Module } from "@nestjs/common";
+import { ElasticsearchModule as ESModule } from "@nestjs/elasticsearch";
+
+@Module({
+  imports: [
+    ESModule.registerAsync({
+      useFactory: () => ({
+        nodes: [getEnv("elasticsearch.url", "http://localhost:9200")],
+      }),
+    }),
+  ],
+  exports: [ESModule],
+})
+export class ElasticsearchModule {}

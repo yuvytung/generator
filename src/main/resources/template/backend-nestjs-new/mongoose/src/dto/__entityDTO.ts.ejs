@@ -1,0 +1,70 @@
+<%
+const { Case, typeDetect } = _;
+const { _name, name , documentation, fields, relationships } = _entity;
+const relationshipType = {
+    O2O: "one-to-one",
+    O2M: "one-to-many",
+    M2O: "many-to-one",
+    M2M: "many-to-many"
+};
+
+const EntityDTO = _entity.name.pascal().concat(dtoSuffix);
+
+const importDto = Array.from(new Set(relationships
+        .map(r => r.otherEntityName)
+        .filter(v => v.lower() !== name.lower())))
+        .map((otherEntityName)=> `import { ${otherEntityName.pascal()+dtoSuffix} } from "../dto";`)
+        .join(`\n`);
+const importEnum = fields.filter(f => f.fieldValues)
+        .map((f)=> `import { ${f.fieldType.pascal()} } from "../common/enums";`)
+
+-%>
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from "class-transformer";
+import { Base<%-dtoSuffix%> } from "../common/bases";
+
+<%-importDto%>
+<%-importEnum%>
+
+/**
+* <%-name.pascal().concat(dtoSuffix)%> DTO.
+*
+* <%-documentation?.replace(/\\n/g,`
+ * `)%>
+*/
+export class <%-EntityDTO%> extends Base<%-dtoSuffix%> {
+<%-
+fields?.map(field =>
+        `/**
+   * ${field.documentation?.replace(/\\n/g,`
+   * `) || field.fieldName}
+   */
+  @ApiProperty({
+    description: '${field.documentation || field.fieldName}',
+    required: false
+  })
+  @Expose()
+  ${Case.camel(field.fieldName)}: ${field.options?.any ? "any" : typeDetect(field.fieldType)};`
+).join(`
+
+  `)
+%>
+
+<%-relationships?.map(relationship => {
+    // let propBuilder = `@ApiProperty({ type: ()=> ${relationship.otherEntityName.pascal().concat(dtoSuffix)},
+    let propBuilder = `@ApiProperty({ type: ()=> Base${dtoSuffix},
+  isArray: ${(relationshipType.O2O === relationship.relationshipType) || (relationshipType.M2O === relationship.relationshipType) ? 'false': 'true'},
+  description: '${relationship.otherEntityName.pascal()} relationship' })
+  @Expose()`;
+    if ((relationshipType.O2O === relationship.relationshipType) || (relationshipType.M2O === relationship.relationshipType))
+        return propBuilder.concat(`${relationship.relationshipName.camel()}: ${relationship.otherEntityName.pascal().concat(dtoSuffix)};`);
+    else if ((relationshipType.O2M === relationship.relationshipType)
+            // || (relationshipType.M2M === relationship.relationshipType && relationship.ownerSide)
+            // || (relationshipType.M2M === relationship.relationshipType && !relationship.ownerSide)
+    )
+        return propBuilder.concat(`${relationship.relationshipName.camel()}s: ${relationship.otherEntityName.pascal().concat(dtoSuffix)}[];`);
+}).join(``)%>
+
+}
+

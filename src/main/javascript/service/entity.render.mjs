@@ -79,7 +79,7 @@ const processTemplateEjs = (moduleName) => {
           const pathOutput = pathInput
             .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
             .replace(/\.ejs$/g, "")
-            .replace(/__enum/g, `${en.fieldType.kebab()}`);
+            .replace(/__enum/g, `${en.fieldType.pascal()}`);
           fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
           fs.writeFileSync(
             pathOutput,
@@ -104,7 +104,7 @@ const processTemplateEjs = (moduleName) => {
         const pathOutput = pathInput
           .replace(new RegExp(`${moduleTemplatePath}/\\w+`), moduleOutputPath)
           .replace(/\.ejs$/g, "")
-          .replace(/__entity/g, `${ep.name.kebab()}`);
+          .replace(/__entity/g, `${ep.name.pascal()}`);
         fs.mkdirSync(path.dirname(pathOutput), { recursive: true });
         fs.writeFileSync(
           pathOutput,

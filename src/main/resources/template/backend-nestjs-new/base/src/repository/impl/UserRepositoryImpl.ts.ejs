@@ -1,0 +1,17 @@
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { BaseRepository } from "../../common/bases";
+import { User } from "../../domain";
+import { EntitiesEnum } from "../../common/enums/EntitiesEnum";
+import { UserRepository } from "../";
+
+@Injectable()
+export class UserRepositoryImpl extends BaseRepository<User> implements UserRepository {
+  protected readonly esIndex: string;
+  constructor(@InjectModel(EntitiesEnum.User) protected model: Model<User>) {
+    super();
+  }
+}
+
+export default { provide: UserRepository, useClass: UserRepositoryImpl };

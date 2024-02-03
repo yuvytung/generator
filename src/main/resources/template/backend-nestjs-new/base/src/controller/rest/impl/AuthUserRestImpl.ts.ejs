@@ -1,0 +1,91 @@
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { AuthGuard, Roles, RolesGuard, RoleTypeEnum } from "../../../internal/security";
+
+import { UserDTO } from "../../../dto";
+
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+
+import { AuthUserRest } from "../AuthUserRest";
+import { AuthControllerImpl } from "../../impl";
+
+@Controller("api/admin/users")
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@ApiBearerAuth()
+@ApiTags("user-resource")
+export class AuthUserRestImpl implements AuthUserRest {
+  constructor(private readonly controller: AuthControllerImpl) {}
+
+  @Get("/")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Get the list of users" })
+  @ApiResponse({
+    status: 200,
+    description: "List all users",
+    type: UserDTO,
+  })
+  async getAllUsers(): Promise<UserDTO[]> {
+    return this.controller.getAllUsers();
+  }
+
+  @Post("/")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Create user" })
+  @ApiResponse({
+    status: 201,
+    description: "The record has been successfully created.",
+    type: UserDTO,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  async createUser(@Body() userDTO: UserDTO): Promise<UserDTO> {
+    return this.controller.createUser(userDTO);
+  }
+
+  @Put("/")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Update user" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: UserDTO,
+  })
+  async updateUser(@Body() userDTO: UserDTO): Promise<UserDTO> {
+    return this.controller.updateUser(userDTO);
+  }
+
+  @Get("/:login")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Get user" })
+  @ApiResponse({
+    status: 200,
+    description: "The found record",
+    type: UserDTO,
+  })
+  async getUser(@Param("login") loginValue: string): Promise<UserDTO> {
+    return this.controller.getUser(loginValue);
+  }
+
+  @Delete("/:login")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Delete user" })
+  @ApiResponse({
+    status: 204,
+    description: "The record has been successfully deleted.",
+    type: UserDTO,
+  })
+  async deleteUser(@Param("login") loginValue: string): Promise<UserDTO> {
+    return this.controller.deleteUser(loginValue);
+  }
+}

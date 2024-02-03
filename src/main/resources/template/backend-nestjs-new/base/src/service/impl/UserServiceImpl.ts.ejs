@@ -1,0 +1,98 @@
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { User } from "../../domain";
+import { UserDTO } from "../../dto";
+import { UserMapper } from "../../mapper";
+import { UserRepository } from "../../repository";
+import { transformPassword } from "../../internal/security";
+import { FilterQuery, QueryOptions } from "mongoose";
+import { UserService, AuthService } from "../";
+
+@Injectable()
+export class UserServiceImpl implements UserService {
+  constructor(
+    private userRepository: UserRepository,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
+  ) {}
+
+  async findById(id: string): Promise<UserDTO | undefined> {
+    const result = await this.userRepository.findById(id);
+    return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+  }
+
+  async findByFields(filter): Promise<UserDTO | undefined> {
+    const result = await this.userRepository.findOne(filter, { populate: ["authorities"] });
+    return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+  }
+
+  async find(filter: FilterQuery<UserDTO>): Promise<UserDTO | undefined> {
+    const result = await this.userRepository.findOne(filter);
+    return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+  }
+
+  async findAndCount(
+    filter: FilterQuery<User>,
+    options?: QueryOptions<User>,
+  ): Promise<[UserDTO[], number]> {
+    const resultList = await this.userRepository.findAndCount(filter, options);
+    const usersDTO: UserDTO[] = [];
+    if (resultList?.[0]) {
+      resultList[0].forEach((user) =>
+        usersDTO.push(UserMapper.fromEntityToDTO(this.flatAuthorities(user))),
+      );
+      resultList[0] = usersDTO;
+    }
+    return resultList;
+  }
+
+  async save(
+    userDTO: UserDTO,
+    creator?: string,
+    updatePassword = false,
+  ): Promise<UserDTO | undefined> {
+    const user = await this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
+    if (updatePassword) {
+      await transformPassword(user);
+    }
+    if (creator) {
+      if (!user._createdBy) {
+        user._createdBy = creator;
+      }
+      user._updatedBy = creator;
+    }
+    const result = await this.userRepository.save(user);
+    return UserMapper.fromEntityToDTO(this.flatAuthorities(result));
+  }
+
+  async update(userDTO: UserDTO, updater?: string): Promise<UserDTO | undefined> {
+    return this.save(userDTO, updater);
+  }
+
+  async delete(userDTO: UserDTO): Promise<UserDTO | undefined> {
+    const user = UserMapper.fromDTOtoEntity(userDTO);
+    const result = await this.userRepository.remove(user);
+    return UserMapper.fromEntityToDTO(result);
+  }
+
+  private flatAuthorities(user: any): User {
+    if (user?.authorities) {
+      const authorities: string[] = [];
+      user.authorities.forEach((authority) => authorities.push(authority.name));
+      user.authorities = authorities;
+    }
+    return user;
+  }
+
+  private async convertInAuthorities(user: any): Promise<User> {
+    if (user?.authorities) {
+      user.authorities = await this.authService._find({
+        name: {
+          $in: user.authorities,
+        },
+      });
+    }
+    return user;
+  }
+}
+
+export default { provide: UserService, useClass: UserServiceImpl };

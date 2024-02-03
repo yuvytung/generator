@@ -1,0 +1,8 @@
+<%
+const entitiesName = _entities.map((e)=> e.name)
+-%>
+export enum EntitiesEnum {
+  User = "sys_user",
+  Authority = "sys_authority",
+  <%- entitiesName.map((name)=> `${name.pascal()} = "${name.snake()}"`).join(`,\n`)%>
+};

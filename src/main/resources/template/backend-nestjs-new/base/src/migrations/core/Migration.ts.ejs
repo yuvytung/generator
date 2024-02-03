@@ -1,0 +1,6 @@
+import { Mongoose } from "mongoose";
+
+export interface Migration {
+  up(mongoose: Mongoose): Promise<void>;
+  down(mongoose: Mongoose): Promise<void>;
+}

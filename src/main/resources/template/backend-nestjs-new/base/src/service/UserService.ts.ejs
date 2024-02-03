@@ -1,0 +1,22 @@
+import { Injectable } from "@nestjs/common";
+import { User } from "../domain";
+import { UserDTO } from "../dto";
+import { FilterQuery, QueryOptions } from "mongoose";
+
+@Injectable()
+export abstract class UserService {
+  abstract findById(id: string): Promise<UserDTO | undefined>;
+  abstract findByFields(filter: any): Promise<UserDTO | undefined>;
+  abstract find(filter: FilterQuery<UserDTO>): Promise<UserDTO | undefined>;
+  abstract findAndCount(
+    filter: FilterQuery<User>,
+    options?: QueryOptions<User>,
+  ): Promise<[UserDTO[], number]>;
+  abstract save(
+    userDTO: UserDTO,
+    creator?: string,
+    updatePassword?: boolean,
+  ): Promise<UserDTO | undefined>;
+  abstract update(userDTO: UserDTO, updater?: string): Promise<UserDTO | undefined>;
+  abstract delete(userDTO: UserDTO): Promise<UserDTO | undefined>;
+}

@@ -1,0 +1,15 @@
+import { Transform, Expose } from "class-transformer";
+import { ObjectId } from "mongodb";
+
+/**
+ * A DTO base object.
+ */
+export abstract class BaseDTO {
+  _id?: ObjectId | string;
+  // @Transform((id) => (id?.value.toHexString ? id?.value.toHexString() : id), { toPlainOnly: true })
+  @Expose()
+  id?: string;
+
+  @Expose()
+  refId?: string;
+}

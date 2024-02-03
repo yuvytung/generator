@@ -1,0 +1,124 @@
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { AuthGuard, Roles, RolesGuard, RoleTypeEnum } from "../../../internal/security";
+import { PasswordChangeDTO, UserDTO } from "../../../dto";
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthAccountRest } from "../AuthAccountRest";
+
+import { AuthControllerImpl } from "../../impl/AuthControllerImpl";
+
+@Controller("api")
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@ApiTags("account-resource")
+export class AuthAccountRestImpl implements AuthAccountRest {
+  constructor(private readonly controller: AuthControllerImpl) {}
+
+  @Post("/register")
+  @ApiOperation({ summary: "Register user" })
+  @ApiResponse({
+    status: 201,
+    description: "Registered user",
+    type: UserDTO,
+  })
+  async registerAccount(@Body() userDTO: UserDTO & { password: string }): Promise<any> {
+    return await this.controller.registerAccount(userDTO);
+  }
+
+  @Get("/activate")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Activate an account" })
+  @ApiResponse({
+    status: 200,
+    description: "activated",
+  })
+  activateAccount(@Param() key: string): any {
+    return this.controller.activateAccount(key);
+  }
+
+  @Get("/authenticate")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Check if the user is authenticated" })
+  @ApiResponse({
+    status: 200,
+    description: "login authenticated",
+  })
+  isAuthenticated(): any {
+    return this.controller.isAuthenticated();
+  }
+
+  @Get("/account")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Get the current user." })
+  @ApiResponse({
+    status: 200,
+    description: "user retrieved",
+  })
+  async getAccount(): Promise<any> {
+    return this.controller.getAccount();
+  }
+
+  @Post("/account")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Update the current user information" })
+  @ApiResponse({
+    status: 201,
+    description: "user info updated",
+    type: UserDTO,
+  })
+  async saveAccount(@Body() newUserInfo: UserDTO): Promise<any> {
+    return this.controller.saveAccount(newUserInfo);
+  }
+
+  @Post("/account/change-password")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Change current password" })
+  @ApiResponse({
+    status: 201,
+    description: "user password changed",
+    type: PasswordChangeDTO,
+  })
+  async changePassword(@Body() passwordChange: PasswordChangeDTO): Promise<any> {
+    return await this.controller.changePassword(passwordChange);
+  }
+
+  @Post("/account/reset-password/init")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Send an email to reset the password of the user" })
+  @ApiResponse({
+    status: 201,
+    description: "mail to reset password sent",
+    type: "string",
+  })
+  requestPasswordReset(@Body() email: string): any {
+    return this.controller.requestPasswordReset(email);
+  }
+
+  @Post("/account/reset-password/finish")
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Finish to reset the password of the user" })
+  @ApiResponse({
+    status: 201,
+    description: "password reset",
+    type: "string",
+  })
+  finishPasswordReset(@Body() keyAndPassword: string): any {
+    return this.controller.finishPasswordReset(keyAndPassword);
+  }
+}

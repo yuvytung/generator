@@ -1,0 +1,159 @@
+import {
+  Body,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Param,
+  Scope,
+} from "@nestjs/common";
+
+import { PasswordChangeDTO } from "../../dto";
+import { UserDTO } from "../../dto";
+
+import { AuthService } from "../../service";
+import { AuthAccountRest } from "../rest";
+import { REQUEST } from "@nestjs/core";
+import { Page, PageRequest } from "../../domain/base/pagination.entity";
+import { HeaderUtil } from "../../common/util/HeaderUtil";
+import { RoleTypeEnum } from "../../internal/security";
+import { AuthPublicUserRest } from "../rest";
+import { Request } from "../../common/interfaces/Request";
+import { AuthUserJwtRest } from "../rest";
+import { UserLoginDTO } from "../../dto";
+import { AuthUserRest } from "../rest";
+import { UserService } from "../../service/";
+
+@Injectable({ scope: Scope.REQUEST })
+export class AuthControllerImpl
+  implements AuthAccountRest, AuthPublicUserRest, AuthUserJwtRest, AuthUserRest
+{
+  constructor(
+    @Inject(REQUEST) protected request: Request,
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
+
+  async getAllUsers(): Promise<UserDTO[]> {
+    const pageRequest: PageRequest = new PageRequest(this.request);
+    const [results, count] = await this.userService.findAndCount(
+      {},
+      {
+        skip: +pageRequest.page * pageRequest.size,
+        limit: +pageRequest.size,
+        sort: pageRequest.sort.asOrder(),
+        populate: ["authorities"],
+      },
+    );
+    HeaderUtil.addPaginationHeaders(this.request.res, new Page(results as any, count, pageRequest));
+    return results;
+  }
+
+  async createUser(@Body() userDTO: UserDTO): Promise<UserDTO> {
+    userDTO.password = userDTO.login;
+    const created = await this.userService.save(userDTO, this.request.user?.login);
+    HeaderUtil.addEntityCreatedHeaders(this.request.res, "User", created.id);
+    return created;
+  }
+  async updateUser(userDTO: UserDTO): Promise<UserDTO> {
+    const userOnDb = await this.userService.find({ login: userDTO.login });
+    let updated = false;
+    if (userOnDb && userOnDb.id) {
+      userDTO.id = userOnDb.id;
+      updated = true;
+    } else {
+      userDTO.password = userDTO.login;
+    }
+    const createdOrUpdated = await this.userService.update(userDTO, this.request.user?.login);
+    if (updated) {
+      HeaderUtil.addEntityUpdatedHeaders(this.request.res, "User", createdOrUpdated.id);
+    } else {
+      HeaderUtil.addEntityCreatedHeaders(this.request.res, "User", createdOrUpdated.id);
+    }
+    return createdOrUpdated;
+  }
+  async getUser(@Param("login") loginValue: string): Promise<UserDTO> {
+    return await this.userService.find({ login: loginValue });
+  }
+  async deleteUser(@Param("login") loginValue: string): Promise<UserDTO> {
+    HeaderUtil.addEntityDeletedHeaders(this.request.res, "User", loginValue);
+    const userToDelete = await this.userService.find({ login: loginValue });
+    return await this.userService.delete(userToDelete);
+  }
+
+  async registerAccount(userDTO: UserDTO & { password: string }): Promise<any> {
+    return await this.authService.registerNewUser(userDTO);
+  }
+
+  activateAccount(key: string): any {
+    throw new InternalServerErrorException();
+  }
+
+  isAuthenticated(): any {
+    const user: any = this.request.user;
+    return user.login;
+  }
+
+  async getAccount(): Promise<any> {
+    const user: any = this.request.user;
+    return await this.authService.getAccount(user.id || user._id);
+  }
+
+  async saveAccount(newUserInfo: UserDTO): Promise<any> {
+    const user: any = this.request.user;
+    return await this.authService.updateUserSettings(user.login, newUserInfo);
+  }
+
+  async changePassword(passwordChange: PasswordChangeDTO): Promise<any> {
+    const user: any = this.request.user;
+    return await this.authService.changePassword(
+      user.login,
+      passwordChange.currentPassword,
+      passwordChange.newPassword,
+    );
+  }
+
+  requestPasswordReset(email: string): any {
+    throw new InternalServerErrorException();
+  }
+
+  finishPasswordReset(keyAndPassword: string): any {
+    throw new InternalServerErrorException();
+  }
+
+  async getAllPublicUsers(): Promise<UserDTO[]> {
+    const pageRequest: PageRequest = new PageRequest(this.request);
+    const [results, count] = await this.authService.getAllUsers(
+      {},
+      {
+        skip: +pageRequest.page * pageRequest.size,
+        limit: +pageRequest.size,
+        sort: pageRequest.sort.asOrder(),
+      },
+    );
+    HeaderUtil.addPaginationHeaders(this.request.res, new Page(results, count, pageRequest));
+    return results;
+  }
+
+  async getAuthorities(): Promise<any> {
+    const user: any = this.request.user;
+    if (!user) {
+      return await this.authService
+        .find()
+        .then(
+          (auth) =>
+            auth.map((value) => value.name) || [
+              RoleTypeEnum.USER,
+              RoleTypeEnum.USER,
+              RoleTypeEnum.ANONYMOUS,
+            ],
+        );
+    }
+    return user.authorities;
+  }
+
+  async authorize(user: UserLoginDTO): Promise<any> {
+    const jwt = await this.authService.login(user);
+    this.request.res.setHeader("Authorization", "Bearer ".concat(jwt.id_token));
+    return this.request.res.json(jwt);
+  }
+}

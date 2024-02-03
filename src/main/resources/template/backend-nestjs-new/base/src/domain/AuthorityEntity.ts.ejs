@@ -1,0 +1,14 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { BaseEntity } from "../common/bases";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+
+@Schema({ collection: EntitiesEnum.Authority })
+export class Authority extends BaseEntity {
+  @ApiProperty({ example: "ROLE_USER", description: "User role" })
+  @Prop({ unique: true })
+  name: string;
+}
+
+export const AuthoritySchema = SchemaFactory.createForClass(Authority);
+AuthoritySchema.set("timestamps", { createdAt: "_createdAt", updatedAt: "_updatedAt" });

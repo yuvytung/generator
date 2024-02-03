@@ -1,0 +1,32 @@
+import { MongoMemoryServer } from "mongodb-memory-server";
+import { MongooseModuleFactoryOptions } from "@nestjs/mongoose";
+
+async function databaseConfig(): Promise<MongooseModuleFactoryOptions> {
+  let mongoMemory;
+  if (process.env.BACKEND_ENV !== "prod") {
+    mongoMemory = await MongoMemoryServer.create();
+  }
+
+  let dbConfig: MongooseModuleFactoryOptions = {
+    uri: await mongoMemory?.getUri(),
+    dbName: "dev",
+  };
+
+  if (process.env.BACKEND_ENV === "prod") {
+    dbConfig = {
+      dbName: getEnv("mongodb.db.name", "prod"),
+      uri: getEnv("mongodb.uri", "mongodb://localhost:27018"),
+      user: getEnv("mongodb.user", "sa"),
+      pass: getEnv("mongodb.pass", "yourStrong(!)Password"),
+    };
+  }
+
+  if (process.env.BACKEND_ENV === "test") {
+    dbConfig = {
+      dbName: "test",
+    };
+  }
+  return dbConfig;
+}
+
+export { databaseConfig };

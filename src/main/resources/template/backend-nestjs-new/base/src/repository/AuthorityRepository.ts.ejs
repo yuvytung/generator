@@ -1,0 +1,6 @@
+import { Authority } from "../domain";
+import { BaseRepository } from "../common/bases";
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export abstract class AuthorityRepository extends BaseRepository<Authority> {}

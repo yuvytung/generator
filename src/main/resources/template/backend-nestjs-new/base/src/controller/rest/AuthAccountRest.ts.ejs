@@ -1,0 +1,13 @@
+import { PasswordChangeDTO } from "../../dto";
+import { UserDTO } from "../../dto";
+
+export abstract class AuthAccountRest {
+  public abstract registerAccount(userDTO: UserDTO & { password: string }): Promise<any>;
+  public abstract activateAccount(key: string): any;
+  public abstract isAuthenticated(): any;
+  public abstract getAccount(): Promise<any>;
+  public abstract saveAccount(newUserInfo: UserDTO): Promise<any>;
+  public abstract changePassword(passwordChange: PasswordChangeDTO): Promise<any>;
+  public abstract requestPasswordReset(email: string): any;
+  public abstract finishPasswordReset(keyAndPassword: string): any;
+}

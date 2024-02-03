@@ -1,0 +1,48 @@
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Inject,
+  UseInterceptors,
+} from "@nestjs/common";
+
+import { UserDTO } from "../../../dto";
+import { Request } from "../../../common/interfaces/Request";
+import { REQUEST } from "@nestjs/core";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthPublicUserRest } from "../AuthPublicUserRest";
+import { AuthControllerImpl } from "../../impl/AuthControllerImpl";
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+
+@Controller("api")
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@ApiTags("public-user-controller")
+export class AuthPublicUserRestImpl implements AuthPublicUserRest {
+  constructor(
+    @Inject(REQUEST)
+    private readonly request: Request,
+    private readonly controller: AuthControllerImpl,
+  ) {}
+  @Get("/users")
+  @ApiOperation({ summary: "Get the list of users" })
+  @ApiResponse({
+    status: 200,
+    description: "List all users records",
+    type: UserDTO,
+  })
+  async getAllPublicUsers(): Promise<UserDTO[]> {
+    return this.controller.getAllPublicUsers();
+  }
+
+  @Get("/authorities")
+  @ApiOperation({ summary: "Get the list of user roles" })
+  @ApiResponse({
+    status: 200,
+    description: "List all user roles",
+    type: "string",
+    isArray: true,
+  })
+  async getAuthorities(): Promise<any> {
+    return this.controller.getAuthorities();
+  }
+}

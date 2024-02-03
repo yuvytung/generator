@@ -1,0 +1,18 @@
+import { Test, TestingModule } from "@nestjs/testing";
+import { ManagementControllerImpl } from "../../../src/controller/rest/impl/ManagementControllerImpl";
+
+describe("Management Controller", () => {
+  let controller: ManagementControllerImpl;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ManagementControllerImpl],
+    }).compile();
+
+    controller = module.get<ManagementControllerImpl>(ManagementControllerImpl);
+  });
+
+  it("should be defined", () => {
+    expect(controller).toBeDefined();
+  });
+});

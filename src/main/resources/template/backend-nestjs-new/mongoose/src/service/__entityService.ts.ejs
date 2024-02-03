@@ -1,0 +1,10 @@
+<%
+const Entity = _entity.name.pascal().concat();
+const EntityService = _entity.name.pascal().concat("Service");
+-%>
+
+import { BaseService } from "../common/bases";
+import { <%-Entity%> } from "../domain";
+
+export abstract class <%-EntityService%> extends BaseService<<%-Entity%>> {
+}

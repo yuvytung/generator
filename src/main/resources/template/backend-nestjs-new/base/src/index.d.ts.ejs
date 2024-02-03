@@ -1,0 +1,11 @@
+/* eslint-disable no-var */
+import { Logger } from "log4js";
+import Redis from "ioredis";
+
+declare global {
+  var log: Logger;
+  function getEnv(key: string, defaultValue?: string | boolean | number): any;
+}
+export interface CacheService extends Redis {
+  quick<T>(key: string, callback: () => Promise<T>): Promise<T>;
+}

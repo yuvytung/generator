@@ -1,0 +1,44 @@
+/* eslint-disable max-classes-per-file */
+import { Expose as JsonProperty, Type } from "class-transformer";
+import { BaseDTO } from "../../common/bases";
+import { Request } from "../../common/interfaces/Request";
+
+export class Sort {
+  public property: string;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  public direction: "ASC" | "DESC" | string;
+  constructor(sort: string) {
+    if (sort) {
+      [this.property, this.direction] = sort.split(",");
+    }
+  }
+
+  asOrder(): any {
+    const order = {};
+    order[this.property] = this.direction;
+    return order;
+  }
+}
+
+export class PageRequest {
+  @JsonProperty()
+  page = 0;
+  @JsonProperty()
+  size = 20;
+  @Type(() => Sort)
+  sort: Sort = new Sort("id,ASC");
+
+  constructor(request: Request) {
+    this.page = +request.query?.page ?? 0;
+    this.size = +request.query?.size ?? this.size;
+    this.sort = new Sort(request.query?.sort || "id,ASC");
+  }
+}
+
+export class Page<T extends BaseDTO> {
+  constructor(
+    public content: T[],
+    public total: number,
+    public pageable: PageRequest,
+  ) {}
+}

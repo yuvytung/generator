@@ -1,0 +1,85 @@
+import { Mongoose } from "mongoose";
+import { Migration } from "./core/Migration";
+import { transformPassword } from "../internal/security";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+import { Authority, User } from "../domain";
+
+import { AuthoritySchema } from "../domain/AuthorityEntity";
+import { UserSchema } from "../domain/UserEntity";
+
+export default class Migration0000000000000 implements Migration {
+  public async up(mongoose: Mongoose): Promise<any> {
+    const role1: Authority = { name: "ROLE_ADMIN" };
+
+    const role2: Authority = { name: "ROLE_USER" };
+
+    const user1: User = {
+      login: "system",
+      password: "system",
+      firstName: "System",
+      lastName: "System",
+      email: "system@localhost.it",
+      imageUrl: "",
+      activated: true,
+      langKey: "en",
+      _createdBy: "system",
+      _updatedBy: "system",
+    };
+
+    const user2: User = {
+      login: "anonymoususer",
+      password: "anonymoususer",
+      firstName: "Anonymous",
+      lastName: "User",
+      email: "anonymoususer@localhost.it",
+      imageUrl: "",
+      activated: true,
+      langKey: "en",
+      _createdBy: "system",
+      _updatedBy: "system",
+    };
+
+    const user3: User = {
+      login: "admin",
+      password: "admin",
+      firstName: "Administrator",
+      lastName: "Administrator",
+      email: "admin@localhost.it",
+      imageUrl: "",
+      activated: true,
+      langKey: "en",
+      _createdBy: "system",
+      _updatedBy: "system",
+    };
+
+    const user4: User = {
+      login: "user",
+      password: "user",
+      firstName: "User",
+      lastName: "User",
+      email: "user@localhost.it",
+      imageUrl: "",
+      activated: true,
+      langKey: "en",
+      _createdBy: "system",
+      _updatedBy: "system",
+    };
+
+    const authorityRepository = mongoose.model(EntitiesEnum.Authority, AuthoritySchema);
+
+    const adminRole = await authorityRepository.create(role1);
+    const userRole = await authorityRepository.create(role2);
+
+    const userRepository = mongoose.model(EntitiesEnum.User, UserSchema);
+
+    user1.authorities = [adminRole, userRole];
+    user3.authorities = [adminRole, userRole];
+    user4.authorities = [userRole];
+
+    await Promise.all([user1, user2, user3, user4].map((u) => transformPassword(u)));
+    await userRepository.insertMany([user1, user2, user3, user4]);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+  public async down(mongoose: Mongoose): Promise<any> {}
+}

@@ -1,0 +1,6 @@
+import { BaseRepository } from "../common/bases";
+import { Injectable } from "@nestjs/common";
+import { User } from "../domain";
+
+@Injectable()
+export abstract class UserRepository extends BaseRepository<User> {}

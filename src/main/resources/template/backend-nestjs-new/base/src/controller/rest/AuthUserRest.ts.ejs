@@ -1,0 +1,9 @@
+import { UserDTO } from "../../dto";
+
+export abstract class AuthUserRest {
+  public abstract getAllUsers(): Promise<UserDTO[]>;
+  public abstract createUser(userDTO: UserDTO): Promise<UserDTO>;
+  public abstract updateUser(userDTO: UserDTO): Promise<UserDTO>;
+  public abstract getUser(loginValue: string): Promise<UserDTO>;
+  public abstract deleteUser(loginValue: string): Promise<UserDTO>;
+}

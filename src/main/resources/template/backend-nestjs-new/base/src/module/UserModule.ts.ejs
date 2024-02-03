@@ -1,0 +1,24 @@
+import { ManagementControllerImpl } from "../controller/rest/impl/ManagementControllerImpl";
+import UserServiceImpl from "../service/impl/UserServiceImpl";
+import { forwardRef, Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { UserRepository } from "../repository";
+import { UserSchema } from "../domain";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+import { AuthModule } from "./AuthModule";
+import { UserService } from "../service/";
+import UserRepositoryImpl from "../repository/impl/UserRepositoryImpl";
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: EntitiesEnum.User, schema: UserSchema }]),
+    forwardRef(() => AuthModule),
+  ],
+  controllers: [ManagementControllerImpl],
+  providers: [
+    UserRepositoryImpl,
+    UserServiceImpl,
+  ],
+  exports: [UserService],
+})
+export class UserModule {}

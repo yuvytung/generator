@@ -1,0 +1,118 @@
+<%
+const EntityDTO = _entity.name.pascal().concat(dtoSuffix);
+const EntityRest = _entity.name.pascal().concat("Rest");
+const EntityControllerImpl = _entity.name.pascal().concat("ControllerImpl");
+-%>
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard, Roles, RolesGuard, RoleTypeEnum } from "../../../internal/security";
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+
+import { <%-EntityRest%> } from "..";
+import { <%-EntityDTO%> } from "../../../dto";
+import { <%-EntityControllerImpl%> } from "../../impl/<%-EntityControllerImpl%>";
+
+@Controller("api/<%-_entity.name.kebab()%>s")
+@UseGuards(AuthGuard, RolesGuard)
+@UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
+@ApiBearerAuth()
+@ApiTags('<%-_entity.name.kebab()%>s')
+export class <%-EntityRest%>Impl implements <%-EntityRest%> {
+  constructor(private readonly controller: <%-EntityControllerImpl%>) {}
+
+  @Get("/")
+  @Roles(RoleTypeEnum.USER)
+  @ApiResponse({
+    status: 200,
+    description: "List all records",
+    type: <%-EntityDTO%>,
+  })
+  public async getAll(): Promise<<%-EntityDTO%>[]> {
+    return this.controller.getAll();
+  }
+
+  @Get("/_search")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Search entity (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "Search all records by keywords.",
+    type: <%-EntityDTO%>,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  public async search(@Query("keywords") keywords: string): Promise<<%-EntityDTO%>[]> {
+    return this.controller.search(keywords);
+  }
+
+  @Get("/:id")
+  @Roles(RoleTypeEnum.USER)
+  @ApiResponse({
+    status: 200,
+    description: "The found record",
+    type: <%-EntityDTO%>,
+  })
+  public async getOne(@Param("id") id: string): Promise<<%-EntityDTO%>> {
+    return this.controller.getOne(id);
+  }
+
+  @Post("/")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Create entity (default)" })
+  @ApiResponse({
+    status: 201,
+    description: "The record has been successfully created.",
+    type: <%-EntityDTO%>,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  public async post(@Body() dto: <%-EntityDTO%>): Promise<<%-EntityDTO%>> {
+    return this.controller.post(dto);
+  }
+
+  @Put("/:id")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: <%-EntityDTO%>,
+  })
+  public async put(@Param("id") id: string, @Body() dto: <%-EntityDTO%>): Promise<<%-EntityDTO%>> {
+    return this.controller.put(id, dto);
+  }
+
+  @Patch("/:id")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Partial update entity with id (default)" })
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully updated.",
+    type: <%-EntityDTO%>,
+  })
+  public async patch(@Param("id") id: string, @Body() dto: <%-EntityDTO%>): Promise<<%-EntityDTO%>> {
+    return this.controller.patch(id, dto);
+  }
+
+  @Delete("/:id")
+  @Roles(RoleTypeEnum.ADMIN)
+  @ApiOperation({ summary: "Delete entity (default)" })
+  @ApiResponse({
+    status: 204,
+    description: "The record has been successfully deleted.",
+  })
+  public async deleteById(@Param("id") id: string): Promise<void> {
+    return this.controller.deleteById(id);
+  }
+}

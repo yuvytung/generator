@@ -1,0 +1,23 @@
+import { Body, Controller, Post, UseInterceptors } from "@nestjs/common";
+import { UserLoginDTO } from "../../../dto";
+import { LoggingInterceptor } from "../../../internal/interceptors/LoggingInterceptor";
+import { ApiTags, ApiResponse, ApiOperation } from "@nestjs/swagger";
+import { AuthControllerImpl } from "../../impl/AuthControllerImpl";
+import { AuthUserJwtRest } from "../AuthUserJwtRest";
+
+@Controller("api")
+@UseInterceptors(LoggingInterceptor)
+@ApiTags("user-jwt-controller")
+export class AuthUserJwtRestImpl implements AuthUserJwtRest {
+  constructor(private readonly controller: AuthControllerImpl) {}
+
+  @Post("/authenticate")
+  @ApiOperation({ summary: "Authorization api retrieving token" })
+  @ApiResponse({
+    status: 201,
+    description: "Authorized",
+  })
+  async authorize(@Body() user: UserLoginDTO): Promise<any> {
+    return this.controller.authorize(user);
+  }
+}

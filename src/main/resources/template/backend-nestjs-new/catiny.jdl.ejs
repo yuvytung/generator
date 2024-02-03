@@ -1,0 +1,58 @@
+/**
+* Informational post that I have
+*/
+entity Post {
+  /** tiêu đề của Post */
+  title String
+  /** giới thiệu */
+  summary String
+  /** mô tả */
+  description String
+  /** nội dung */
+  @Any
+  content String
+  /**
+    các thẻ để lọc gắn với nội dung
+    data structure: {
+      name: tên tag,
+      value: giá trị bất kỳ,
+      numberValue: value là số coòn lại sẽ là null,
+      priority: độ ưu tiên tùy chỉnh
+    }
+   */
+  @Any
+  contentTags String
+}
+
+/**
+* User profile
+*/
+entity UserMetadata {
+  @Any
+  profile String
+  @Any
+  setting String
+}
+
+/**
+* Document này sẽ chứa danh sách các tag có thể có trong Post.contentTags nó phục vụ cho fuzzy search on typing
+*/
+entity ContentTag {
+  /** tên tag */
+  name String required unique maxlength(50)
+  /** giới thiệu */
+  summary String
+  /** mô tả về tag */
+  description String
+  /** chỉ số ưu tiên  */
+  priority Double min(0) max(1)
+}
+
+
+relationship OneToMany {
+  UserMetadata to Post{owner}
+}
+
+relationship OneToOne {
+  UserMetadata{owner} to User with builtInEntity
+}

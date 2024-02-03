@@ -1,0 +1,10 @@
+<%
+const entitiesName = _entities.map((e)=> e.name)
+const exportAll = entitiesName.map((name)=> `export * from "./${name.pascal()}Rest"`).join(`;\n`)
+-%>
+export * from "./EntityManagementController";
+export * from "./AuthUserJwtRest";
+export * from "./AuthAccountRest";
+export * from "./AuthPublicUserRest";
+export * from "./AuthUserRest";
+<%-exportAll%>

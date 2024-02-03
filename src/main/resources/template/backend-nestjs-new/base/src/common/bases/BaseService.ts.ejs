@@ -1,0 +1,78 @@
+import { HttpException, HttpStatus } from "@nestjs/common";
+import { Options, Projection } from "./BaseRepository";
+import { BaseEntity, BaseRepository } from ".";
+import { FilterQuery } from "mongoose";
+import { Request } from "../interfaces/Request";
+
+export abstract class BaseService<E extends BaseEntity> {
+  protected abstract readonly repository: BaseRepository<E>;
+  protected abstract readonly request: Request;
+
+  public async findById(id: string): Promise<E | undefined> {
+    return await this.repository.findById(id);
+  }
+
+  public async _find(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<E[] | undefined> {
+    return await this.repository._find(filter, options, projection);
+  }
+
+  public async find(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<E[] | undefined> {
+    return await this.repository.find(filter, options, projection);
+  }
+
+  public async searchAndCount(keywords: string, params: any = {}): Promise<[E[], number]> {
+    return this.repository.esSearchAndCount(keywords, params);
+  }
+
+  public async findAndCount(
+    filter: FilterQuery<E> = {},
+    options: Options<E> = {},
+    projection: Projection<E> = {},
+  ): Promise<[E[], number]> {
+    return this.repository.findAndCount(filter, options, projection);
+  }
+
+  public async save(entity: E, creator?: string): Promise<E | undefined>;
+  public async save(entities: E[], creator?: string): Promise<E[]>;
+  public async save(e: E | E[], creator?: string): Promise<E | E[] | undefined> {
+    const isArray = Array.isArray(e);
+    const entities: E[] = isArray ? e : [e];
+    if (creator) {
+      for (const entity of entities) {
+        if (!entity._createdBy) {
+          entity._createdBy = creator;
+        }
+        entity._updatedBy = creator;
+      }
+    }
+    const result = await this.repository.save(entities);
+    this.repository.esSave(result).catch((error) => log.warn("error save search", result, error));
+    return result;
+  }
+
+  public async update(entity: E, updater?: string): Promise<E | undefined> {
+    if (updater) {
+      entity._updatedBy = updater;
+    }
+    const result = await this.repository.save(entity);
+    void this.repository.esSave(result);
+    return result;
+  }
+
+  public async deleteById(id: string): Promise<void | undefined> {
+    await this.repository.remove(id);
+    const entityFind = await this.findById(id);
+    if (entityFind) {
+      throw new HttpException("Error, entity not deleted!", HttpStatus.NOT_FOUND);
+    }
+    void this.repository.esDelete(id).catch((error) => log.warn("error delete search", id, error));
+  }
+}

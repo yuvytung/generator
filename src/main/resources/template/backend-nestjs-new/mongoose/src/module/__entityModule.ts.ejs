@@ -1,0 +1,38 @@
+<%
+const Entity = _entity.name.pascal().concat();
+const EntityRestImpl = _entity.name.pascal().concat("RestImpl");
+const EntityControllerImpl = _entity.name.pascal().concat("ControllerImpl");
+const EntityService = _entity.name.pascal().concat("Service");
+const EntityServiceImpl = _entity.name.pascal().concat("ServiceImpl");
+const EntityRepositoryImpl = _entity.name.pascal().concat("RepositoryImpl");
+const EntitySchema = _entity.name.pascal().concat("Schema");
+const EntityModule = _entity.name.pascal().concat("Module");
+-%>
+
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { EntitiesEnum } from "../common/enums/EntitiesEnum";
+<%-modules.search === "elasticsearch" ?
+        `import {ElasticsearchModule} from "./ElasticsearchModule";` : ``
+%>
+import { <%-EntitySchema%> } from "../domain";
+import { <%-EntityControllerImpl%> } from "../controller/impl/<%-EntityControllerImpl%>";
+import { <%-EntityRestImpl%> } from "../controller/rest/impl/<%-EntityRestImpl%>";
+import { <%-EntityService%> } from "../service";
+import <%-EntityServiceImpl%> from "../service/impl/<%-EntityServiceImpl%>";
+import <%-EntityRepositoryImpl%> from "../repository/impl/<%-EntityRepositoryImpl%>";
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: EntitiesEnum.<%-Entity%>, schema: <%-EntitySchema%> }]),
+    <%-modules.search === "elasticsearch" ? `ElasticsearchModule,` : ``%>
+  ],
+  controllers: [<%-EntityRestImpl%>],
+  providers: [
+    <%-EntityControllerImpl%>,
+    <%-EntityServiceImpl%>,
+    <%-EntityRepositoryImpl%>,
+  ],
+  exports: [<%-EntityService%>],
+})
+export class <%-EntityModule%> {}

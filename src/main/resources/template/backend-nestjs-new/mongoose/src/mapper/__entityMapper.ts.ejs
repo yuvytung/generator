@@ -1,0 +1,14 @@
+<%
+const Entity = _entity.name.pascal().concat();
+const EntityDTO = _entity.name.pascal().concat(dtoSuffix);
+const EntityMapper = _entity.name.pascal().concat("Mapper");
+-%>
+
+import { <%-Entity%> } from "../domain";
+import { <%-EntityDTO%> } from "../dto";
+import { BaseMapper } from "../common/bases";
+
+/**
+ * A Job mapper object.
+ */
+export class <%-EntityMapper%> extends BaseMapper<<%-Entity%>, <%-EntityDTO%>> {}

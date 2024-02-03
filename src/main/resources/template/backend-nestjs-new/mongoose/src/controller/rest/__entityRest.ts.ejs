@@ -1,0 +1,11 @@
+<%
+const EntityDTO = _entity.name.pascal().concat(dtoSuffix);
+const EntityRest = _entity.name.pascal().concat("Rest");
+%>
+
+import { EntityManagementController } from "./EntityManagementController";
+
+import { <%-EntityDTO%> } from "../../dto";
+
+export abstract class <%-EntityRest%> extends EntityManagementController<<%-EntityDTO%>> {
+}

@@ -1,0 +1,37 @@
+// eslint-disable-next-line max-classes-per-file
+import { ClassConstructor, ClassTransformOptions, plainToInstance } from "class-transformer";
+import { cloneDeep } from "lodash";
+
+class Empty {}
+
+/**
+ * A base mapper object.
+ */
+export abstract class BaseMapper<E, D> {
+  constructor(
+    protected readonly Entity: ClassConstructor<E> = Empty as any,
+    protected readonly DTO: ClassConstructor<D> = Empty as any,
+  ) {}
+
+  d2e(dto: D): E;
+  d2e(dto: D[]): E[];
+  d2e(dto: D | D[]): E | E[] {
+    const result = [].concat(dto).map((d) => Object.assign(new this.Entity(), cloneDeep(d)));
+    return Array.isArray(dto) ? result : result[0];
+  }
+
+  e2d(dto: E): D;
+  e2d(dto: E[]): D[];
+  e2d(entity: E | E[], { TargetClass, options }: TargetOptionsType<D> = {}): D | D[] {
+    const result = [].concat(entity).map((e) => Object.assign(new this.DTO(), cloneDeep(e)));
+    return plainToInstance<D, E>(TargetClass || this.DTO, result, {
+      excludeExtraneousValues: true,
+      ...options,
+    });
+  }
+}
+
+interface TargetOptionsType<T> {
+  TargetClass?: ClassConstructor<T>;
+  options?: ClassTransformOptions;
+}

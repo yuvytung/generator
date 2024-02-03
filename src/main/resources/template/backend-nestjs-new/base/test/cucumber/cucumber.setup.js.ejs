@@ -1,0 +1,16 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+global.expect = require("expect").default;
+
+const common = {
+  paths: ["./test/cucumber/**/*.feature"],
+  requireModule: ["ts-node/register"],
+  require: ["./test/cucumber/**/*.steps.ts"],
+  formatOptions: {
+    snippetInterface: "synchronous",
+  },
+  format: ["html:report/cucumber/index.html"],
+};
+
+module.exports = {
+  default: common,
+};

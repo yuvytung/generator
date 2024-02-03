@@ -1,0 +1,44 @@
+import { LoggerConfig } from "./internal/config/LoggerConfig";
+import { config as configEnv } from "dotenv";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./AppModule";
+import { swaggerConfig } from "./internal/config/SwaggerConfig";
+import { config } from "./internal/config/Config";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
+import * as fs from "fs";
+
+import { loadCloudConfig, registerAsEurekaService } from "./internal/config/EurkaConfig";
+
+configEnv({ path: ".env" });
+const port = process.env.NODE_SERVER_PORT || config.get("server.port");
+
+async function bootstrap(): Promise<void> {
+  await new Promise((r) => setTimeout(r, getEnv("jhipster.sleep", 0) * 1000));
+  if (getEnv("migrations.run")) require("./migrations");
+
+  await loadCloudConfig();
+  registerAsEurekaService();
+  const appOptions = { cors: true, logger: new LoggerConfig() };
+  const app = await NestFactory.create(AppModule, appOptions);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (): BadRequestException => new BadRequestException("Validation error"),
+    }),
+  );
+
+  const staticClientPath = config.getClientPath();
+  if (fs.existsSync(staticClientPath)) {
+    log.info(`Serving static client resources on ${staticClientPath}`);
+  } else {
+    log.info("No client it has been found");
+  }
+
+  swaggerConfig(app);
+
+  await app.listen(port);
+  process.on("uncaughtException", (error) => {
+    log.error("Uncaught Exception:", error?.stack);
+  });
+}
+
+void bootstrap().then(() => log.info(`Application listening on port ${port}`));

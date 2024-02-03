@@ -1,0 +1,24 @@
+<%
+const Entity = _entity.name.pascal().concat();
+const EntityService = _entity.name.pascal().concat("Service");
+const EntityServiceImpl = _entity.name.pascal().concat("ServiceImpl");
+const EntityRepository = _entity.name.pascal().concat("Repository");
+-%>
+import { Injectable } from "@nestjs/common";
+import { <%-EntityRepository%> } from "../../repository";
+import { BaseService } from "../../common/bases";
+import { <%-Entity%> } from "../../domain";
+import { <%-EntityService%> } from "../";
+import { Request } from "src/common/interfaces/Request";
+
+@Injectable()
+export class <%-EntityServiceImpl%> extends BaseService<<%-Entity%>> implements <%-EntityService%> {
+  protected request: Request;
+  constructor(
+    protected readonly repository: <%-EntityRepository%>,
+  ) {
+    super();
+  }
+}
+
+export default { provide: <%-EntityService%>, useClass: <%-EntityServiceImpl%> };
